@@ -645,13 +645,16 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="brand" style="font-size:16px">Transless<span class="dot">.</span></span>
     <div class="foot-links">
       <a href="privacy.html">隐私政策</a>
+      <a href="terms.html">服务条款</a>
       <a href="mailto:support@transless.net">联系我们</a>
       <!-- 2026-08-26：联系邮箱放出来了。它不是占位符 —— transless.net 的 MX
            指向 ImprovMX，08-25 实测「外部发信 → support@transless.net → Kevin 的 Gmail」
            整条链通了（收件人那栏写的就是 support@），发信侧走 Resend 已验证域名。
-           🚨 服务条款仍未放：`legal/terms.en.DRAFT.html` 只有英文草稿，
-           而且里面写着「Free 10 条/天 + Pro 月付/年付」——**那套订阅还不存在**。
-           把一份描述不存在的收费方案的条款挂上去，比没有条款更糟。 -->
+           2026-08-26：服务条款也放出来了，源是 `dist/terms.html`（中文·内测版 v1.0）。
+           🚨 **不是** `legal/terms.en.DRAFT.html` —— 那份英文草稿里写着
+           「Free 10 条/天 + Pro 月付/年付」，那套订阅根本不存在，挂上去比没有条款更糟。
+           现在这份只写当下成立的：免费内测、按设备每日额度（后端 FREE_DAILY 真机制）、
+           AI 会出错要自己复核、香港法律、运营方是 Luminate Pacific。 -->
     </div>
     <!-- 2026-08-26 Kevin 定：一步到位署公司主体。
          三个理由：① 商标申请人就是它，官网是「实际使用」证据，署名对不上这份证据要打折
@@ -688,6 +691,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-ba8e99d547 -->
+<!-- build-f21f6e12b7 -->
 </body>
 </html>
