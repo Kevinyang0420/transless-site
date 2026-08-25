@@ -6,6 +6,16 @@
 <title>Transless — 让世界听懂你</title>
 <meta name="description" content="说中文口水话，直接上屏成地道、结构化的英文。Transless 语音输入法键盘。">
 <meta name="theme-color" content="#0F1B4F">
+<!-- 标签页图标。2026-08-26 加：之前浏览器标签上是默认的小地球。
+     🚨 图不是新画的 —— `site/make_favicon.py` 从安卓那颗 `ic_launcher.png`
+     （紫底 + T 变麦克风）缩出来的，跟手机桌面上那颗必须是同一个，
+     不然用户认不出是同一个产品。
+     🚨 apple-touch-icon 已铺不透明底：iOS 会把透明渲染成黑色。
+     这些都是**同域文件**，不违反 DESIGN.md 的「整页零外部资源」。 -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <!--
   规格来源：site/DESIGN.md（唯一配置点）。色值与 Skin.java / Theme.java 逐字对齐。
   🚨 改配色只改下面的 :root，别在组件里另写色值。
@@ -692,6 +702,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-00e993f769 -->
+<!-- build-b852d5257e -->
 </body>
 </html>
