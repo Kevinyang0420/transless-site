@@ -645,11 +645,21 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="brand" style="font-size:16px">Transless<span class="dot">.</span></span>
     <div class="foot-links">
       <a href="privacy.html">隐私政策</a>
-      <!-- 🚨 服务条款：legal/terms.html 本地有，但线上 404（从没部署过）。
-           联系我们：隐私政策里的联系邮箱还是 [待填写]。
-           两个都等真地址到位再放出来 —— 死链不如不放。 -->
+      <a href="mailto:support@transless.net">联系我们</a>
+      <!-- 2026-08-26：联系邮箱放出来了。它不是占位符 —— transless.net 的 MX
+           指向 ImprovMX，08-25 实测「外部发信 → support@transless.net → Kevin 的 Gmail」
+           整条链通了（收件人那栏写的就是 support@），发信侧走 Resend 已验证域名。
+           🚨 服务条款仍未放：`legal/terms.en.DRAFT.html` 只有英文草稿，
+           而且里面写着「Free 10 条/天 + Pro 月付/年付」——**那套订阅还不存在**。
+           把一份描述不存在的收费方案的条款挂上去，比没有条款更糟。 -->
     </div>
-    <span class="copy">&copy; 2026 Transless</span>
+    <!-- 2026-08-26 Kevin 定：一步到位署公司主体。
+         三个理由：① 商标申请人就是它，官网是「实际使用」证据，署名对不上这份证据要打折
+         ② GDPR 要求披露数据控制者身份，早晚要写 ③ 现在改一次，晚改要动页脚/隐私/条款三处。
+         🚨 只写「运营」，不写「App Store 上的开发者是公司」——
+         苹果账号目前仍是个人主体（个人账号不能转公司，只能新开 Organization 再转移 App），
+         那句话现在会被现实打脸。 -->
+    <span class="copy">&copy; 2026 Luminate Pacific Consulting Service Limited</span>
   </div>
 </footer>
 
@@ -678,6 +688,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-be6ed2a7d6 -->
+<!-- build-ba8e99d547 -->
 </body>
 </html>
