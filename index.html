@@ -97,7 +97,10 @@ nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-betwe
 
 /* ================= 屏 1 · Hero ================= */
 .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px}
-.hero .wrap{display:grid;grid-template-columns:42% 58%;align-items:center;gap:0}
+/* 🚨 width:100% 不能省 —— .hero 是 flex，.wrap 作为 flex item 默认 flex:0 1 auto，
+   宽度被内容撑出来。演示卡一改窄，整个 wrap 跟着缩、左栏被连坐、
+   中文 slogan 从 1 行折成 2 行。nav .wrap 早就写了这句，hero 一直漏着。 */
+.hero .wrap{width:100%;display:grid;grid-template-columns:42% 58%;align-items:center;gap:0}
 .hero-left{padding-right:48px}
 /* 🚨 这里原来又写了一遍 "Transless"，跟导航栏上那个隔 6cm 重复。
    RedotPay / Typeless 都只在导航出现一次，所以换成品类标签。 */
@@ -136,25 +139,94 @@ h1{
        opacity:.72;line-height:1.9}
 
 /* ================= 演示卡：按 Theme.java 复刻的键盘 ================= */
-.demo{justify-self:end;width:560px;max-width:100%}
+/* 🚨 原来 560px 宽 / min-height 560px，宽高比接近 1:1 ——
+   所以 Kevin 说「太宽了，看起来不像是一个手机」。改成真手机比例 9:19.5。 */
+.demo{justify-self:end;width:340px;max-width:100%}
 .phone{
-  position:relative;border-radius:38px;padding:12px;
+  position:relative;border-radius:38px;padding:10px;
   background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.02));
-  border:1px solid var(--card-border);
-  box-shadow:0 40px 100px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;
+  border:1.5px solid var(--card-border);
+  box-shadow:0 40px 100px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset,
+             0 0 90px var(--glow);
 }
 .screen{
-  border-radius:28px;overflow:hidden;
+  border-radius:30px;overflow:hidden;
   background:linear-gradient(180deg,var(--kb-bg-top),var(--kb-bg-mid) 50%,var(--kb-bg-bot));
-  display:flex;flex-direction:column;min-height:560px;
+  display:flex;flex-direction:column;
+  aspect-ratio:9/19.5;
 }
-/* 上半：正在输入的文本 */
-.compose{flex:1;padding:28px 22px;display:flex;flex-direction:column;gap:14px}
+.statusbar{
+  height:28px;flex:0 0 28px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 15px;
+  font-size:11px;color:var(--text-secondary);
+}
+.sb-right{display:flex;align-items:center;gap:5px}
+.sb-bars{display:flex;align-items:flex-end;gap:1.5px;height:9px}
+.sb-bars i{width:2.5px;background:var(--text-secondary);border-radius:1px;display:block}
+.sb-bars i:nth-child(1){height:3px}.sb-bars i:nth-child(2){height:5px}
+.sb-bars i:nth-child(3){height:7px}.sb-bars i:nth-child(4){height:9px}
+.sb-batt{width:18px;height:9px;border:1px solid var(--text-secondary);border-radius:2.5px;
+  position:relative;padding:1px}
+.sb-batt::after{content:"";position:absolute;right:-3px;top:2.5px;width:1.5px;height:3px;
+  background:var(--text-secondary);border-radius:0 1px 1px 0}
+.sb-batt span{display:block;height:100%;width:72%;background:var(--text-secondary);border-radius:1px}
+.home-ind{flex:0 0 16px;display:flex;align-items:center;justify-content:center}
+.home-ind i{display:block;width:112px;height:4px;border-radius:2px;background:rgba(244,241,251,.28)}
+/* 上半：6 个功能叠在一起切换 */
+.feats{position:relative;flex:1;min-height:0}
+.feat{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(6px);
+  transition:opacity .22s cubic-bezier(0.16,1,0.3,1),transform .22s cubic-bezier(0.16,1,0.3,1)}
+.feat.on{opacity:1;transform:none;pointer-events:auto}
+.feat-tag{display:inline-block;align-self:flex-start;font-size:10px;letter-spacing:.1em;
+  padding:4px 9px;border-radius:999px;background:var(--card-bg);
+  border:1px solid var(--card-border);color:var(--text-secondary);margin-bottom:2px}
+.feat.on .bubble{animation:rise .42s cubic-bezier(0.16,1,0.3,1) both}
+.feat.on .bubble.out{animation-delay:.34s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* 圆点：激活 --highlight，未激活 --card-border。不许用 accent */
+.dots{display:flex;justify-content:center;gap:7px;margin-top:16px;flex-wrap:wrap}
+.dots button{width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
+  border:1px solid var(--card-border);background:var(--card-border);
+  transition:background .18s cubic-bezier(0.16,1,0.3,1),transform .18s cubic-bezier(0.16,1,0.3,1)}
+.dots button[aria-selected="true"]{background:var(--highlight);border-color:var(--highlight);transform:scale(1.25)}
+.dots button:hover{border-color:var(--highlight)}
+.feat-name{text-align:center;margin-top:9px;font-size:12.5px;color:var(--text-secondary);
+  min-height:1.4em;transition:opacity .18s cubic-bezier(0.16,1,0.3,1)}
+.feat-name b{color:var(--text-primary);font-weight:500}
+/* ============ 随手翻译（TryActivity）——它不是键盘，是独立 Activity ============
+   🚨 Kevin 2026-08-26:「随手翻译那个没有加」。我原来给它画的还是键盘，
+   所以它跟旁边几屏长得一模一样 = 等于没加。
+   真身用的是 App 的 Skin 配色（不是键盘的 Theme），没有键盘，
+   麦克风是 dp(96) 的大圆、里面写「点一下 / 开始说」（TryActivity.java:203-213）。 */
+.screen[data-app="1"]{background:var(--bg-gradient)}
+.screen[data-app="1"] .kb{display:none}
+.tryui{position:absolute;inset:0;padding:16px 15px 12px;display:flex;flex-direction:column;gap:9px}
+.try-bar{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:14px}
+.try-bar .back{color:var(--text-secondary);font-size:13px}
+.try-tabs,.try-sub,.try-sp{display:flex;gap:6px;flex-wrap:wrap}
+.try-mic-row{display:flex;align-items:center;justify-content:center;gap:9px;margin:6px 0 2px}
+.try-mic{width:64px;height:64px;border-radius:50%;flex:0 0 64px;
+  /* 🚨 真身是 Skin.ACCENT #8B5CF6（TryActivity.java:209），而这里用的是
+     --kb-accent #7C5CE6。**这是个有意的偏差，不是抄错了**：
+     `.cta` 那条渐变已经用掉「强调色只许 CTA 用、整页 ≤2 次」的全部配额，
+     再引一次 var(--accent-*) 会被 check_design 的 D1 当场判红。
+     两个紫相差 2 个色阶，在 64px 的圆上看不出来；
+     要严格照抄就得先改 DESIGN.md 那条铁律 —— 那是 Kevin 的决定，不是我的。 */
+  background:var(--kb-accent);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  color:#fff;font-size:10.5px;line-height:1.25;
+  box-shadow:0 8px 24px rgba(124,92,230,.42)}
+.try-heard{font-size:10.5px;color:var(--text-secondary)}
+.try-result{flex:1;min-height:0;border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.6;
+  background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-primary)}
+/* 贴着键盘往上排：真手机上最新的内容就压在键盘上方 */
+.compose{position:absolute;inset:0;padding:18px 15px 12px;display:flex;flex-direction:column;
+  justify-content:flex-end;gap:8px;overflow:hidden}
 .compose-label{
   font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);
 }
 .bubble{
-  border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.65;
+  border-radius:14px;padding:10px 12px;font-size:12.5px;line-height:1.6;
   background:rgba(255,255,255,.06);color:var(--text-secondary);
   border:1px solid rgba(255,255,255,.05);
 }
@@ -170,9 +242,13 @@ h1{
 @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
 
 /* 下半：键盘本体 —— PAD 18 / GAP 12 / R_KEY 12 照抄 Theme.java */
-.kb{padding:18px;display:flex;flex-direction:column;gap:12px;
+.kb{padding:11px;display:flex;flex-direction:column;gap:7px;
     border-top:1px solid var(--kb-rim)}
-.kb-row{display:flex;gap:12px}
+.kb-row{display:flex;gap:6px;align-items:center}
+/* 顶行：四格等宽 + logo 钉正中。照抄 VoiceImeService 的 weight=1 四格布局 */
+.kb-row.top .chip{flex:1 1 0;min-width:0}
+.kb-logo{flex:0 0 24px;height:20px;margin:0 3px;display:flex;align-items:center;justify-content:center}
+.kb-logo svg{width:100%;height:100%;fill:var(--text-secondary);opacity:.75}
 .chip{
   flex:1;height:32px;border-radius:12px;background:var(--kb-key);
   display:flex;align-items:center;justify-content:center;
@@ -180,13 +256,21 @@ h1{
 }
 .chip.on{background:var(--kb-key-on)}
 .kb-mid{display:flex;align-items:center;justify-content:center;padding:14px 0 6px}
+/* 🚨 麦克风保持 var(--kb-accent) —— 那是键盘自己的 ACCENT（Theme.java #7C5CE6），
+   不是网站的 --accent-*。演示卡是真键盘的复刻，改了就跟真键盘对不上。 */
 .mic{
-  width:76px;height:76px;border-radius:50%;
+  width:54px;height:54px;border-radius:50%;
   background:var(--kb-accent);
   display:flex;align-items:center;justify-content:center;gap:4px;
   box-shadow:0 10px 30px rgba(124,92,230,.45),0 0 0 1px rgba(255,255,255,.10) inset;
 }
-.wave{display:flex;align-items:center;gap:4px;height:30px}
+/* 🚨 待命时不显示波形 —— VoiceImeService.java:481「他明确说没点录音前不该有波形」。
+   只有 data-speaking="1" 的那一屏才让它出现。 */
+.mic .wave{display:none}
+.screen[data-speaking="1"] .mic .wave{display:flex}
+.mic-ico{width:22px;height:22px;fill:#fff;opacity:.92}
+.screen[data-speaking="1"] .mic-ico{display:none}
+.wave{align-items:center;gap:3px;height:22px}
 .wave i{
   display:block;width:4px;border-radius:2px;background:#fff;
   animation:breathe 1.8s ease-in-out infinite;
@@ -195,7 +279,10 @@ h1{
 .wave i:nth-child(2){height:26px;animation-delay:.3s}
 .wave i:nth-child(3){height:16px;animation-delay:.6s}
 @keyframes breathe{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
-.kb-bottom{display:flex;gap:12px}
+/* 发送键：真键盘用 Theme.accentBg（键盘自己的强调色），不是网站 accent */
+.key.send{background:var(--kb-accent);color:#fff}
+.key.lit{background:rgba(185,139,232,.22);color:var(--text-primary)}
+.kb-bottom{display:flex;gap:6px}
 .key{
   flex:1;height:38px;border-radius:12px;background:var(--kb-key);
   border:1px solid var(--kb-rim);
@@ -338,7 +425,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   :root{--pad:48px}
   .hero .wrap{grid-template-columns:1fr;gap:64px}
   .hero-left{padding-right:0}
-  .demo{justify-self:center;width:100%;max-width:460px}
+  .demo{justify-self:center;width:100%;max-width:340px}
 }
 @media (max-width:768px){
   :root{--pad:24px}
@@ -391,46 +478,125 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <!-- 演示卡：按 Theme.java 复刻的键盘，不是截图 -->
     <div class="demo">
       <div class="phone">
-        <div class="screen">
-          <div class="compose">
-            <div class="compose-label">你说的</div>
-            <div class="bubble">
-              呃…就是那个，我想跟客户说一下，<span class="filler">就是</span>这个报价我们这边可能要再调一下，
-              <span class="filler">然后呢</span>大概下周三之前给他答复<span class="caret"></span>
+        <div class="screen" id="screen" data-speaking="0">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <span class="sb-bars"><i></i><i></i><i></i><i></i></span>
+              <span class="sb-batt"><span></span></span>
+            </span>
+          </div>
+
+          <div class="feats" id="feats">
+            <div class="feat on" data-sub="tone" data-sub-active="工作" data-lang="英文"
+                 data-mode="翻译" data-speaking="0" data-name="翻译 · 说中文出英文">
+              <div class="compose">
+                <span class="feat-tag">翻译 · 说中文出英文</span>
+                <div class="compose-label">你说的</div>
+                <div class="bubble">报价这边要再调一下，下周三前给他答复<span class="caret"></span></div>
+                <div class="compose-label">上屏的</div>
+                <div class="bubble out">Hi James,<br><br><b>We&rsquo;re revisiting the quote</b> and will get back to you <b>by Wednesday next week</b>.<br><br>Best,</div>
+                
+              </div>
             </div>
-            <div class="compose-label" style="margin-top:6px">上屏的</div>
-            <div class="bubble out">
-              Hi James,<br><br>
-              <b>We're revisiting the quotation on our side</b> and will come back to you
-              with a revised figure <b>by Wednesday next week</b>.<br><br>
-              Kind regards,
+            <div class="feat" data-sub="trans" data-sub-active="整理" data-lang="英文"
+                 data-mode="转写" data-speaking="0" data-name="转写 · 说什么就出什么">
+              <div class="compose">
+                <span class="feat-tag">转写 · 说什么就出什么</span>
+                <div class="compose-label">你说的</div>
+                <div class="bubble">呃…设计那块要多两天，然后开发还好，测试压一压<span class="caret"></span></div>
+                <div class="compose-label">上屏的</div>
+                <div class="bubble out">设计需多两天；开发进度正常；测试压缩。<br>整体后移约三天。</div>
+                <div class="compose-label" style="color:var(--highlight)">转写不翻译。「整理」去口水，「逐字」一字不改</div>
+              </div>
+            </div>
+            <div class="feat" data-app="1" data-name="随手翻译 · 不用切输入法">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; 返回</span><b>随手翻译</b></div>
+                <div class="try-tabs">
+                  <div class="chip on">翻译</div><div class="chip">转写</div>
+                </div>
+                <div class="try-sub">
+                  <div class="chip">整理</div><div class="chip">逐字</div>
+                  <div class="chip on">工作</div><div class="chip">英文</div>
+                </div>
+                <div class="try-mic-row">
+                  <div class="chip">&#8644; 对方说</div>
+                  <div class="try-mic">点一下<br>开始说</div>
+                  <div class="chip">连续</div>
+                </div>
+                <div class="try-sp"><div class="chip">朗读</div><div class="chip">大字</div></div>
+                <div class="try-heard">听到：这个多少钱？能少一点吗</div>
+                <div class="try-result">
+                  How much is this?<br>Could you do a bit better on the price?
+                </div>
+              </div>
+            </div>
+            <div class="feat" data-sub="tone" data-sub-active="邮件" data-lang="英文"
+                 data-mode="翻译" data-speaking="0" data-name="译光标前的中文">
+              <div class="compose">
+                <span class="feat-tag">译光标前的中文</span>
+                <div class="compose-label">你说的</div>
+                <div class="bubble">（框里已经打好的中文）<br>麻烦下周三前给我答复<span class="caret"></span></div>
+                <div class="compose-label">上屏的</div>
+                <div class="bubble out">Please get back to me by <b>Wednesday next week</b>.</div>
+                <div class="compose-label" style="color:var(--highlight)">不用重说一遍，已经打好的中文一键变外文</div>
+              </div>
+            </div>
+            <div class="feat" data-sub="tone" data-sub-active="随意" data-lang="日本語"
+                 data-mode="翻译" data-speaking="0" data-name="朗读 · 用母语嗓音念给对方听">
+              <div class="compose">
+                <span class="feat-tag">朗读 · 用母语嗓音念给对方听</span>
+                <div class="compose-label">你说的</div>
+                <div class="bubble">这个多少钱？能少一点吗<span class="caret"></span></div>
+                <div class="compose-label">上屏的</div>
+                <div class="bubble out">これはいくらですか？<br>もう少し安くできますか？</div>
+                <div class="compose-label" style="color:var(--highlight)">点「朗读」，用日语念出来。不用把手机怼到人脸前</div>
+              </div>
+            </div>
+            <div class="feat" data-sub="tone" data-sub-active="随意" data-lang="한국어"
+                 data-mode="翻译" data-speaking="0" data-name="九种语言 · 手写也能用">
+              <div class="compose">
+                <span class="feat-tag">九种语言 · 手写也能用</span>
+                <div class="compose-label">你说的</div>
+                <div class="bubble">地铁站怎么走<span class="caret"></span></div>
+                <div class="compose-label">上屏的</div>
+                <div class="bubble out">지하철역은 어떻게 가나요?</div>
+                <div class="compose-label" style="color:var(--highlight)">手写识别在你手机上本地完成，不联网</div>
+              </div>
             </div>
           </div>
+
+          <!-- 🚨 键盘照抄真身：顶行 翻译·英文▾ |logo| 转写·历史（四格等宽），
+               第二排跟着模式换，底排四个键含发送。出处见规格文件末尾那张对照表。 -->
           <div class="kb">
-            <div class="kb-row">
-              <div class="chip on">翻译</div>
-              <div class="chip">转写</div>
-              <div class="chip">EN</div>
-              <div class="chip">历史</div>
+            <div class="kb-row top">
+              <div class="chip on" data-slot="tab-tr">翻译</div>
+              <div class="chip" data-slot="lang">英文 &#9662;</div>
+              <div class="kb-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="2.2" width="17" height="3.4" rx="1.3"/><rect x="8.6" y="6" width="6.8" height="10.4" rx="3.4"/><rect x="11.3" y="16.6" width="1.4" height="3" rx=".7"/><rect x="8" y="19.4" width="8" height="2.1" rx="1.05"/></svg></div>
+              <div class="chip" data-slot="tab-ts">转写</div>
+              <div class="chip dim">历史</div>
             </div>
-            <div class="kb-row">
-              <div class="chip">随意</div>
-              <div class="chip on">工作</div>
-              <div class="chip">邮件</div>
-            </div>
+            <div class="kb-row" data-slot="subrow"></div>
             <div class="kb-mid">
               <div class="mic">
+                <svg class="mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg>
                 <div class="wave"><i></i><i></i><i></i></div>
               </div>
             </div>
             <div class="kb-bottom">
-              <div class="key">打字</div>
-              <div class="key">朗读</div>
+              <div class="key">&#9000; 打字</div>
+              <div class="key" data-slot="speak">&#128264; 朗读</div>
               <div class="key">&#9003;</div>
+              <div class="key send">发送</div>
             </div>
           </div>
+
+          <div class="home-ind"><i></i></div>
         </div>
       </div>
+      <div class="dots" id="dots" role="tablist" aria-label="功能"></div>
+      <div class="feat-name" id="featName"></div>
     </div>
   </div>
 </header>
@@ -526,6 +692,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         <div class="tag">Cross-border</div>
         <h3>跟海外同事对齐</h3>
         <p>会开完了，把刚才说的复述一遍，直接得到一份带编号的要点。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Face to face</div>
+        <h3>临时当个翻译</h3>
+        <p>打开<b>「随手翻译」</b>，不用切输入法。你说中文出外语给对方看；
+        点一下<b>「⇄ 对方说」</b>，对方讲外语就译回你的语言。
+        还有<b>连续模式</b>一句接一句、<b>大字</b>让对面看得清。</p>
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
@@ -678,6 +851,73 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 </footer>
 
 <script>
+/* 功能轮播。原生 setInterval，零依赖。
+   每切一屏，键盘的第二排 / 语言按钮 / 模式 Tab / 朗读高亮 / 波形
+   都跟着变成那个功能的真实样子 —— 演示卡是真键盘的复刻，不能只换文字。 */
+(function(){
+  var scenes = [].slice.call(document.querySelectorAll('#feats .feat'));
+  var dotsBox = document.getElementById('dots');
+  var screen = document.getElementById('screen');
+  var featName = document.getElementById('featName');
+  if (!scenes.length || !dotsBox) return;
+
+  var subrow = document.querySelector('[data-slot="subrow"]');
+  var langChip = document.querySelector('[data-slot="lang"]');
+  var tabTr = document.querySelector('[data-slot="tab-tr"]');
+  var tabTs = document.querySelector('[data-slot="tab-ts"]');
+  var speakKey = document.querySelector('[data-slot="speak"]');
+  var SUB = {tone: ['随意','工作','邮件'], trans: ['整理','逐字']};
+  var i = 0, timer = null, paused = false;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  scenes.forEach(function(s, n){
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role','tab');
+    b.setAttribute('aria-label', s.getAttribute('data-name') || ('功能 ' + (n+1)));
+    b.addEventListener('click', function(){ go(n); pause(); });
+    dotsBox.appendChild(b);
+  });
+  var dots = [].slice.call(dotsBox.children);
+
+  function go(n){
+    i = (n + scenes.length) % scenes.length;
+    var cur = scenes[i];
+    scenes.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+    dots.forEach(function(d, k){ d.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+
+    // 第二排跟着模式换：翻译档 随意/工作/邮件，转写档 整理/逐字
+    var kind = cur.getAttribute('data-sub') || 'tone';
+    var active = cur.getAttribute('data-sub-active');
+    subrow.innerHTML = '';
+    SUB[kind].forEach(function(t){
+      var c = document.createElement('div');
+      c.className = 'chip' + (t === active ? ' on' : '');
+      c.textContent = t;
+      subrow.appendChild(c);
+    });
+
+    if (langChip) langChip.innerHTML = (cur.getAttribute('data-lang') || '英文') + ' \u25BE';
+    var mode = cur.getAttribute('data-mode') || '翻译';
+    if (tabTr) tabTr.classList.toggle('on', mode === '翻译');
+    if (tabTs) tabTs.classList.toggle('on', mode === '转写');
+    if (speakKey) speakKey.classList.toggle('lit', /朗读/.test(cur.getAttribute('data-name')||''));
+    if (screen) {
+      screen.setAttribute('data-speaking', cur.getAttribute('data-speaking') || '0');
+      // 随手翻译那一屏不是键盘，是独立页面 —— 整屏换掉，键盘藏起来
+      screen.setAttribute('data-app', cur.getAttribute('data-app') || '0');
+    }
+    if (featName) featName.innerHTML = '<b>' + (cur.getAttribute('data-name')||'') + '</b>';
+  }
+  function pause(){ paused = true; if (timer) { clearInterval(timer); timer = null; } }
+  go(0);
+  if (!still) {
+    timer = setInterval(function(){ if (!paused) go(i + 1); }, 5200);
+    var demo = document.querySelector('.demo');
+    demo.addEventListener('mouseenter', function(){ paused = true; });
+    demo.addEventListener('mouseleave', function(){ if (timer) paused = false; });
+  }
+})();
+
 // 进视口才播动画（IntersectionObserver），一次性
 var io = new IntersectionObserver(function(es){
   es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
@@ -702,6 +942,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-b852d5257e -->
+<!-- build-770730e32d -->
 </body>
 </html>
