@@ -174,9 +174,14 @@ h1{
 .home-ind i{display:block;width:112px;height:4px;border-radius:2px;background:rgba(244,241,251,.28)}
 /* 上半：6 个功能叠在一起切换 */
 .feats{position:relative;flex:1;min-height:0}
+/* 🚨 先出后进，不要交叉淡。原来出场入场都是 .22s 同时跑，
+   那 220ms 里两屏文字都半透明可见 —— 每次切换闪一下重影，线上实拍到了。
+   现在：出场 .12s 立刻走完，入场延迟 .12s 才开始，两者几乎不重叠。 */
 .feat{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(6px);
-  transition:opacity .22s cubic-bezier(0.16,1,0.3,1),transform .22s cubic-bezier(0.16,1,0.3,1)}
-.feat.on{opacity:1;transform:none;pointer-events:auto}
+  transition:opacity .12s cubic-bezier(0.16,1,0.3,1),transform .12s cubic-bezier(0.16,1,0.3,1)}
+.feat.on{opacity:1;transform:none;pointer-events:auto;
+  transition:opacity .22s cubic-bezier(0.16,1,0.3,1) .12s,
+             transform .22s cubic-bezier(0.16,1,0.3,1) .12s}
 .feat-tag{display:inline-block;align-self:flex-start;font-size:10px;letter-spacing:.1em;
   padding:4px 9px;border-radius:999px;background:var(--card-bg);
   border:1px solid var(--card-border);color:var(--text-secondary);margin-bottom:2px}
@@ -942,6 +947,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-770730e32d -->
+<!-- build-2a6f6d3483 -->
 </body>
 </html>
