@@ -189,12 +189,18 @@ h1{
 .feat.on .bubble.out{animation-delay:.34s}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 /* 圆点：激活 --highlight，未激活 --card-border。不许用 accent */
-.dots{display:flex;justify-content:center;gap:7px;margin-top:16px;flex-wrap:wrap}
-.dots button{width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
-  border:1px solid var(--card-border);background:var(--card-border);
-  transition:background .18s cubic-bezier(0.16,1,0.3,1),transform .18s cubic-bezier(0.16,1,0.3,1)}
-.dots button[aria-selected="true"]{background:var(--highlight);border-color:var(--highlight);transform:scale(1.25)}
-.dots button:hover{border-color:var(--highlight)}
+/* 🚨 原来这里是一排 7px 的小圆点。Kevin 2026-08-26：「那个小点太难点了，不好看」
+   —— 改成**按住拖动切换**，圆点整排去掉。
+   留一根进度条：圆点没了得有别的办法知道现在是第几屏，
+   但它**不可点**（不可点就不会再有"太小点不中"的问题），只负责告知。 */
+.prog{display:flex;gap:6px;justify-content:center;margin-top:16px}
+.prog i{display:block;width:26px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,.18);transition:background .25s var(--ease),width .25s var(--ease)}
+.prog i.on{background:var(--highlight);width:40px}
+/* 拖动面：横向手势归我们，纵向仍然让页面正常滚 */
+.demo{touch-action:pan-y}
+.demo.dragging{cursor:grabbing}
+.demo:focus-visible{outline:2px solid var(--highlight);outline-offset:6px;border-radius:18px}
 .feat-name{text-align:center;margin-top:9px;font-size:12.5px;color:var(--text-secondary);
   min-height:1.4em;transition:opacity .18s cubic-bezier(0.16,1,0.3,1)}
 .feat-name b{color:var(--text-primary);font-weight:500}
@@ -600,7 +606,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
           <div class="home-ind"><i></i></div>
         </div>
       </div>
-      <div class="dots" id="dots" role="tablist" aria-label="功能"></div>
+      <div class="prog" id="prog" aria-hidden="true"></div>
       <div class="feat-name" id="featName"></div>
     </div>
   </div>
@@ -709,6 +715,18 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         <div class="tag">Travel</div>
         <h3>在国外点菜、问路</h3>
         <p>对着手机说中文，出来是当地语言 —— 再点一下朗读，<b>用母语嗓音念给对方听</b>。不用比划，也不用把手机怼到人脸前。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Notes</div>
+        <h3>把还没想清楚的话，说成能用的中文</h3>
+        <p>开完会、路上想到一件事，先说出来再说。<b>转写</b>不翻译 ——
+        「整理」替你去掉「呃…然后…就是说」，归成几条；「逐字」一字不改。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Rewrite</div>
+        <h3>已经打好的中文，不用重说一遍</h3>
+        <p>微信框里中文都打完了，才想起对方看不懂。
+        <b>译光标前的中文</b>，原地换成对方读得懂的那一版。</p>
       </div>
     </div>
   </div>
@@ -861,10 +879,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
    都跟着变成那个功能的真实样子 —— 演示卡是真键盘的复刻，不能只换文字。 */
 (function(){
   var scenes = [].slice.call(document.querySelectorAll('#feats .feat'));
-  var dotsBox = document.getElementById('dots');
+  var progBox = document.getElementById('prog');
   var screen = document.getElementById('screen');
   var featName = document.getElementById('featName');
-  if (!scenes.length || !dotsBox) return;
+  // 🚨 原来这里是 `if (!scenes.length || !dotsBox) return;`。
+  //    去掉圆点时如果忘了改这一行，整个轮播会当场早退、一屏都不动。
+  if (!scenes.length) return;
 
   var subrow = document.querySelector('[data-slot="subrow"]');
   var langChip = document.querySelector('[data-slot="lang"]');
@@ -875,20 +895,21 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   var i = 0, timer = null, paused = false;
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  scenes.forEach(function(s, n){
-    var b = document.createElement('button');
-    b.type = 'button'; b.setAttribute('role','tab');
-    b.setAttribute('aria-label', s.getAttribute('data-name') || ('功能 ' + (n+1)));
-    b.addEventListener('click', function(){ go(n); pause(); });
-    dotsBox.appendChild(b);
-  });
-  var dots = [].slice.call(dotsBox.children);
+  // 进度条：一屏一根，**不可点**（不可点就不会再有"太小点不中"的问题）
+  var bars = [];
+  if (progBox) {
+    scenes.forEach(function(){
+      var t = document.createElement('i');
+      progBox.appendChild(t);
+      bars.push(t);
+    });
+  }
 
   function go(n){
     i = (n + scenes.length) % scenes.length;
     var cur = scenes[i];
     scenes.forEach(function(s, k){ s.classList.toggle('on', k === i); });
-    dots.forEach(function(d, k){ d.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+    bars.forEach(function(d, k){ d.classList.toggle('on', k === i); });
 
     // 第二排跟着模式换：翻译档 随意/工作/邮件，转写档 整理/逐字
     var kind = cur.getAttribute('data-sub') || 'tone';
@@ -914,6 +935,53 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     if (featName) featName.innerHTML = '<b>' + (cur.getAttribute('data-name')||'') + '</b>';
   }
   function pause(){ paused = true; if (timer) { clearInterval(timer); timer = null; } }
+
+  /* ---------------- 按住拖一下换屏 ----------------
+     Kevin 2026-08-26：「鼠标按住滑一下就能切换到下一屏，不要下面这种小圆点」。
+
+     🚨 用 Pointer Events：鼠标和触屏同一套代码，不用写两遍、也不会两套互相触发。
+     🚨 CSS 上给拖动面 `touch-action:pan-y` —— **横向手势归我们，纵向仍然让页面正常滚**。
+        不写这条，手机上想往下滑页面会被我们吃掉，比小圆点还难用。
+     🚨 只有横向位移**大于**纵向时才算换屏（`|dx| > |dy|`），
+        否则斜着滑一下也会误切。
+     🚨 阈值 44px：太小会误触（手指按下时本来就会抖几像素），
+        太大就变成"要用力拖"，失去"滑一下"的手感。 */
+  var DRAG_MIN = 44;
+  var demoEl = document.querySelector('.demo');
+  if (demoEl) {
+    var sx = 0, sy = 0, down = false, moved = false;
+    demoEl.addEventListener('pointerdown', function(ev){
+      if (ev.button !== undefined && ev.button !== 0) return;   // 右键/中键不算
+      down = true; moved = false; sx = ev.clientX; sy = ev.clientY;
+      demoEl.classList.add('dragging');
+      pause();                       // 一上手就停掉自动轮播，别跟人抢
+    });
+    demoEl.addEventListener('pointermove', function(ev){
+      if (!down || moved) return;
+      var dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (Math.abs(dx) < DRAG_MIN || Math.abs(dx) <= Math.abs(dy)) return;
+      moved = true;                  // 一次按下只切一屏，别拖得远就连翻好几屏
+      go(dx < 0 ? i + 1 : i - 1);    // 往左拖 = 看下一屏（跟手）
+    });
+    function up(){ down = false; demoEl.classList.remove('dragging'); }
+    demoEl.addEventListener('pointerup', up);
+    demoEl.addEventListener('pointercancel', up);
+    demoEl.addEventListener('pointerleave', up);
+
+    /* 🚨 可达性：圆点没了之后，不能只剩"会拖的人才用得了"。
+       左右方向键照样能切，而且这块要能被 Tab 到。 */
+    demoEl.setAttribute('tabindex', '0');
+    demoEl.setAttribute('role', 'group');
+    demoEl.setAttribute('aria-roledescription', '功能轮播');
+    demoEl.setAttribute('aria-label', '功能演示，按左右方向键或按住拖动切换');
+    demoEl.addEventListener('keydown', function(ev){
+      if (ev.key === 'ArrowRight') { pause(); go(i + 1); ev.preventDefault(); }
+      else if (ev.key === 'ArrowLeft') { pause(); go(i - 1); ev.preventDefault(); }
+    });
+    // 屏读器靠这个知道换到哪一屏了（进度条是 aria-hidden 的，纯视觉）
+    if (featName) featName.setAttribute('aria-live', 'polite');
+  }
+
   go(0);
   if (!still) {
     timer = setInterval(function(){ if (!paused) go(i + 1); }, 5200);
@@ -947,6 +1015,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-2a6f6d3483 -->
+<!-- build-eb9d51ee97 -->
 </body>
 </html>
