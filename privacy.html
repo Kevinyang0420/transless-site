@@ -27,11 +27,11 @@ th{background:#20202a;color:#fff}
 a{color:#9fd0ff}
 </style></head><body>
 <h1>Transless 隐私政策</h1>
-<p><strong>生效日期：2026-08-26</strong>　|　<strong>版本：v2.1</strong></p>
+<p><strong>生效日期：2026-08-28</strong>　|　<strong>版本：v2.2</strong></p>
 <p><strong>运营方（也就是本政策下的数据控制者）</strong>：
 Luminate Pacific Consulting Service Limited，香港注册公司。
 联系方式：<a href="mailto:support@transless.net">support@transless.net</a>。</p>
-<p>本次变更（v2.0 → v2.1）只做了一件事：<strong>把运营主体写出来</strong>。
+<p>本次变更（v2.1 → v2.2）：<strong>账号体系已经上线</strong>，本页据此更新了「我们处理什么」「第三方共享与跨境传输」「你的权利」三节，写明了登录信息、地区信号，以及所有参与处理的服务商。<span style="display:none">v2.1 说明（存档）：</span>
 之前整份政策只有"我们"和一个邮箱，没有可识别的法律主体 ——
 而 GDPR 第 13 条要求披露控制者身份。数据处理方式本身没有任何改动。</p>
 <hr>
@@ -46,12 +46,20 @@ Luminate Pacific Consulting Service Limited，香港注册公司。
 <p><strong>关于那串设备编号</strong>：它由 App 随机生成，<strong>不包含</strong>你的手机号、IMEI、
 广告标识或任何来自你手机的身份信息，我们<strong>无法</strong>用它反查出你是谁。
 它的作用只是让服务器分得清"这是同一台设备的请求"。卸载 App 即失效。</p>
-<p><strong>我们不收集</strong>：姓名、手机号、邮箱、身份证、位置、通讯录、相册、
-广告标识符（Advertising ID）、系统级设备标识（IMEI／Android ID／IDFA）。</p>
-<p><strong>目前不需要注册即可使用。</strong>我们正在开发账号体系 ——
-<strong>使用付费功能时需要登录</strong>（我们得认得出是谁付过费，才能在你换手机、
-重装之后还认你）。账号会用手机号或邮箱 + 验证码登录，不设密码。
-届时我们会收集你用来登录的那个手机号或邮箱，本政策会**先更新**并写明。</p>
+<p><strong>我们不收集</strong>：姓名、身份证、位置、通讯录、相册、
+广告标识符（Advertising ID）、系统级设备标识（IMEI／Android ID／IDFA）。<br>
+（登录用的手机号或邮箱见下面「账号信息」一段。）</p>
+<h3>账号信息</h3>
+<p><strong>账号体系已经上线。</strong>不登录也可以使用基础功能；使用需要认得出你的功能（例如付费额度）时才需要登录。登录用<strong>手机号或邮箱 + 验证码</strong>，<strong>不设密码</strong>。</p>
+<p>创建账号时我们会记录：</p>
+<ul>
+<li><strong>你用来登录的手机号或邮箱</strong>；</li>
+<li><strong>四项用于按国家统计用户的信号</strong>：你设备的地区设置、时区、语言，以及由你当时的 IP 地址推算出的<strong>两位国家代码</strong>。</li>
+</ul>
+<p>🔒 <strong>我们不保存你的 IP 地址，也不会把它发给任何第三方</strong> —— 国家代码（例如 <code>HK</code>、<code>CN</code>）是在我们自己的服务器上<strong>用一份离线的地址段对照表查出来的</strong>，你的 IP 不会离开我们的服务器，查完只留下那两个字母。</p>
+<p>之所以同时看四项，是因为任何单一信号都可能失真（地区可以自己设、IP 会被 VPN 改变），交叉对照才能得到大致准确的国家分布。</p>
+<p>🔒 手机号登录使用阿里云「号码认证服务」——<strong>验证码由阿里云生成和校验，我们自始至终看不到那 6 位数字</strong>。</p>
+<strong>不登录不影响基础功能。</strong></p>
 
 <h2>二、这是一个输入法，所以要特别说清楚一件事</h2>
 <p>输入法在技术上可以读取你在任何输入框里键入的内容。Transless 需要你在系统设置里
@@ -65,7 +73,7 @@ Luminate Pacific Consulting Service Limited，香港注册公司。
 
 <h2>三、这些内容去了哪里、留多久</h2>
 <p>1. <strong>你的语音</strong>上传到我们的服务器，转发给语音识别服务商。
-我们的服务器<strong>不写磁盘、不留存</strong>。</p>
+我们的服务器<strong>不把你的语音和文字写入磁盘</strong>，处理完即丢弃。<br>（使用量记录是另一回事 —— 它只有时间、用到了哪个功能和一个哈希代号，<strong>不含任何内容</strong>，见第十节。）</p>
 <p>2. <strong>识别出的文字</strong>发送给 AI 模型服务商（见第四节）进行整理与翻译。</p>
 <p>3. <strong>生成的译文</strong>（以及朗读功能产生的合成语音）会在我们服务器的<strong>内存</strong>中
 短暂停留，等你的设备来取。<strong>你的设备一取走，我们就把它标记为可清除</strong>，
@@ -81,10 +89,18 @@ Luminate Pacific Consulting Service Limited，香港注册公司。
 <p>为完成识别与翻译，你的语音和文字会发送给以下服务商处理：</p>
 <div class="tw"><table><thead><tr><th>服务商</th><th>处理什么</th><th>服务器所在地</th></tr></thead><tbody>
 <tr><td><strong>DeepSeek</strong>（杭州深度求索）</td><td>文字整理与翻译（主要处理方）</td><td><strong>中国大陆</strong></td></tr>
-<tr><td><strong>火山引擎</strong>（北京字节跳动旗下）</td><td>语音识别；文字处理的备用通道</td><td><strong>中国大陆</strong></td></tr>
+<tr><td><strong>火山引擎</strong>（北京字节跳动旗下）</td><td>语音识别；文字处理的备用通道；使用量记录的存储</td><td><strong>中国大陆</strong></td></tr>
+<tr><td><strong>阿里云</strong>（号码认证服务）</td><td>手机号登录时下发并校验验证码</td><td><strong>中国大陆</strong></td></tr>
+<tr><td><strong>Resend</strong></td><td>邮箱登录时投递验证码邮件</td><td><strong>美国</strong></td></tr>
+<tr><td><strong>Supabase</strong></td><td>存放账号记录（登录用的手机号或邮箱、上述地区信号）</td><td><strong>新加坡</strong></td></tr>
 </tbody></table></div>
-<p><strong>请注意：如果你不在中国大陆，你的语音和文字会被传输到中国大陆的服务器处理。</strong>
-这些服务商对数据的处理受其自身隐私政策约束。</p>
+<p><strong>请注意，不同的数据去往不同的地方：</strong></p>
+<ul>
+<li><strong>你的语音和文字内容</strong> → <strong>中国大陆</strong>（DeepSeek、火山引擎）。如果你不在中国大陆，这是一次跨境传输。</li>
+<li><strong>你的账号信息</strong>（登录用的手机号或邮箱、地区信号）→ <strong>新加坡</strong>（Supabase）。</li>
+<li><strong>验证码投递</strong> → 邮箱走<strong>美国</strong>（Resend），手机号走<strong>中国大陆</strong>（阿里云）。</li>
+</ul>
+<p>这些服务商对数据的处理受其自身隐私政策约束。</p>
 <p>基于这一点，我们建议你不要口述以下内容：</p>
 <ul>
 <li>密码、银行卡号、身份证号等敏感个人信息</li>
@@ -135,7 +151,8 @@ App 内相应位置已作明确标示。</p>
 
 <h2>十、你的权利</h2>
 <p>我们<strong>不保存</strong>你的语音和文字内容，因此不存在可供查询、导出或删除的内容档案。你随时可以卸载 App 终止全部处理。</p>
-<p>账号体系上线后，你可以随时要求我们删除账号及其关联信息 ——通过下面的邮箱联系即可。</p>
+<p>你可以随时要求我们删除你的账号 —— 通过下面的邮箱联系即可。收到请求后，我们会删除账号本身，以及其中<strong>可以直接识别你的信息</strong>（登录用的手机号或邮箱）。</p>
+<p>为了统计使用量、防止滥用和保障服务稳定，我们会保留一份<strong>不包含任何内容</strong>的使用记录 —— 里面只有时间、用到了哪个功能，以及一个<strong>经过加盐哈希处理的代号</strong>。账号删除之后，我们<strong>无法再把这份记录关联到你本人</strong>。
 <p>如果你身处欧洲经济区、英国或瑞士，就我们处理你数据的法律依据而言：
 处理语音与文字的依据是<strong>履行合同所必需</strong>（你要求我们翻译）；
 处理设备编号的依据是<strong>正当利益</strong>（防止滥用、维持服务）。
