@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "AX3W379KV8.com.kevin.transless"
+        ],
+        "components": [
+          {
+            "/": "/kb/*"
+          }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "AX3W379KV8.com.kevin.transless"
+    ]
+  }
+}
