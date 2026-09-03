@@ -6,16 +6,84 @@
 <title>Transless — 让世界听懂你</title>
 <meta name="description" content="说中文口水话，直接上屏成地道、结构化的英文。Transless 语音输入法键盘。">
 <meta name="theme-color" content="#0F1B4F">
+
+<!-- 多语言。三个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English)
+     🚨 canonical / og:locale / og:url 三条由 build_i18n.py 的 cmd_render **逐版改写**，
+        不要在这里手改 —— 单一配置点在 LANGS 那张表里。 -->
+<link rel="canonical" href="https://transless.net/">
+<link rel="alternate" hreflang="zh-Hans" href="https://transless.net/">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://transless.net/zh-hk/">
+<link rel="alternate" hreflang="en" href="https://transless.net/en/">
+<link rel="alternate" hreflang="x-default" href="https://transless.net/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Transless">
+<meta property="og:url" content="https://transless.net/">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="Transless — 让世界听懂你">
+<meta property="og:description" content="说中文口水话，直接上屏成地道、结构化的英文。Transless 语音输入法键盘。">
+<meta name="twitter:card" content="summary_large_image">
+<!-- 分享大图 1200×630。🚨 每语言指自己那张、绝对 URL —— 相对路径分享平台抓不到。
+     这两行的值由 build_i18n.py cmd_render 逐版改写（`og_<lang>.png`），别手改。 -->
+<meta property="og:image" content="https://transless.net/og_zh-CN.png">
+<meta name="twitter:image" content="https://transless.net/og_zh-CN.png">
+<script>
+/* 首次进站按浏览器语言送到对应版本。四道闸，任何一道不过就**原地不动**：
+   ① 只在根目录跳（子目录里一律不跳，防环、也防覆盖他手输的地址）
+   ② 他自己点过切换器 -> 永远尊重他的选择，不再自动跳
+   ③ 本次会话已经自动跳过一次 -> 不再跳（第二道防环）
+   ④ 地址带 ?nolang -> 逃生开关
+   🚨 不用 IP 归属地：后端刚把 ip-api.com 这类外部依赖拆掉过，主页不再引第二个。
+      而且 IP 判的是"人在哪"，我们要的是"他读哪种字"，这两件事经常不是一回事
+      （他人在深圳，但可能就想看英文版）。*/
+(function () {
+  var P = location.pathname;
+  if (P !== '/' && P !== '/index.html') return;
+  if (location.search.indexOf('nolang') >= 0) return;
+  var ls, ss;
+  try { ls = localStorage; ss = sessionStorage; } catch (e) { return; }
+  try {
+    if (ls.getItem('tl_lang')) return;
+    if (ss.getItem('tl_redir')) return;
+  } catch (e) { return; }
+  var L = navigator.languages || [navigator.language || ''];
+  var to = '';
+  for (var i = 0; i < L.length; i++) {
+    var l = String(L[i]).toLowerCase();
+    if (l.indexOf('zh') === 0) {                 // 中文：只有繁体地区才跳走
+      if (/hant|-hk|-mo|-tw/.test(l)) to = '/zh-hk/';
+      break;                                      // 简体留在根目录
+    }
+    if (l.indexOf('en') === 0) { to = '/en/'; break; }
+  }
+  if (!to) return;
+  try { ss.setItem('tl_redir', '1'); } catch (e) {}
+  location.replace(to);                           // replace：不往历史里塞一层
+})();
+
+/* 他点了切换器 = 明确表态，记下来，以后**永不**再自动跳。
+   🚨 只认「点切换器」这一个动作。直接输网址进 /en/ 不算表态 ——
+      那可能是别人发的链接，不代表他想把英文版设成默认。
+   用捕获阶段的委托监听：不依赖 DOMContentLoaded，脚本在 head 里也照样生效。 */
+document.addEventListener('click', function (e) {
+  var t = e.target, a = null;
+  while (t && t !== document) {
+    if (t.tagName === 'A' && t.parentNode && t.parentNode.className === 'langsw') { a = t; break; }
+    t = t.parentNode;
+  }
+  if (!a) return;
+  try { localStorage.setItem('tl_lang', a.getAttribute('hreflang') || '1'); } catch (err) {}
+}, true);
+</script>
 <!-- 标签页图标。2026-08-26 加：之前浏览器标签上是默认的小地球。
      🚨 图不是新画的 —— `site/make_favicon.py` 从安卓那颗 `ic_launcher.png`
      （紫底 + T 变麦克风）缩出来的，跟手机桌面上那颗必须是同一个，
      不然用户认不出是同一个产品。
      🚨 apple-touch-icon 已铺不透明底：iOS 会把透明渲染成黑色。
      这些都是**同域文件**，不违反 DESIGN.md 的「整页零外部资源」。 -->
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <!--
   规格来源：site/DESIGN.md（唯一配置点）。色值与 Skin.java / Theme.java 逐字对齐。
   🚨 改配色只改下面的 :root，别在组件里另写色值。
@@ -94,6 +162,24 @@ nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-betwe
 }
 .nav-link:hover{color:var(--text-primary)}
 .nav-right{display:flex;align-items:center;gap:26px}
+/* 语言切换器。三个标签写成各自语言的字（简/繁/EN），所以 data-i18n="no" ——
+   它们三版必须一模一样，被当成待译文案就废了。
+   🚨 当前版本的高亮**纯 CSS**，靠 <html lang> 选，不靠 JS：
+      JS 挂了的话切换器还得能用、还得看得出现在在哪一版。 */
+.langsw{display:flex;align-items:center;gap:2px;
+  border:1px solid var(--hairline,rgba(255,255,255,.18));border-radius:999px;padding:2px}
+.langsw a{
+  font-size:12px;line-height:1;padding:5px 8px;border-radius:999px;
+  color:var(--text-secondary);text-decoration:none;white-space:nowrap;
+  transition:color .25s var(--ease),background .25s var(--ease);
+}
+.langsw a:hover{color:var(--text-primary)}
+html[lang^="zh-CN"]      .langsw a[hreflang="zh-Hans"],
+html[lang^="zh-Hans"]    .langsw a[hreflang="zh-Hans"],
+html[lang="zh-Hant-HK"]  .langsw a[hreflang="zh-Hant-HK"],
+html[lang^="en"]         .langsw a[hreflang="en"]{
+  color:var(--text-primary);background:rgba(255,255,255,.10);
+}
 
 /* ================= 屏 1 · Hero ================= */
 .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px}
@@ -258,6 +344,22 @@ h1{
 .kb-row{display:flex;gap:6px;align-items:center}
 /* 顶行：四格等宽 + logo 钉正中。照抄 VoiceImeService 的 weight=1 四格布局 */
 .kb-row.top .chip{flex:1 1 0;min-width:0}
+/* 英文版把键盘上的字缩到 11px。**不是为了好看，是量出来必须缩**：
+   顶行四格**等宽 51px**（`flex:1 1 0`），所以约束是**单格**不是整行 ——
+   `Transcribe` 12px 要 53px，超出可用的 49px；`English ▾` 正好 51px 也贴死。
+   11px 下分别是 49 / 47，都进得去。
+   🚨 繁体那半完全不用管（翻譯/轉寫/歷史 各 24px），所以只给 en 加。
+   🚨 语言 chip 的名字一律用**那门语言自己的写法**（日本語 / 한국어 / English）——
+      译成 `Japanese ▾`(61px) / `Cantonese ▾`(69px) 的话，缩到 10px 都放不下。 */
+html[lang^="en"] .kb .chip,
+html[lang^="en"] .kb .key{font-size:10px}
+/* 🚨 英文版顶行**取消等宽**。中文四个标签都是 2 字，等宽好看；
+   英文 History(7) 和 Transcribe(10) 差一倍，等宽等于让短的白占地方、长的撑破。
+   实测：11px + 等宽时 `Transcribe` 内容 45px 塞进 40px 的格子；
+   改成按内容分配后行内需要 214px，而行宽正好 214px —— **富余 0**，
+   换台机器字体一变就爆，所以再降到 10px 换出真富余。 */
+html[lang^="en"] .kb-row.top .chip{flex:0 1 auto}
+html[lang^="en"] .kb-row.top{gap:5px}
 .kb-logo{flex:0 0 24px;height:20px;margin:0 3px;display:flex;align-items:center;justify-content:center}
 .kb-logo svg{width:100%;height:100%;fill:var(--text-secondary);opacity:.75}
 .chip{
@@ -440,6 +542,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 }
 @media (max-width:768px){
   :root{--pad:24px}
+  .nav-right{gap:14px}
+  .nav-link{font-size:13px}
   h1{font-size:36px}
   .slogan-en{font-size:20px}
   h2{font-size:28px}
@@ -447,6 +551,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   section{padding:80px 0}
   .compare-grid,.steps-grid,.scenes-grid{grid-template-columns:1fr}
   .cta-row{flex-direction:column;align-items:flex-start;gap:14px}
+}
+@media (max-width:560px){
+  /* 窄屏藏掉三个锚点链接，只留品牌 + 语言切换器。
+     锚点是便利不是必需（整页往下滚就是全部内容），而语言切换器是必需 ——
+     看不懂这一版的人，唯一的出路就是它。 */
+  .nav-right .nav-link{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -467,6 +577,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <a class="nav-link" href="#how">怎么用</a>
       <a class="nav-link" href="#privacy">隐私</a>
       <a class="nav-link" href="#faq">常见问题</a>
+      <span class="langsw" role="group" aria-label="语言">
+        <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
+        <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
+        <a data-i18n="no" href="/en/"    hreflang="en"        lang="en">EN</a>
+      </span>
     </span>
   </div>
 </nav>
@@ -487,7 +602,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     </div>
 
     <!-- 演示卡：按 Theme.java 复刻的键盘，不是截图 -->
-    <div class="demo">
+    <div class="demo" data-a11y-role="功能轮播" data-a11y-label="功能演示，按左右方向键或按住拖动切换">
       <div class="phone">
         <div class="screen" id="screen" data-speaking="0">
           <div class="statusbar">
@@ -499,8 +614,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
           </div>
 
           <div class="feats" id="feats">
-            <div class="feat on" data-sub="tone" data-sub-active="工作" data-lang="英文"
-                 data-mode="翻译" data-speaking="0" data-name="翻译 · 说中文出英文">
+            <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="英文"
+                 data-mode="tr" data-speaking="0" data-name="翻译 · 说中文出英文">
               <div class="compose">
                 <span class="feat-tag">翻译 · 说中文出英文</span>
                 <div class="compose-label">你说的</div>
@@ -510,8 +625,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 
               </div>
             </div>
-            <div class="feat" data-sub="trans" data-sub-active="整理" data-lang="英文"
-                 data-mode="转写" data-speaking="0" data-name="转写 · 说什么就出什么">
+            <div class="feat" data-sub="trans" data-sub-active="0" data-lang="英文"
+                 data-mode="ts" data-speaking="0" data-name="转写 · 说什么就出什么">
               <div class="compose">
                 <span class="feat-tag">转写 · 说什么就出什么</span>
                 <div class="compose-label">你说的</div>
@@ -543,8 +658,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 </div>
               </div>
             </div>
-            <div class="feat" data-sub="tone" data-sub-active="邮件" data-lang="英文"
-                 data-mode="翻译" data-speaking="0" data-name="译光标前的中文">
+            <div class="feat" data-sub="tone" data-sub-active="2" data-lang="英文"
+                 data-mode="tr" data-speaking="0" data-name="译光标前的中文">
               <div class="compose">
                 <span class="feat-tag">译光标前的中文</span>
                 <div class="compose-label">你说的</div>
@@ -554,8 +669,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="compose-label" style="color:var(--highlight)">不用重说一遍，已经打好的中文一键变外文</div>
               </div>
             </div>
-            <div class="feat" data-sub="tone" data-sub-active="随意" data-lang="日本語"
-                 data-mode="翻译" data-speaking="0" data-name="朗读 · 用母语嗓音念给对方听">
+            <div class="feat" data-sub="tone" data-sub-active="0" data-lang="日本語"
+                 data-mode="tr" data-speak="1" data-speaking="0" data-name="朗读 · 用母语嗓音念给对方听">
               <div class="compose">
                 <span class="feat-tag">朗读 · 用母语嗓音念给对方听</span>
                 <div class="compose-label">你说的</div>
@@ -565,8 +680,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="compose-label" style="color:var(--highlight)">点「朗读」，用日语念出来。不用把手机怼到人脸前</div>
               </div>
             </div>
-            <div class="feat" data-sub="tone" data-sub-active="随意" data-lang="한국어"
-                 data-mode="翻译" data-speaking="0" data-name="九种语言 · 手写也能用">
+            <div class="feat" data-sub="tone" data-sub-active="0" data-lang="한국어"
+                 data-mode="tr" data-speaking="0" data-name="九种语言 · 手写也能用">
               <div class="compose">
                 <span class="feat-tag">九种语言 · 手写也能用</span>
                 <div class="compose-label">你说的</div>
@@ -580,7 +695,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 
           <!-- 🚨 键盘照抄真身：顶行 翻译·英文▾ |logo| 转写·历史（四格等宽），
                第二排跟着模式换，底排四个键含发送。出处见规格文件末尾那张对照表。 -->
-          <div class="kb">
+          <div class="kb" data-sub-tone="随意|工作|邮件" data-sub-trans="整理|逐字">
             <div class="kb-row top">
               <div class="chip on" data-slot="tab-tr">翻译</div>
               <div class="chip" data-slot="lang">英文 &#9662;</div>
@@ -791,7 +906,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       识别出的<b>文字</b>需要交给 AI 模型服务商处理 —— 这一步绕不开，
       我们也不会假装它不存在。所以：<b>别口述密码、银行卡号、身份证号，或受保密协议约束的内容。</b>
       <br><br>
-      完整条款见 <a href="privacy.html" style="color:var(--highlight)">隐私政策</a>。
+      完整条款见 <a href="/privacy.html" style="color:var(--highlight)">隐私政策</a>。
     </div>
   </div>
 </section>
@@ -850,9 +965,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   <div class="wrap">
     <span class="brand" style="font-size:16px">Transless<span class="dot">.</span></span>
     <div class="foot-links">
-      <a href="privacy.html">隐私政策</a>
-      <a href="terms.html">服务条款</a>
-      <a href="company.html">公司信息</a>
+      <a href="/privacy.html">隐私政策</a>
+      <a href="/terms.html">服务条款</a>
+      <a href="/company.html">公司信息</a>
       <a href="mailto:support@transless.net">联系我们</a>
       <!-- 2026-08-26：联系邮箱放出来了。它不是占位符 —— transless.net 的 MX
            指向 ImprovMX，08-25 实测「外部发信 → support@transless.net → Kevin 的 Gmail」
@@ -891,7 +1006,15 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   var tabTr = document.querySelector('[data-slot="tab-tr"]');
   var tabTs = document.querySelector('[data-slot="tab-ts"]');
   var speakKey = document.querySelector('[data-slot="speak"]');
-  var SUB = {tone: ['随意','工作','邮件'], trans: ['整理','逐字']};
+  /* 🚨 档位名以前写死在这里，而 data-sub-active 拿**文字**去匹配它 ——
+     多语言下必然对不上（属性翻了、这个数组没翻 → 一个都不高亮）。
+     文字挪到 .kb 的 data-sub-tone / data-sub-trans（会被抽取器翻），
+     选中项改用**序号**，两边彻底解耦。*/
+  var kbEl = document.querySelector('.kb');
+  var SUB = {
+    tone:  ((kbEl && kbEl.getAttribute('data-sub-tone'))  || '随意|工作|邮件').split('|'),
+    trans: ((kbEl && kbEl.getAttribute('data-sub-trans')) || '整理|逐字').split('|')
+  };
   var i = 0, timer = null, paused = false;
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -913,20 +1036,24 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 
     // 第二排跟着模式换：翻译档 随意/工作/邮件，转写档 整理/逐字
     var kind = cur.getAttribute('data-sub') || 'tone';
-    var active = cur.getAttribute('data-sub-active');
+    var active = parseInt(cur.getAttribute('data-sub-active'), 10);
     subrow.innerHTML = '';
-    SUB[kind].forEach(function(t){
+    SUB[kind].forEach(function(t, n){
       var c = document.createElement('div');
-      c.className = 'chip' + (t === active ? ' on' : '');
+      c.className = 'chip' + (n === active ? ' on' : '');
       c.textContent = t;
       subrow.appendChild(c);
     });
 
-    if (langChip) langChip.innerHTML = (cur.getAttribute('data-lang') || '英文') + ' \u25BE';
-    var mode = cur.getAttribute('data-mode') || '翻译';
-    if (tabTr) tabTr.classList.toggle('on', mode === '翻译');
-    if (tabTs) tabTs.classList.toggle('on', mode === '转写');
-    if (speakKey) speakKey.classList.toggle('lit', /朗读/.test(cur.getAttribute('data-name')||''));
+    if (langChip) langChip.innerHTML = (cur.getAttribute('data-lang') || '') + ' \u25BE';
+    /* 🚨 下面这三行以前拿**显示文案**当判据（mode === '翻译'、/朗读/.test(data-name)）。
+       做多语言时立刻暴露：文案一翻，Tab 不高亮、朗读键永远不亮，而**页面看着完全正常**。
+       现在一律用**从不显示给用户的枚举/开关**匹配，显示文案怎么翻都不影响逻辑。
+       —— 3 获客与市场 2026-08-28 指出，且坚持"别只改正则，那是把坑往后挪一版"。*/
+    var mode = cur.getAttribute('data-mode') || 'tr';
+    if (tabTr) tabTr.classList.toggle('on', mode === 'tr');
+    if (tabTs) tabTs.classList.toggle('on', mode === 'ts');
+    if (speakKey) speakKey.classList.toggle('lit', cur.getAttribute('data-speak') === '1');
     if (screen) {
       screen.setAttribute('data-speaking', cur.getAttribute('data-speaking') || '0');
       // 随手翻译那一屏不是键盘，是独立页面 —— 整屏换掉，键盘藏起来
@@ -972,8 +1099,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
        左右方向键照样能切，而且这块要能被 Tab 到。 */
     demoEl.setAttribute('tabindex', '0');
     demoEl.setAttribute('role', 'group');
-    demoEl.setAttribute('aria-roledescription', '功能轮播');
-    demoEl.setAttribute('aria-label', '功能演示，按左右方向键或按住拖动切换');
+    // 🚨 这两条以前写死在 JS 里，而抽取器不碰 <script> —— 三语页面都会念简体。
+    //    屏幕阅读器会读出来，它是**真·用户可见内容**，只是眼睛看不见。
+    //    挪到 .demo 的 data-* 上，跟别的文案走同一条翻译链路。
+    demoEl.setAttribute('aria-roledescription',
+      demoEl.getAttribute('data-a11y-role') || '');
+    demoEl.setAttribute('aria-label',
+      demoEl.getAttribute('data-a11y-label') || '');
     demoEl.addEventListener('keydown', function(ev){
       if (ev.key === 'ArrowRight') { pause(); go(i + 1); ev.preventDefault(); }
       else if (ev.key === 'ArrowLeft') { pause(); go(i - 1); ev.preventDefault(); }
@@ -1015,6 +1147,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-1a64840e3f -->
+<!-- build-ee3bc7d6d9 -->
 </body>
 </html>
