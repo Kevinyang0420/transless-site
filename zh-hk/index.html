@@ -304,7 +304,7 @@ h1{
 .tryui{position:absolute;inset:0;padding:16px 15px 12px;display:flex;flex-direction:column;gap:9px}
 .try-bar{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:14px}
 .try-bar .back{color:var(--text-secondary);font-size:13px}
-.try-tabs,.try-sub,.try-sp{display:flex;gap:6px;flex-wrap:wrap}
+.try-tabs,.try-sp{display:flex;gap:6px;flex-wrap:wrap}
 .try-mic-row{display:flex;align-items:center;justify-content:center;gap:9px;margin:6px 0 2px}
 .try-mic{width:64px;height:64px;border-radius:50%;flex:0 0 64px;
   /* 🚨 真身是 Skin.ACCENT #8B5CF6（TryActivity.java:209），而这里用的是
@@ -317,7 +317,6 @@ h1{
   display:flex;align-items:center;justify-content:center;text-align:center;
   color:#fff;font-size:10.5px;line-height:1.25;
   box-shadow:0 8px 24px rgba(124,92,230,.42)}
-.try-heard{font-size:10.5px;color:var(--text-secondary)}
 .try-result{flex:1;min-height:0;border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.6;
   background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-primary)}
 /* 贴着键盘往上排：真手机上最新的内容就压在键盘上方 */
@@ -654,22 +653,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="try-tabs">
                   <div class="chip on">翻譯</div><div class="chip">轉寫</div>
                 </div>
-                <div class="try-sub">
-                  <div class="chip">整理</div><div class="chip">逐字</div>
-                  <div class="chip on">工作</div><div class="chip">英文</div>
+                <div class="try-tabs">
+                  <div class="chip">工作 &#9662;</div><div class="chip">英文 &#9662;</div>
                 </div>
-                <div class="try-mic-row">
-                  <div class="chip">&#8644; 對方講</div>
-                  <div class="try-mic">撳一下<br>開始講</div>
-                  <div class="chip">連續</div>
-                </div>
-                <div class="try-sp"><div class="chip">朗讀</div><div class="chip">大字</div></div>
-                <div class="try-heard">聽到：這個多少錢？可以平一點嗎</div>
                 <div class="try-result">
                   How much is this?<br>Could you do a bit better on the price?
                 </div>
+                <div class="try-sp"><div class="chip">朗讀</div><div class="chip">大字</div></div>
+                <div class="try-mic-row">
+                  <div class="try-mic">撳一下<br>開始講</div>
+                </div>
               </div>
             </div>
+            <!-- 🚨 2026-09-06 四次修：Kevin 当面指出这张卡的 UI 已经过时——真机早就简化了
+                 （STATE.md item 17/19/24：语气/语言合并成两个玻璃下拉、⇄对方说已移到独立的
+                 「面对面」Tab、历史/引导/听到预览整块删除只剩空结果框）。按已实测的真机改动
+                 改这张卡，不是按感觉简化的。 -->
+
             <div class="feat" data-sub="tone" data-sub-active="2" data-lang="英文"
                  data-mode="tr" data-speaking="0" data-name="譯游標前面的中文">
               <div class="compose">
