@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Transless — 让世界听懂你</title>
-<meta name="description" content="说中文口水话，直接上屏成地道、结构化的英文。Transless 语音输入法键盘。">
+<!-- 🚨 2026-09-06 改：旧文案「说中文口水话，直接上屏成…」是 Typeless 那类
+     「转换工具」的框架，Kevin 明确否掉（「不要强调上屏这种工具属性」）。
+     新文案对齐 _定位与Slogan_v2 —— 主语是「你想说的话」不是「转换动作」；
+     功能部分只写已核实的（9 种目标语言），不写「任何语言」这类未验证的功能承诺。 -->
+<meta name="description" content="想说的话，直接说给世界听。中文说出来，就是地道的英文、日语、法语等 31 种语言。Transless 语音输入法键盘。">
 <meta name="theme-color" content="#0F1B4F">
 
 <!-- 多语言。三个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English)
@@ -20,7 +24,7 @@
 <meta property="og:url" content="https://transless.net/">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:title" content="Transless — 让世界听懂你">
-<meta property="og:description" content="说中文口水话，直接上屏成地道、结构化的英文。Transless 语音输入法键盘。">
+<meta property="og:description" content="想说的话，直接说给世界听。中文说出来，就是地道的英文、日语、法语等 31 种语言。Transless 语音输入法键盘。">
 <meta name="twitter:card" content="summary_large_image">
 <!-- 分享大图 1200×630。🚨 每语言指自己那张、绝对 URL —— 相对路径分享平台抓不到。
      这两行的值由 build_i18n.py cmd_render 逐版改写（`og_<lang>.png`），别手改。 -->
@@ -590,10 +594,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <header class="hero">
   <div class="wrap">
     <div class="hero-left">
-      <div class="hero-eyebrow">Voice keyboard &middot; 中文说，九种语言出</div>
+      <div class="hero-eyebrow">Voice keyboard &middot; 中文说，31 种语言出</div>
       <h1>让世界听懂你</h1>
       <div class="slogan-en">No Language In Between</div>
-      <p class="lede">说中文口水话，直接上屏成地道的那门语言。<br>该分点的自动分点，不用先想怎么说。</p>
+      <p class="lede">想说的话，说出来就是地道的那门语言。<br>该分点的自动分点，不用先想怎么说。</p>
+      <!-- 🚨 2026-09-06 二次修：昨晚只改了meta/FAQ，漏了首屏最显眼的这句——H1已是"让世界听懂你"，
+           紧跟着的lede却还写着"说中文口水话/上屏"，是Kevin否掉的原句，被 Kevin 当场抓出来。 -->
       <div class="cta-row">
         <a class="cta" href="#how">看看它怎么工作</a>
         <span class="cta-note">安卓内测中 · iOS 排队中</span>
@@ -615,9 +621,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 
           <div class="feats" id="feats">
             <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="英文"
-                 data-mode="tr" data-speaking="0" data-name="翻译 · 说中文出英文">
+                 data-mode="tr" data-speaking="0" data-name="翻译 · 说中文出地道外语">
               <div class="compose">
-                <span class="feat-tag">翻译 · 说中文出英文</span>
+                <span class="feat-tag">翻译 · 说中文出地道外语</span>
                 <div class="compose-label">你说的</div>
                 <div class="bubble">报价这边要再调一下，下周三前给他答复<span class="caret"></span></div>
                 <div class="compose-label">上屏的</div>
@@ -681,9 +687,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
               </div>
             </div>
             <div class="feat" data-sub="tone" data-sub-active="0" data-lang="한국어"
-                 data-mode="tr" data-speaking="0" data-name="九种语言 · 手写也能用">
+                 data-mode="tr" data-speaking="0" data-name="31 种语言 · 手写也能用">
               <div class="compose">
-                <span class="feat-tag">九种语言 · 手写也能用</span>
+                <span class="feat-tag">31 种语言 · 手写也能用</span>
                 <div class="compose-label">你说的</div>
                 <div class="bubble">地铁站怎么走<span class="caret"></span></div>
                 <div class="compose-label">上屏的</div>
@@ -731,8 +737,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <section id="difference" class="compare reveal" data-observe>
   <div class="wrap">
     <div class="eyebrow">The difference</div>
-    <h2>口水话进去，<span class="dim">能直接发出去的英文出来。</span></h2>
+    <h2>想到什么说什么，<span class="dim">听到的是想清楚了才说的样子。</span></h2>
     <p class="sub">不是逐字翻译。它会把你说的那堆碎话归并成一件事、排出顺序、按你选的语气写完。</p>
+    <!-- 🚨 2026-09-06 三次修：旧标题"口水话进去,英文出来"仍是Typeless式转换框架,
+         且锁死"出英文"跟"不锁死中文→英文"的定位冲突。第911行同样含"口水话/英文"
+         但在隐私披露段,是如实说明数据流向,判断后没动——不是所有出现都要改,要按上下文判断是不是定位语言。 -->
 
     <div class="compare-grid">
       <div class="card">
@@ -834,9 +843,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>临时当个翻译</h3>
-        <p>打开<b>「随手翻译」</b>，不用切输入法。你说中文出外语给对方看；
-        点一下<b>「⇄ 对方说」</b>，对方讲外语就译回你的语言。
+        <p>点底部<b>「面对面」</b>，不用切输入法。你说中文出外语给对方看；
+        对方讲外语，它自动判断是谁在说、译回你的语言。
         还有<b>连续模式</b>一句接一句、<b>大字</b>让对面看得清。</p>
+        <!-- 🚨 2026-09-06 更新：面对面翻译已升级成底部独立 Tab（此前是随手翻译里的
+             ⇄按钮切换），改成自动判断说话方而不是手动点切换。这一段是按 STATE.md
+             的文字描述改的，没有对着真机截图核对过，建议 2.1/2.2 抽空扫一眼版式描述是否精确。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
@@ -884,8 +896,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
             <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
         </div>
         <div>
-          <h3>没有历史记录，也没有画像</h3>
-          <p>我们不建立对话存档、不做用户画像。也<b>不要</b>你的通讯录、相册和位置。</p>
+          <h3>历史记录只留在你手机上</h3>
+          <p>为方便你自己回看，App 会在<b>你的设备本地</b>保存最近的记录 —— 从没有传到我们的服务器，我们也看不到。我们不建立对话存档、不做用户画像，也<b>不要</b>你的通讯录、相册和位置。</p>
+          <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
+               本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
         </div>
       </div>
       <div class="pv">
@@ -923,7 +938,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       </div>
       <div class="qa">
         <h3>我说的话会被存下来吗？</h3>
-        <p>不会。录音识别完当场丢弃，整理结果在内存里最多 10 分钟。我们这边没有任何一份你的历史记录。</p>
+        <p>录音识别完当场丢弃，整理结果在服务器内存里最多 10 分钟。App 会在你手机本地留一份历史方便自己回看，但那份记录不会传到我们这边，我们看不到。</p>
       </div>
       <div class="qa">
         <h3>需要注册吗？</h3>
@@ -931,7 +946,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       </div>
       <div class="qa">
         <h3>支持哪些语言？</h3>
-        <p>目前九种：英文、日文、法文、德文、西班牙文、韩文、粤语、繁体中文、简体中文。说中文，选一个目标语言就行。<b>朗读会按文字本身的语种自动挑母语嗓音</b> —— 出日文就用日文嗓子念，不会拿英文腔念日文。</p>
+        <p>现在 31 种，含英文、日文、法文、德文、西班牙文、韩文、粤语、泰文、阿拉伯文、俄文等主流语言。说中文，选一个目标语言就行。<b>朗读会按文字本身的语种自动挑母语嗓音</b> —— 出日文就用日文嗓子念，不会拿英文腔念日文。
+        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
       </div>
       <div class="qa">
         <h3>能在哪些 App 里用？</h3>
@@ -1147,6 +1163,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-ee3bc7d6d9 -->
+<!-- build-a586c75e4e -->
 </body>
 </html>
