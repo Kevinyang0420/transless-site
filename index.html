@@ -147,6 +147,20 @@ body{
 
 /* 背景：整页固定渐变 + 唯一一处柔光中心 */
 .bg{position:fixed;inset:0;z-index:-2;background:var(--bg-gradient)}
+/* 2026-09-06：Kevin 要"每拉一页，下面都有场景"，原来全站只有 .bg 这一层纯色渐变，
+   一路到底都是同一片紫。给 4 个段落各配一张真实场景照片（Grok 生成，Kevin 从
+   8 张里挑的 4 张），叠同色系渐变蒙层保持原有的深紫基调、不破坏文字对比度——
+   路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。
+   隔一段配一张、隔一段留白（.steps/.privacy/.faq 不配），滚动时才有"景在变"的感觉，
+   不是每屏都放会糊成一片。 */
+.hero{background:linear-gradient(rgba(15,27,79,.90),rgba(42,19,88,.87),rgba(67,22,97,.90)),
+  url('/img/scene_friends.jpg') center 20%/cover no-repeat fixed}
+#difference{background:linear-gradient(rgba(15,27,79,.91),rgba(42,19,88,.89)),
+  url('/img/scene_business.jpg') center/cover no-repeat fixed}
+#where{background:linear-gradient(rgba(42,19,88,.90),rgba(67,22,97,.90)),
+  url('/img/scene_travel.jpg') center/cover no-repeat fixed}
+#memory{background:linear-gradient(rgba(15,27,79,.91),rgba(67,22,97,.89)),
+  url('/img/scene_family.jpg') center/cover no-repeat fixed}
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
   position:fixed;z-index:-1;width:860px;height:860px;border-radius:50%;
@@ -1374,6 +1388,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-0b32141d48 -->
+<!-- build-76f6201139 -->
 </body>
 </html>
