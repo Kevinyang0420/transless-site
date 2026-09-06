@@ -333,8 +333,29 @@ h1{
 .feat.on .try-keep{animation:step-pulse 1.1s ease-out 2}
 @keyframes item-flash{0%{background:rgba(185,139,232,.38)}100%{background:var(--card-bg)}}
 .feat.on .wb-item-new{animation:item-flash 1.6s ease-out}
+/* 2026-09-06 十次修：Kevin「这是动画吗？」——原来 4 张卡之间只是 0.34s 的硬切
+   （连贯性对话线上一段真实吐槽的教训是：动效要慢到能被看见）。这个徽章是唯一
+   真正跨屏移动的元素：从②收藏那一下的位置，飞到③列表新条目出现的位置，
+   把"收藏的东西真的到单词本里去了"画出来，不是靠脑补。坐标是相对手机框的
+   固定百分比，不测量任何屏幕的实际布局——两屏共用同一个 inset:0 的手机框，
+   位置早就对得上，不用跑 JS 量坐标（量坐标那条路更炫但更容易在他机器上跑歪）。 */
+.fly-badge{
+  position:absolute; left:50%; top:72%; z-index:5;
+  transform:translate(-50%,0) scale(.9); opacity:0;
+  background:var(--highlight); color:#1B1440; font-weight:500; font-size:12px;
+  padding:7px 14px; border-radius:999px; white-space:nowrap;
+  box-shadow:0 8px 24px rgba(185,139,232,.5); pointer-events:none;
+}
+.fly-badge.fly{animation:fly-to-book 1.4s cubic-bezier(.16,1,.3,1) both}
+@keyframes fly-to-book{
+  0%  {top:72%; transform:translate(-50%,0) scale(.85); opacity:0}
+  18% {opacity:1; transform:translate(-50%,0) scale(1)}
+  75% {opacity:1}
+  100%{top:20%; transform:translate(-50%,0) scale(.8); opacity:0}
+}
 @media (prefers-reduced-motion:reduce){
   .feat.on .try-keep, .feat.on .wb-item-new{animation:none}
+  .fly-badge.fly{animation:none}
 }
 .wb-tag{font-size:11.5px;color:var(--text-secondary);text-align:center;margin-top:2px}
 .wb-card{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
@@ -863,6 +884,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 
           <div class="home-ind"><i></i></div>
         </div>
+        <div class="fly-badge" id="flyBadge" aria-hidden="true">保存しました → 単語帳</div>
       </div>
       <div class="prog" id="prog" aria-hidden="true"></div>
       <div class="feat-name" id="featName"></div>
@@ -1217,9 +1239,20 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     });
   }
 
+  var flyBadge = document.getElementById('flyBadge');
   function go(n){
+    var prevApp = scenes[i] ? scenes[i].getAttribute('data-app') : null;
     i = (n + scenes.length) % scenes.length;
     var cur = scenes[i];
+    // 🚨 故事线②(随手翻译·data-app=1，收藏)→③(单词本列表·data-app=3) 这一步
+    //    专门放一个跨屏移动的徽章：Kevin 要"看得出这是动画"，静态卡切换不算。
+    //    不测量坐标——两屏共用同一个 inset:0 手机框，起止点写死成相对手机框的
+    //    百分比，比跑 JS 量元素位置更稳，不会在别的屏幕尺寸下飞歪。
+    if (flyBadge && prevApp === '1' && cur.getAttribute('data-app') === '3' && !still) {
+      flyBadge.classList.remove('fly');
+      void flyBadge.offsetWidth;   // 强制重排，让下一帧的 class 变化重新触发动画
+      flyBadge.classList.add('fly');
+    }
     scenes.forEach(function(s, k){ s.classList.toggle('on', k === i); });
     bars.forEach(function(d, k){ d.classList.toggle('on', k === i); });
 
