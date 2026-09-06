@@ -147,20 +147,32 @@ body{
 
 /* 背景：整页固定渐变 + 唯一一处柔光中心 */
 .bg{position:fixed;inset:0;z-index:-2;background:var(--bg-gradient)}
-/* 2026-09-06：Kevin 要"每拉一页，下面都有场景"，原来全站只有 .bg 这一层纯色渐变，
-   一路到底都是同一片紫。给 4 个段落各配一张真实场景照片（Grok 生成，Kevin 从
-   8 张里挑的 4 张），叠同色系渐变蒙层保持原有的深紫基调、不破坏文字对比度——
-   路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。
-   隔一段配一张、隔一段留白（.steps/.privacy/.faq 不配），滚动时才有"景在变"的感觉，
-   不是每屏都放会糊成一片。 */
-.hero{background:linear-gradient(rgba(15,27,79,.90),rgba(42,19,88,.87),rgba(67,22,97,.90)),
-  url('/img/scene_friends.jpg') center 20%/cover no-repeat fixed}
-#difference{background:linear-gradient(rgba(15,27,79,.91),rgba(42,19,88,.89)),
-  url('/img/scene_business.jpg') center/cover no-repeat fixed}
-#where{background:linear-gradient(rgba(42,19,88,.90),rgba(67,22,97,.90)),
-  url('/img/scene_travel.jpg') center/cover no-repeat fixed}
-#memory{background:linear-gradient(rgba(15,27,79,.91),rgba(67,22,97,.89)),
-  url('/img/scene_family.jpg') center/cover no-repeat fixed}
+/* 2026-09-06 十二次修：Kevin 看了实际效果指出三处问题，逐条改：
+   ①原来按 8 个 <section> 各配一张图，相邻两段图不一样、中间没配图的 .pivot
+     露出裸的 .bg 底色，切面之间出现一条"杠"。→ 现在改成**大区块**：几个连续
+     section 共用同一条 background 规则，物理上就是同一张图，不存在接缝。
+   ②原来 .steps/.privacy/.faq 刻意留白，Kevin 要全站覆盖，不留白——
+     新生成一张"独处/信任"主题的图给隐私+FAQ这个区块（内容本来就是讲隐私承诺）。
+   ③原来 8 段配 4 张、切换太频繁，"说得越多"那几张卡刚出现就被滚过去看不清。
+     →区块从 8 个粒度收成 4 个大区块，每张图要撑的滚动距离变长，同一张图
+     停留时间自然变长，不用另外调时长参数。
+   路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。 */
+.hero, .pivot, #difference{
+  background:linear-gradient(rgba(15,27,79,.90),rgba(42,19,88,.88),rgba(67,22,97,.90)),
+  url('/img/scene_friends.jpg') center 15%/cover no-repeat fixed;
+}
+#how, #where{
+  background:linear-gradient(rgba(42,19,88,.90),rgba(67,22,97,.90)),
+  url('/img/scene_travel.jpg') center/cover no-repeat fixed;
+}
+#memory{
+  background:linear-gradient(rgba(15,27,79,.91),rgba(67,22,97,.89)),
+  url('/img/scene_family.jpg') center/cover no-repeat fixed;
+}
+#privacy, #faq{
+  background:linear-gradient(rgba(15,27,79,.92),rgba(42,19,88,.90)),
+  url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
   position:fixed;z-index:-1;width:860px;height:860px;border-radius:50%;
@@ -265,7 +277,12 @@ h1{
 }
 .screen{
   border-radius:30px;overflow:hidden;
-  background:linear-gradient(180deg,var(--kb-bg-top),var(--kb-bg-mid) 50%,var(--kb-bg-bot));
+  /* 2026-09-06 十一次修：Kevin 当面点名键盘演示卡（黑底）跟随手翻译/单词本演示卡
+     （紫底）配色不统一。查过 Theme.java:37-38，键盘真身背景确实是 #0B1230→#231843
+     这组更暗的深蓝紫，跟 Skin.java 的 --bg-gradient 是两套真实存在、都对的颜色——
+     不是我编的哪个错了。但这里是给人看的营销演示，统一观感比"技术上两端本来就
+     不同色"更重要，按 Kevin 的话统一成主 App 那套亮紫（--bg-gradient）。 */
+  background:var(--bg-gradient);
   display:flex;flex-direction:column;
   aspect-ratio:9/19.5;
 }
@@ -339,6 +356,21 @@ h1{
 .screen[data-app="2"] .kb{display:none}
 .screen[data-app="3"]{background:var(--bg-gradient)}
 .screen[data-app="3"] .kb{display:none}
+/* ============ 面对面（FaceToFaceActivity）—— 大字居中 + 手动⇄切换方向 ============ */
+.screen[data-app="4"]{background:var(--bg-gradient)}
+.screen[data-app="4"] .kb{display:none}
+.f2f-big{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;text-align:center;padding:0 12px}
+.f2f-side{font-size:10.5px;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
+.f2f-text{font-size:19px;font-weight:500;color:var(--text-primary);line-height:1.5}
+.f2f-keep{align-self:center;font-size:11px;padding:5px 12px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:var(--text-secondary);margin-bottom:8px}
+.f2f-langbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.f2f-langbar .chip{flex:0 1 auto}
+.f2f-swap{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:var(--text-secondary);font-size:13px;flex:0 0 26px}
 /* 2026-09-06 九次修：Kevin 要"沟通→收藏→存进单词本→复习"串成一条能一眼看懂的线，
    不是几张互不相关的功能卡。给这 4 张卡各加一个步骤角标 + 两处衔接处的高亮动画
    （收藏那一下、新条目那一下），autoplay 5.2s/张，不用手动划也能看完整条流程。 */
@@ -510,6 +542,9 @@ html[lang^="en"] .kb-row.top{gap:5px}
 
 /* ================= 通用区块 ================= */
 section{padding:110px 0}
+/* Kevin：单词本这节卡片一下就被滚过去，看不清"说得越多"那几句——
+   加大上下留白，让这节多占一点滚动距离，读的时间自然变长。 */
+#memory{padding:170px 0}
 .pivot{padding:0 0 60px;text-align:center}
 .pivot-line{
   font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
@@ -823,6 +858,31 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                  都照真机字符串资源抄（wb_review_n/wb_front_fmt/wb_got/wb_card_retry，
                  android/res/values/strings.xml），不是照记忆编的措辞。跟①②③用同一句话，
                  呼应"刚才收藏的这句，现在拿出来复习了"。 -->
+
+            <div class="feat" data-app="4" data-name="面對面 · 即時翻譯俾對方睇">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; 返回</span><b>面對面</b></div>
+                <div class="f2f-big">
+                  <div class="f2f-side">而家顯示緊：英文</div>
+                  <div class="f2f-text">How much is this? Could you do a bit better on the price?</div>
+                </div>
+                <div class="f2f-keep">+ 收入單詞本</div>
+                <div class="f2f-langbar">
+                  <div class="chip">中文 &#9662;</div>
+                  <div class="f2f-swap">&#8644;</div>
+                  <div class="chip">English &#9662;</div>
+                </div>
+                <div class="try-mic-row">
+                  <div class="try-mic"><svg class="try-mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg></div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06 十三次修：Kevin 当面点名手机演示漏了「面对面」——他明确说这是
+                 "很好的卖点"。这张卡逐行照真实代码建：`FaceToFaceActivity.java`（A定稿）——
+                 大字整屏居中显示译文(点大字触发朗读，没有单独朗读钮)、"+单词本"chip(出结果才显示)、
+                 语言条[中文▾]中间⇄[English▾]手动切换方向、麦克风纯图标钉底。跟"随手翻译"是
+                 两个不同的 App 屏，不放进①-④故事线（面对面是平行的另一个场景，不是"沟通"
+                 那条时间线的一部分），跟转写/朗读等放在后面当独立功能展示。 -->
 
             <!-- ============ 后面几张：不进故事线的其它功能，仍是真实截图级还原 ============ -->
             <div class="feat" data-sub="trans" data-sub-active="0" data-lang="英文"
