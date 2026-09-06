@@ -164,25 +164,28 @@ body{
    几乎只显示得出最深那一段颜色，看起来就是一条更暗的杠——三个 section "用的是
    同一条 CSS 规则"，但矮的那个渲染出来的样子不一样。改成**纯色蒙层**（不用渐变），
    高矮不同的盒子叠出来的颜色就完全一致，物理上不可能再有色差。 */
-/* 2026-09-06 Kevin:「背景图片放得太大了，看不清楚在表达啥，缩小一点」——
-   根因：background-attachment:fixed 时，size 的参照物是**整个视口**不是 section 自己的盒子，
-   cover 会把图放大裁到填满整屏，裁得只剩局部、认不出画的是什么。改 size 为 46%，
-   图就整张缩小显示在视口里，认得出场景，视觉份量也降下来了。 */
+/* 2026-09-06 Kevin 第一次:「背景图片放得太大了，看不清楚在表达啥，缩小一点」——
+   试过把 size 从 cover 改成 46%，结果 Kevin 第二次反馈：「没有铺满，截了一半，很丑」。
+   46% 治好了"太大"但破了"铺满"——size 变小之后图片box比section本身小，
+   露出了周围的纯色，两个要求其实是矛盾的：cover 是"填满不留缝"的唯一保证方式，
+   任何更小的固定百分比都不能保证在所有视口下都填满。
+   → 改法：size 换回 cover（保证不留缝），用**加深蒙层不透明度**去压视觉份量——
+   图还是铺满整个区域，但透出来的部分更淡，不会显得"图被放得很大很抢"。 */
 .hero, .pivot, #difference{
-  background:linear-gradient(rgba(30,23,83,.89),rgba(30,23,83,.89)),
-  url('/img/scene_friends.jpg') center 15%/46% no-repeat fixed;
+  background:linear-gradient(rgba(30,23,83,.94),rgba(30,23,83,.94)),
+  url('/img/scene_friends.jpg') center 15%/cover no-repeat fixed;
 }
 #how, #where{
-  background:linear-gradient(rgba(54,20,92,.90),rgba(54,20,92,.90)),
-  url('/img/scene_travel.jpg') center/46% no-repeat fixed;
+  background:linear-gradient(rgba(54,20,92,.94),rgba(54,20,92,.94)),
+  url('/img/scene_travel.jpg') center/cover no-repeat fixed;
 }
 #memory{
-  background:linear-gradient(rgba(41,24,88,.90),rgba(41,24,88,.90)),
-  url('/img/scene_family.jpg') center/46% no-repeat fixed;
+  background:linear-gradient(rgba(41,24,88,.94),rgba(41,24,88,.94)),
+  url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
 #privacy, #faq{
-  background:linear-gradient(rgba(29,21,85,.91),rgba(29,21,85,.91)),
-  url('/img/scene_alone.jpg') center/46% no-repeat fixed;
+  background:linear-gradient(rgba(29,21,85,.95),rgba(29,21,85,.95)),
+  url('/img/scene_alone.jpg') center/cover no-repeat fixed;
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -1465,6 +1468,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-f519364140 -->
+<!-- build-35aa89ff00 -->
 </body>
 </html>
