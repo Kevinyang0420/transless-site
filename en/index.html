@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Transless — Say it. They'll read it.</title>
-<meta name="description" content="Speak naturally, get clean ready-to-send text in the language they read. Transless voice keyboard.">
+<!-- 🚨 2026-09-06 改：旧文案「说中文口水话，直接上屏成…」是 Typeless 那类
+     「转换工具」的框架，Kevin 明确否掉（「不要强调上屏这种工具属性」）。
+     新文案对齐 _定位与Slogan_v2 —— 主语是「你想说的话」不是「转换动作」；
+     功能部分只写已核实的（9 种目标语言），不写「任何语言」这类未验证的功能承诺。 -->
+<meta name="description" content="Say what's on your mind &mdash; out comes fluent English, Japanese, French, and dozens more. Transless voice keyboard.">
 <meta name="theme-color" content="#0F1B4F">
 
 <!-- 多语言。三个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English)
@@ -20,7 +24,7 @@
 <meta property="og:url" content="https://transless.net/en/">
 <meta property="og:locale" content="en_US">
 <meta property="og:title" content="Transless — Say it. They'll read it.">
-<meta property="og:description" content="Speak naturally, get clean ready-to-send text in the language they read. Transless voice keyboard.">
+<meta property="og:description" content="Say what's on your mind &mdash; out comes fluent English, Japanese, French, and dozens more. Transless voice keyboard.">
 <meta name="twitter:card" content="summary_large_image">
 <!-- 分享大图 1200×630。🚨 每语言指自己那张、绝对 URL —— 相对路径分享平台抓不到。
      这两行的值由 build_i18n.py cmd_render 逐版改写（`og_<lang>.png`），别手改。 -->
@@ -590,10 +594,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <header class="hero">
   <div class="wrap">
     <div class="hero-left">
-      <div class="hero-eyebrow">Voice keyboard &middot; Speak one language, send another</div>
+      <div class="hero-eyebrow">Voice keyboard &middot; Speak once, 31 languages ready</div>
       <h1>Say it. They'll read it.</h1>
       <div class="slogan-en">No Language In Between</div>
-      <p class="lede">Speak naturally — it lands on screen in the language they actually read.<br>Bullets where bullets belong. No need to plan the sentence first.</p>
+      <p class="lede">Say what's on your mind &mdash; it comes out fluent, in the language you need.<br>Bullets where bullets belong. No need to plan the sentence first.</p>
+      <!-- 🚨 2026-09-06 二次修：昨晚只改了meta/FAQ，漏了首屏最显眼的这句——H1已是"让世界听懂你"，
+           紧跟着的lede却还写着"说中文口水话/上屏"，是Kevin否掉的原句，被 Kevin 当场抓出来。 -->
       <div class="cta-row">
         <a class="cta" href="#how">See how it works</a>
         <span class="cta-note">Android beta &middot; iOS queued</span>
@@ -615,9 +621,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 
           <div class="feats" id="feats">
             <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="English"
-                 data-mode="tr" data-speaking="0" data-name="Translate · Speak Chinese, send English">
+                 data-mode="tr" data-speaking="0" data-name="Translate &middot; Speak Chinese, get fluent output">
               <div class="compose">
-                <span class="feat-tag">Translate · Speak Chinese, send English</span>
+                <span class="feat-tag">Translate &middot; Speak Chinese, get fluent output</span>
                 <div class="compose-label">You said</div>
                 <div class="bubble">Need to tweak the quote — get back to them by next Wednesday<span class="caret"></span></div>
                 <div class="compose-label">On screen</div>
@@ -651,7 +657,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                   <div class="try-mic">Tap<br>to start</div>
                   <div class="chip">Continuous</div>
                 </div>
-                <div class="try-sp"><div class="chip">Speak</div><div class="chip">Big text</div></div>
+                <div class="try-sp"><div class="chip">Speak</div><div class="chip">Big text </div></div>
                 <div class="try-heard">Heard: How much is this? Can you go lower?</div>
                 <div class="try-result">
                   How much is this?<br>Could you do a bit better on the price?
@@ -681,9 +687,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
               </div>
             </div>
             <div class="feat" data-sub="tone" data-sub-active="0" data-lang="한국어"
-                 data-mode="tr" data-speaking="0" data-name="Nine languages · Handwriting too">
+                 data-mode="tr" data-speaking="0" data-name="31 languages &middot; Handwriting too">
               <div class="compose">
-                <span class="feat-tag">Nine languages · Handwriting too</span>
+                <span class="feat-tag">31 languages &middot; Handwriting too</span>
                 <div class="compose-label">You said</div>
                 <div class="bubble">How do I get to the subway?<span class="caret"></span></div>
                 <div class="compose-label">On screen</div>
@@ -731,8 +737,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <section id="difference" class="compare reveal" data-observe>
   <div class="wrap">
     <div class="eyebrow">The difference</div>
-    <h2>Messy speech in, <span class="dim">text you can send as-is, out.</span></h2>
+    <h2>Say it as it comes to mind &mdash;<span class="dim">sounds like you thought it through first.</span></h2>
     <p class="sub">Not word-for-word. It groups the scattered bits into one point, puts them in order, and writes it in the register you picked.</p>
+    <!-- 🚨 2026-09-06 三次修：旧标题"口水话进去,英文出来"仍是Typeless式转换框架,
+         且锁死"出英文"跟"不锁死中文→英文"的定位冲突。第911行同样含"口水话/英文"
+         但在隐私披露段,是如实说明数据流向,判断后没动——不是所有出现都要改,要按上下文判断是不是定位语言。 -->
 
     <div class="compare-grid">
       <div class="card">
@@ -834,9 +843,12 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>Be the interpreter for a minute</h3>
-        <p>Open <b>Translate as you go </b> — no switching apps. You speak, they read.
-        Tap<b>“⇄ Their turn” </b> and they speak back in theirs — it comes back in yours.
-        There's also <b>Continuous mode </b>for back-and-forth turns, and <b>Big text</b>so they can read it across a desk.</p>
+        <p>Tap <b>"Face to Face"</b> at the bottom, no keyboard switching needed. Speak Chinese, show them the translation;
+        when they reply, it figures out who's speaking and translates it back to your language.
+        There's also <b>Continuous mode </b>for back-and-forth turns, and <b>Big text </b>so they can read it across a desk.</p>
+        <!-- 🚨 2026-09-06 更新：面对面翻译已升级成底部独立 Tab（此前是随手翻译里的
+             ⇄按钮切换），改成自动判断说话方而不是手动点切换。这一段是按 STATE.md
+             的文字描述改的，没有对着真机截图核对过，建议 2.1/2.2 抽空扫一眼版式描述是否精确。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
@@ -863,7 +875,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         </div>
         <div>
           <h3>Audio is dropped once recognised</h3>
-          <p>Audio is uploaded only to work out what you said. The moment that's done it is<b>discarded immediately</b> — never written to disk, no copies kept.</p>
+          <p>Audio is uploaded only to work out what you said. The moment that's done it is <b>discarded immediately</b> — never written to disk, no copies kept.</p>
         </div>
       </div>
       <div class="pv">
@@ -884,8 +896,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
             <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
         </div>
         <div>
-          <h3>No history, no profiling</h3>
-          <p>We keep no conversation archive and build no user profile. We also<b>don't ask for</b>your contacts, photos or location.</p>
+          <h3>History stays on your phone</h3>
+          <p>To help you look back, the app keeps this <b>only on your device </b>&mdash; your recent history never reaches our servers, and we can't see it. We don't build conversation archives, we don't profile you, and we <b>don't ask for </b>your contacts, photos or location.</p>
+          <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
+               本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
         </div>
       </div>
       <div class="pv">
@@ -896,14 +911,14 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         </div>
         <div>
           <h3>Nobody is reading what you say</h3>
-          <p>The abuse checks compliance requires are<b>automated rule matching</b> — no human reads it. We don't sell or rent your content, and we don't use it for ads.</p>
+          <p>The abuse checks compliance requires are <b>automated rule matching</b> — no human reads it. We don't sell or rent your content, and we don't use it for ads.</p>
         </div>
       </div>
     </div>
 
     <div class="caveat">
-      <b>But there's one thing we have to be straight about: </b>To turn messy speech into idiomatic English, the recognised
-      <b>text</b>has to go to an AI model provider. There's no way around that step, and we're not going to pretend otherwise. So: <b>Don't dictate passwords, card numbers, ID numbers, or anything under an NDA.</b>
+      <b>But there's one thing we have to be straight about: </b>To turn messy speech into something usable, the recognised
+      <b>text </b>has to go to an AI model provider. There's no way around that step, and we're not going to pretend otherwise. So: <b>Don't dictate passwords, card numbers, ID numbers, or anything under an NDA.</b>
       <br><br>
       Full terms: <a href="/privacy.html" style="color:var(--highlight)">Privacy Policy</a>。
     </div>
@@ -922,7 +937,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       </div>
       <div class="qa">
         <h3>Is what I say stored anywhere?</h3>
-        <p>No. Audio is discarded the moment it's recognised; the result sits in memory for 10 minutes at most. We hold no history of yours.</p>
+        <p>The recording is discarded the moment it's transcribed; the cleaned-up result sits in server memory for at most 10 minutes. The app keeps a local history on your device so you can look back, but that history never reaches our servers &mdash; we can't see it.</p>
       </div>
       <div class="qa">
         <h3>Do I need an account?</h3>
@@ -930,7 +945,8 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       </div>
       <div class="qa">
         <h3>Which languages are supported?</h3>
-        <p>Nine today: English, Japanese, French, German, Spanish, Korean, Cantonese, Traditional Chinese, Simplified Chinese. Speak, pick a target language, done.<b> Read-aloud picks a native voice to match the text</b>  — Japanese output gets a Japanese voice, not an English accent.</p>
+        <p>31 languages and counting &mdash; English, Japanese, French, German, Spanish, Korean, Cantonese, Thai, Arabic, Russian, and more. Pick a target language, then just speak.<b> Read-aloud picks a native voice to match the text</b>  — Japanese output gets a Japanese voice, not an English accent.
+        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
       </div>
       <div class="qa">
         <h3>Which apps does it work in?</h3>
