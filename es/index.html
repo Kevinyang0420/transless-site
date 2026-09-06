@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">Cómo funciona</a>
       <a class="nav-link" href="#privacy">Privacidad</a>
-      <a class="nav-link" href="#faq">Preguntas frecuentes</a>
+      <a class="nav-link" href="/faq.html">Preguntas frecuentes</a>
       <span class="langsw" role="group" aria-label="Idioma">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1097,29 +1122,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>Responder un correo en inglés</h3>
-        <p>Di en voz alta tu razonamiento en chino, y sale un correo completo con saludo, párrafos y despedida.</p>
+        <p>Dilo en chino y te llega un correo completo en inglés.</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>Coordinar con colegas en el extranjero</h3>
-        <p>Al terminar la reunión, repite lo que se dijo y obtén al instante una lista numerada de los puntos clave.</p>
+        <p>Repite lo que se dijo en la reunión y obtén al momento una lista numerada de los puntos.</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>Convertir ideas a medio formar en chino utilizable</h3>
-        <p>Se te ocurre algo después de una reunión o de camino a algún lado — di primero, piensa después.<b>Transcribir</b>no traduce —
-        «Organizado» te quita el «eh… y entonces… o sea» y lo agrupa en puntos; «Literal» no cambia ni una palabra.</p>
+        <p><b>Transcribir</b> no traduce, convierte lo que dices en unas frases útiles.</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>Chino ya escrito, sin repetirlo en voz alta</h3>
-        <p>Terminas de escribir en chino en WeChat y te das cuenta de que tu interlocutor no lo entiende.
-        <b>Traducir el chino antes del cursor</b>. Traducir el chino antes del cursor lo convierte, en el mismo lugar, en algo que la otra persona entiende.</p>
+        <p><b>Traducir el chino antes del cursor</b> — cámbialo con un toque por una versión que la otra persona entienda.</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>Improvisa de intérprete</h3>
-        <p>Toca abajo<b>«Cara a cara»</b>, sin cambiar de teclado. La última frase traducida<b>aparece centrada en texto grande</b>, fácil de leer para tu interlocutor; toca el texto grande para<b>Leer en voz alta</b>; el<b>「⇄」</b>del medio cambia la dirección manualmente; lo que busques también se puede guardar en tu cuaderno de vocabulario con un toque.</p>
+        <p>Toca abajo<b>«Cara a cara»</b>, la traducción aparece en letras grandes en toda la pantalla, toca para <b>Leer en voz alta</b>，
+        <b>「⇄」</b> cambia la dirección de traducción.</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1127,16 +1151,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>Pedir comida o preguntar direcciones en el extranjero</h3>
-        <p>Habla en chino al móvil y sale en el idioma local — toca además en leer en voz alta y<b>lo escuchará con una voz nativa</b>. Sin gesticular ni acercar el móvil a la cara de nadie.</p>
+        <p>Habla en chino al teléfono y sale en el idioma local — toca para que se <b>lea en voz alta con acento nativo.</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1148,21 +1179,26 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>Lo que buscas y usas se guarda automáticamente en tu vocabulario</h3>
-        <p>Las palabras que buscaste al traducir, las expresiones que corregiste — con un toque se guardan en tu<b>cuaderno de vocabulario</b>, sin anotarlas en otro sitio.</p>
+        <p>Las palabras que buscas o corriges van directo a tu <b>cuaderno de vocabulario.</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>El sistema elige lo que aún no dominas y te lo trae para repasar</h3>
-        <p>Repaso en tarjetas: toca<b>«Lo sé»</b> si te lo sabes, o<b>«Otra vez»</b> si no — el sistema elige qué mostrarte.</p>
+        <p>Tarjetas para repasar: toca si ya te lo sabes, y las que no vuelven a aparecer.</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>Cuanto más hablas, más te sale solo</h3>
-        <p>De «buscar palabras, depender de la traducción» a «recordarlo tú mismo y decirlo directamente» — este ciclo solo lo tiene Transless.</p>
+        <p>De buscar palabras a decirlas tú mismo — ese ciclo es exclusivo de Transless.</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1237,44 +1273,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>Las preguntas que probablemente tengas</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>¿Necesita conexión? ¿Funciona sin internet?</h3>
-        <p>Sí, necesita conexión. El reconocimiento de voz y la edición se hacen en el servidor, así que sin internet no funciona. La escritura a mano sí es local, el modelo está en tu móvil.</p>
-      </div>
-      <div class="qa">
-        <h3>¿Se guarda lo que digo?</h3>
-        <p>La grabación se descarta en cuanto se reconoce, y el resultado editado queda en la memoria del servidor un máximo de 10 minutos. Por defecto, la app guarda un historial local en tu móvil para que puedas revisarlo; si quieres sincronizar entre varios dispositivos, puedes activar tú mismo la sincronización en la nube — cada dispositivo tiene que confirmarlo por separado, y no se sube nada si no lo activas.</p>
-      </div>
-      <div class="qa">
-        <h3>¿Hace falta registrarse?</h3>
-        <p>Por ahora no, funciona en cuanto lo instalas. Más adelante habrá inicio de sesión para poder restaurar tus datos al cambiar de móvil — pero tampoco será obligatorio, seguirá funcionando sin registrarte.</p>
-      </div>
-      <div class="qa">
-        <h3>¿Qué idiomas admite?</h3>
-        <p>Actualmente 31, incluyendo inglés, japonés, francés, alemán, español, coreano, cantón, tailandés, árabe, ruso y otros idiomas principales. Hablas en chino y eliges el idioma de destino.<b>Al leer en voz alta, elige automáticamente la voz nativa según el idioma del texto</b> — si sale en japonés, se lee con voz japonesa, no con acento inglés.
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>¿En qué apps funciona?</h3>
-        <p>Es un teclado de verdad, no una app de traducción aparte. Funciona en cualquier lugar donde puedas escribir — WeChat, correo, notas, el navegador.</p>
-      </div>
-      <div class="qa">
-        <h3>¿Y si la traducción no es correcta?</h3>
-        <p>La traducción la genera una IA y puede tener errores. Por eso incluye un teclado para escribir (pinyin/wubi/escritura a mano) con el que puedes corregir en cualquier momento; también puedes cambiar al modo «Literal», que no cambia ni una palabra y solo añade puntuación.</p>
-      </div>
-      <div class="qa">
-        <h3>¿Cómo lo desinstalo por completo?</h3>
-        <p>Primero desactiva Transless en los ajustes del teclado del sistema, y luego desinstala la app normalmente. Al desinstalarla se detiene todo el procesamiento — no quedan archivos en nuestro lado que tengas que borrar.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1282,7 +1283,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>Haz que el mundo te entienda</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">Preguntas frecuentes</a>
+      <a class="cta" href="/faq.html">Preguntas frecuentes</a>
       <span class="cta-note">Por ahora es gratis. El canal de inscripción para la beta se está activando y aparecerá aquí en cuanto esté listo.</span>
     </div>
   </div>
