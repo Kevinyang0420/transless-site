@@ -409,6 +409,11 @@ html[lang^="en"] .kb-row.top{gap:5px}
 
 /* ================= 通用区块 ================= */
 section{padding:110px 0}
+.pivot{padding:0 0 60px;text-align:center}
+.pivot-line{
+  font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
+  color:var(--text-cn);
+}
 .eyebrow{
   font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--text-secondary);margin-bottom:20px;
@@ -594,12 +599,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <header class="hero">
   <div class="wrap">
     <div class="hero-left">
-      <div class="hero-eyebrow">Voice keyboard &middot; 中文一講，31 種語言就出嚟</div>
+      <div class="hero-eyebrow">語音輸入法 &middot; 講中文，31 種語言出</div>
       <h1>讓世界聽懂你</h1>
       <div class="slogan-en">No Language In Between</div>
-      <p class="lede">想講嘅嘢，講出嚟就係地道嘅嗰種語言。<br>該分點的自動分點，不用先想好怎麼講。</p>
-      <!-- 🚨 2026-09-06 二次修：昨晚只改了meta/FAQ，漏了首屏最显眼的这句——H1已是"让世界听懂你"，
-           紧跟着的lede却还写着"说中文口水话/上屏"，是Kevin否掉的原句，被 Kevin 当场抓出来。 -->
+      <p class="lede">㩒住講嘢，出嚟就係可以直接發送嘅文字——微信、電郵、邊個 App 都用得。<br>想講嘅嘢，講出嚟就係地道嘅嗰種語言，該分點嘅自動分點。</p>
+      <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
+           "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
+           不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
       <div class="cta-row">
         <a class="cta" href="#how">看看它怎麼運作</a>
         <span class="cta-note">Android 內測中 &middot; iOS 排隊中</span>
@@ -733,6 +739,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </header>
 
+<!-- ============ 过渡 · 不止是输入法 ============ -->
+<section class="pivot">
+  <div class="wrap">
+    <p class="pivot-line">但佢唔止係一個輸入法。</p>
+  </div>
+</section>
+
 <!-- ============ 屏 2 · 结果对比 ============ -->
 <section id="difference" class="compare reveal" data-observe>
   <div class="wrap">
@@ -854,6 +867,32 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         <div class="tag">Travel</div>
         <h3>在外地叫東西吃、問路</h3>
         <p>對住手機講中文，出來是當地語言 —— 再撳一下朗讀，<b>用母語聲線讀給對方聽</b>。不用比手勢，也不用把手機湊到人面前。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
+<section id="memory" class="scenes reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">Beyond translation</div>
+    <h2>講過嘅，佢記得；<span class="dim">記住咗嘅，你自己都識講喇。</span></h2>
+    <p class="sub">Transless 唔止係翻譯工具，仲係一本會自己長大嘅單詞本——用得越耐，你需要佢嘅地方就越少。</p>
+    <div class="scenes-grid">
+      <div class="card scene">
+        <div class="tag">Collect</div>
+        <h3>查過、用過嘅講法，自動收入單詞本</h3>
+        <p>翻譯時查過嘅詞、糾正過嘅講法，一撳就收入<b>單詞本</b>，唔使另外揾地方記。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Review</div>
+        <h3>系統揀你仲未記熟嘅，攞出嚟溫習</h3>
+        <p>卡片式溫習：記住咗撳<b>「記住咗」</b>，仲未記熟撳<b>「再嚟一次」</b>，佢會揀住嚟。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Speak</div>
+        <h3>講得越多，自己脫口而出嘅都越多</h3>
+        <p>由「查詞、靠翻譯」到「自己諗返起、直接講出口」，呢條閉環係 Transless 獨有嘅。</p>
       </div>
     </div>
   </div>
