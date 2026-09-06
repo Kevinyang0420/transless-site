@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">كيف يعمل</a>
       <a class="nav-link" href="#privacy">الخصوصية</a>
-      <a class="nav-link" href="#faq">الأسئلة الشائعة</a>
+      <a class="nav-link" href="/faq.html">الأسئلة الشائعة</a>
       <span class="langsw" role="group" aria-label="اللغة">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1097,29 +1122,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>الرد على بريد إلكتروني بالإنجليزية</h3>
-        <p>تحدث بمنطقك الصيني كما هو في ذهنك، ويخرج بريد إلكتروني كامل بتحية وفقرات وختام.</p>
+        <p>قله بالصينية، وتحصل على إيميل إنجليزي كامل.</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>التنسيق مع زملاء في الخارج</h3>
-        <p>بعد انتهاء الاجتماع، أعد سرد ما قيل، واحصل مباشرة على قائمة نقاط مرقّمة.</p>
+        <p>أعد سرد ما قيل في الاجتماع، واحصل فورًا على قائمة نقاط مرقمة.</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>تحويل أفكار غير مكتملة إلى صينية قابلة للاستخدام</h3>
-        <p>يخطر ببالك شيء بعد اجتماع أو في الطريق — قله أولاً، ورتّب أفكارك لاحقًا.<b>تفريغ نصي</b>لا يترجم —
-        „منظّم“ يزيل „امم… ثم… يعني“ ويجمعها في نقاط؛ „حرفي“ لا يغيّر كلمة واحدة.</p>
+        <p><b>تفريغ نصي</b>لا يترجم، بل يحوّل كلامك العفوي إلى بضع جمل قابلة للاستخدام.</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>نص صيني مكتوب مسبقًا، دون إعادة الكلام</h3>
-        <p>تنتهي من كتابة نص صيني في WeChat، ثم تتذكر أن من أمامك لا يقرأ الصينية.
-        <b>ترجمة النص الصيني قبل المؤشر</b>. ترجمة النص الصيني قبل المؤشر تستبدله في مكانه بنص يفهمه الطرف الآخر.</p>
+        <p><b>ترجمة النص الصيني قبل المؤشر</b>— استبدله بلمسة واحدة بنسخة يفهمها الطرف الآخر.</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>كن مترجمًا فوريًا مؤقتًا</h3>
-        <p>اضغط في الأسفل على<b>«‏وجهًا لوجه‏»</b>، دون تبديل لوحة المفاتيح. آخر جملة مترجمة<b>تظهر بخط كبير في منتصف الشاشة</b>، ليسهل على من أمامك قراءتها؛ اضغط على النص الكبير لتشغيل<b>قراءة بصوت عالٍ</b>؛ زر<b>「⇄」</b>في المنتصف يبدّل اتجاه الترجمة يدويًا؛ ويمكن أيضًا حفظ ما تبحث عنه في دفتر الكلمات بلمسة واحدة.</p>
+        <p>اضغط في الأسفل على<b>«‏وجهًا لوجه‏»</b>، تظهر الترجمة بخط كبير على كامل الشاشة، اضغط لـ<b>قراءة بصوت عالٍ</b>，
+        <b>「⇄」</b>تبديل اتجاه الترجمة.</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1127,16 +1151,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>الطلب في مطعم أو السؤال عن الطريق في الخارج</h3>
-        <p>تحدث بالصينية إلى هاتفك، ويخرج باللغة المحلية — اضغط أيضًا على قراءة بصوت عالٍ، و<b>سيُقرأ بصوت متحدث أصلي لمن أمامك</b>. دون إشارات يد، ودون تقريب الهاتف من وجه أحد.</p>
+        <p>تحدث بالصينية إلى هاتفك ويخرج باللغة المحلية — اضغط لتُقرأ<b>بصوت أهل اللغة.</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1148,21 +1179,26 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>التعبيرات التي بحثت عنها واستخدمتها تُحفظ تلقائيًا في دفتر الكلمات</h3>
-        <p>الكلمات التي بحثت عنها أثناء الترجمة، والصياغات التي صححتها — بلمسة واحدة تُحفظ في<b>دفتر الكلمات</b>، دون تدوينها في مكان آخر.</p>
+        <p>الكلمات التي بحثت عنها أو صححتها تُضاف بلمسة إلى <b>دفتر المفردات.</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>يختار النظام ما لم تتقنه بعد ويعرضه عليك للمراجعة</h3>
-        <p>مراجعة بالبطاقات: اضغط<b>‏«تذكرتها»‏</b> إن كنت تتذكرها، أو<b>‏«مرة أخرى»‏</b> إن لم تكن كذلك — والنظام يختار ما يعرضه عليك.</p>
+        <p>بطاقات للمراجعة: اضغط على ما تتذكره، وما لا تتذكره يعود من تلقاء نفسه.</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>كلما تحدثت أكثر، زاد ما يخرج منك تلقائيًا</h3>
-        <p>من «‏البحث عن الكلمات والاعتماد على الترجمة‏» إلى «‏أن تتذكرها وتقولها مباشرة‏» — هذه الحلقة لا توجد إلا في Transless.</p>
+        <p>من البحث عن الكلمات إلى نطقها بنفسك — هذه الحلقة فريدة لدى Transless.</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1237,44 +1273,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>الأسئلة التي على الأرجح تخطر ببالك</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>هل يحتاج اتصالاً بالإنترنت؟ هل يعمل دون اتصال؟</h3>
-        <p>نعم، يحتاج اتصالاً بالإنترنت. التعرف على الصوت والتحرير يتمّان على الخادم، فلا يعمل دون اتصال. أما الكتابة اليدوية فتعمل دون اتصال، والنموذج موجود على هاتفك.</p>
-      </div>
-      <div class="qa">
-        <h3>هل يُحفظ ما أقوله؟</h3>
-        <p>يُحذف التسجيل فور التعرف عليه، وتبقى النتيجة المُعدَّلة في ذاكرة الخادم لمدة 10 دقائق كحد أقصى. يحفظ التطبيق افتراضيًا سجلاً محليًا على هاتفك لتتمكن من مراجعته؛ وإذا أردت المزامنة بين عدة أجهزة، يمكنك أن تُفعّل بنفسك المزامنة السحابية — يجب على كل جهاز التأكيد على حدة، ولن يُرفع أي شيء ما لم تُفعّلها.</p>
-      </div>
-      <div class="qa">
-        <h3>هل يلزم التسجيل؟</h3>
-        <p>لا يلزم الآن، يعمل فور التثبيت. لاحقًا سنضيف تسجيل الدخول لتتمكن من الاستعادة عند تغيير هاتفك — وحتى حينها لن يكون إلزاميًا، وسيظل يعمل دون تسجيل الدخول.</p>
-      </div>
-      <div class="qa">
-        <h3>ما اللغات المدعومة؟</h3>
-        <p>حاليًا 31 لغة، تشمل الإنجليزية واليابانية والفرنسية والألمانية والإسبانية والكورية والكانتونية والتايلاندية والعربية والروسية وغيرها من اللغات الرئيسية. تتحدث بالصينية وتختار لغة الهدف فقط.<b>عند القراءة بصوت عالٍ، يختار تلقائيًا صوتًا أصليًا مناسبًا للغة النص نفسه</b> — إذا كان النص باليابانية، يُقرأ بصوت ياباني، وليس باللكنة الإنجليزية.
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>في أي تطبيقات يعمل؟</h3>
-        <p>إنه لوحة مفاتيح حقيقية، وليس تطبيق ترجمة منفصلاً. يعمل في أي مكان يمكنك الكتابة فيه — WeChat، البريد، الملاحظات، المتصفح.</p>
-      </div>
-      <div class="qa">
-        <h3>ماذا لو كانت الترجمة غير صحيحة؟</h3>
-        <p>الترجمة يُنشئها الذكاء الاصطناعي وقد تحتوي على أخطاء. لذلك تتضمن لوحة كتابة مدمجة (بينيين/ووبي/كتابة يدوية) يمكنك التصحيح بها في أي وقت؛ ويمكنك أيضًا التبديل إلى وضع „حرفي“ الذي لا يغيّر كلمة واحدة ويكتفي بإضافة علامات الترقيم.</p>
-      </div>
-      <div class="qa">
-        <h3>كيف أزيل التثبيت بالكامل؟</h3>
-        <p>أوقف Transless أولاً من إعدادات لوحة المفاتيح في النظام، ثم أزل تثبيت التطبيق بشكل طبيعي. إزالة التثبيت توقف كل معالجة فورًا — ولا توجد لدينا ملفات تحتاج لحذفها بنفسك.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1282,7 +1283,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>اجعل العالم يفهمك</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">الأسئلة الشائعة</a>
+      <a class="cta" href="/faq.html">الأسئلة الشائعة</a>
       <span class="cta-note">مجاني حاليًا. قناة التسجيل للاختبار التجريبي قيد التفعيل، وستظهر هنا فور فتحها.</span>
     </div>
   </div>
