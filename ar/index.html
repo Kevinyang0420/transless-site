@@ -300,6 +300,14 @@ h1{
 /* 拖动面：横向手势归我们，纵向仍然让页面正常滚 */
 .demo{touch-action:pan-y}
 .demo.dragging{cursor:grabbing}
+/* 🚨 2026-09-06 修：Kevin 报"切屏经常选中文字、划不走、甚至跳去新网站"——
+   演示卡里的字从来没关过可选中，拖一下就变成拖文字选区，触发浏览器自己的
+   "拖选区去搜索"手势（不是我们代码跳的，是浏览器原生行为）。演示卡是纯展示，
+   没有一个字需要被选中/复制，直接全关。 */
+.demo, .demo *{
+  user-select:none; -webkit-user-select:none;
+  -webkit-touch-callout:none; -webkit-user-drag:none;
+}
 .demo:focus-visible{outline:2px solid var(--highlight);outline-offset:6px;border-radius:18px}
 .feat-name{text-align:center;margin-top:9px;font-size:12.5px;color:var(--text-secondary);
   min-height:1.4em;transition:opacity .18s cubic-bezier(0.16,1,0.3,1)}
@@ -311,6 +319,18 @@ h1{
    麦克风是 dp(96) 的大圆、里面写「点一下 / 开始说」（TryActivity.java:203-213）。 */
 .screen[data-app="1"]{background:var(--bg-gradient)}
 .screen[data-app="1"] .kb{display:none}
+/* ============ 单词本（WordBookActivity）—— 同样不是键盘，独立复习页 ============ */
+.screen[data-app="2"]{background:var(--bg-gradient)}
+.screen[data-app="2"] .kb{display:none}
+.wb-tag{font-size:11.5px;color:var(--text-secondary);text-align:center;margin-top:2px}
+.wb-card{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;border-radius:14px;padding:20px 16px;text-align:center;
+  background:var(--card-bg);border:1px solid var(--card-border)}
+.wb-side{font-size:10.5px;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
+.wb-en{font-size:16px;font-weight:500;color:var(--text-primary);line-height:1.4}
+.wb-zh{font-size:12.5px;color:var(--text-secondary)}
+.wb-actions{display:flex;gap:8px}
+.wb-actions .chip{flex:1}
 .tryui{position:absolute;inset:0;padding:16px 15px 12px;display:flex;flex-direction:column;gap:9px}
 .try-bar{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:14px}
 .try-bar .back{color:var(--text-secondary);font-size:13px}
@@ -327,8 +347,15 @@ h1{
   display:flex;align-items:center;justify-content:center;text-align:center;
   color:#fff;font-size:10.5px;line-height:1.25;
   box-shadow:0 8px 24px rgba(124,92,230,.42)}
-.try-result{flex:1;min-height:0;border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.6;
-  background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-primary)}
+.try-card{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:12px;
+  background:var(--card-bg);border:1px solid var(--card-border);overflow:hidden}
+.try-card .try-tabs{padding:9px 10px 0;gap:6px}
+.try-sep{height:1px;background:rgba(255,255,255,.13);margin:8px 10px 0}
+.try-result{position:relative;flex:1;min-height:0;padding:11px 12px 30px;font-size:13px;line-height:1.6;
+  color:var(--text-primary)}
+.try-keep{position:absolute;right:10px;bottom:10px;font-size:10.5px;padding:4px 9px;
+  border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:var(--text-secondary)}
 /* 贴着键盘往上排：真手机上最新的内容就压在键盘上方 */
 .compose{position:absolute;inset:0;padding:18px 15px 12px;display:flex;flex-direction:column;
   justify-content:flex-end;gap:8px;overflow:hidden}
@@ -670,11 +697,15 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="try-tabs">
                   <div class="chip on">ترجمة</div><div class="chip">تفريغ نصي</div>
                 </div>
-                <div class="try-tabs">
-                  <div class="chip">العمل &#9662;</div><div class="chip">الإنجليزية &#9662;</div>
-                </div>
-                <div class="try-result">
-                  How much is this?<br>Could you do a bit better on the price?
+                <div class="try-card">
+                  <div class="try-tabs">
+                    <div class="chip">العمل &#9662;</div><div class="chip">الإنجليزية &#9662;</div>
+                  </div>
+                  <div class="try-sep"></div>
+                  <div class="try-result">
+                    How much is this?<br>Could you do a bit better on the price?
+                    <div class="try-keep">حفظ</div>
+                  </div>
                 </div>
                 <div class="try-sp"><div class="chip">قراءة بصوت عالٍ</div><div class="chip">خط كبير</div></div>
                 <div class="try-mic-row">
@@ -682,10 +713,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 </div>
               </div>
             </div>
-            <!-- 🚨 2026-09-06 四次修：Kevin 当面指出这张卡的 UI 已经过时——真机早就简化了
-                 （STATE.md item 17/19/24：语气/语言合并成两个玻璃下拉、⇄对方说已移到独立的
-                 「面对面」Tab、历史/引导/听到预览整块删除只剩空结果框）。按已实测的真机改动
-                 改这张卡，不是按感觉简化的。 -->
+            <!-- 🚨 2026-09-06 七次修：Kevin 当面点名这张卡"还是跟实际产品UI完全不一样"——
+                 上一版是照 STATE.md 的文字摘要拼的，这次直接逐行读了
+                 `TryActivity.java:338-754`（方案F·2026-09-06 定稿的 onCreate 组装顺序），
+                 按真实 View 树重建：顶栏 → 翻译/转写Tab(等宽换色，不再选中拉长) →
+                 一张卡(参数行[语气▾/语言▾，转写档换成整理/逐字单个下拉]+1px分隔线+
+                 结果框，结果框右下角浮着「收藏」— 这个我上一版完全漏了) →
+                 朗读/大字排(有结果才出现) → 麦克风(钉屏幕最底)。 -->
 
             <div class="feat" data-sub="tone" data-sub-active="2" data-lang="الإنجليزية"
                  data-mode="tr" data-speaking="0" data-name="ترجمة النص الصيني قبل المؤشر">
@@ -720,6 +754,24 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="compose-label" style="color:var(--highlight)">التعرف على الكتابة اليدوية يتم بالكامل على هاتفك، دون اتصال بالإنترنت</div>
               </div>
             </div>
+            <div class="feat" data-app="2" data-name="دفتر الكلمات · يتحسّن كلما استخدمته أكثر">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; رجوع</span><b>دفتر الكلمات</b></div>
+                <div class="wb-tag">مراجعة (12)</div>
+                <div class="wb-card">
+                  <div class="wb-side">الوجه المعروض: الإنجليزية</div>
+                  <div class="wb-en">We&rsquo;re revisiting the quote</div>
+                  <div class="wb-zh">علينا تعديل عرض السعر قليلاً</div>
+                </div>
+                <div class="wb-actions">
+                  <div class="chip">مرة أخرى</div>
+                  <div class="chip on">تذكرتها</div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06：Kevin 点名手机演示漏了单词本这个产品功能，从卡片文案到按钮
+                 都照真机字符串资源抄（wb_review_n/wb_front_fmt/wb_got/wb_card_retry，
+                 android/res/values/strings.xml），不是照记忆编的措辞。 -->
           </div>
 
           <!-- 🚨 键盘照抄真身：顶行 翻译·英文▾ |logo| 转写·历史（四格等宽），
@@ -907,7 +959,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>يختار النظام ما لم تتقنه بعد ويعرضه عليك للمراجعة</h3>
-        <p>مراجعة بالبطاقات: اضغط<b>«‏تذكرتها‏»</b> إن كنت تتذكرها، أو<b>«‏مرة أخرى‏»</b> إن لم تكن كذلك — والنظام يختار ما يعرضه عليك.</p>
+        <p>مراجعة بالبطاقات: اضغط<b>‏«تذكرتها»‏</b> إن كنت تتذكرها، أو<b>‏«مرة أخرى»‏</b> إن لم تكن كذلك — والنظام يختار ما يعرضه عليك.</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
@@ -1157,7 +1209,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       down = true; moved = false; sx = ev.clientX; sy = ev.clientY;
       demoEl.classList.add('dragging');
       pause();                       // 一上手就停掉自动轮播，别跟人抢
+      // 🚨 阻止浏览器把这次按下当成"开始选字"——CSS user-select:none 挡不住
+      // 所有浏览器/所有输入方式，这里在源头再挡一层，防止选区被拖出去触发搜索跳转。
+      ev.preventDefault();
     });
+    demoEl.addEventListener('dragstart', function(ev){ ev.preventDefault(); });
     demoEl.addEventListener('pointermove', function(ev){
       if (!down || moved) return;
       var dx = ev.clientX - sx, dy = ev.clientY - sy;
