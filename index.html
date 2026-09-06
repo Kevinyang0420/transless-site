@@ -176,20 +176,33 @@ body{
    不会跟着滚动动。加一个由 JS 按滚动距离算出来的 --px1 偏移量去动 background-position，
    图还是钉在视口上（.hero/.pivot/#difference 三段的拼接方式完全不变，不会把杠的问题
    带回来），只是这个"钉的位置"本身会跟着滚动慢慢往下移，看起来就是人像在缓缓下沉。 */
+/* 2026-09-06 Kevin 第四次：「这个背景色啥也看不清楚，完全偏离我的想法。我要的是有温度、
+   看得出真的有人在用产品」——之前为了压"太大/太抢"把蒙层加到 .94，结果把人像本身也压没了，
+   矫枉过正。换了一张新图（Grok 按他给的参考图风格重新生成：两人暖光贴脸看手机、
+   深紫蓝色夜景光斑，构图/配色都直接照抄参考图），蒙层大幅调淡到 .45，人像清晰可辨。
+   🚨 2026-09-06 五审：Kevin 看完 4 段落地 + 两版完整 HTML 后拍板 Plan B（照片从首屏开始），
+   场景改成"按内容换场景"而不是"同一场景数人头"：首屏=一群人（团队感），
+   往下依次是旅行两人（scene_travel，原图已经是这个新配色，没有重做）、
+   亲子两人（scene_family，同样原图直接能用）、独处一人（scene_alone，收尾呼应隐私主张）。
+   人数是跟着场景走的，不是硬凑的倒计时。
+   下面 4 个区之前只有首屏调淡到 .45，其余三个区还留着旧的 .94/.95——
+   同一套"人真的看得清"标准要對齐到全部 4 个区，不能只对了第一屏。
+   首屏再按 Kevin「更饱满一点」的要求调到 .38，比其余区更清晰一点，
+   撑住"进门第一眼"的分量，其余区维持 .45 保证下面大段文字仍然好读。 */
 .hero, .pivot, #difference{
-  background:linear-gradient(rgba(30,23,83,.94),rgba(30,23,83,.94)),
-  url('/img/scene_friends.jpg') center calc(15% + var(--px1,0px))/cover no-repeat fixed;
+  background:linear-gradient(rgba(30,23,83,.38),rgba(30,23,83,.38)),
+  url('/img/scene_group5_b.jpg') center calc(30% + var(--px1,0px))/cover no-repeat fixed;
 }
 #how, #where{
-  background:linear-gradient(rgba(54,20,92,.94),rgba(54,20,92,.94)),
+  background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
   url('/img/scene_travel.jpg') center/cover no-repeat fixed;
 }
 #memory{
-  background:linear-gradient(rgba(41,24,88,.94),rgba(41,24,88,.94)),
+  background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
 #privacy, #faq{
-  background:linear-gradient(rgba(29,21,85,.95),rgba(29,21,85,.95)),
+  background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
 }
 .bg-glow{
@@ -1497,6 +1510,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-6e314f4d63 -->
+<!-- build-7f7c479d9c -->
 </body>
 </html>
