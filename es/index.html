@@ -316,12 +316,26 @@ h1{
    🚨 Kevin 2026-08-26:「随手翻译那个没有加」。我原来给它画的还是键盘，
    所以它跟旁边几屏长得一模一样 = 等于没加。
    真身用的是 App 的 Skin 配色（不是键盘的 Theme），没有键盘，
-   麦克风是 dp(96) 的大圆、里面写「点一下 / 开始说」（TryActivity.java:203-213）。 */
+   麦克风是纯图标圆钮（micIcon），空闲态不带任何文字——
+   `TryActivity.java:562-571` micLabel 默认 GONE，只在处理中显示"…"。 */
 .screen[data-app="1"]{background:var(--bg-gradient)}
 .screen[data-app="1"] .kb{display:none}
-/* ============ 单词本（WordBookActivity）—— 同样不是键盘，独立复习页 ============ */
+/* ============ 单词本（WordBookActivity）—— 同样不是键盘，独立复习/列表页 ============ */
 .screen[data-app="2"]{background:var(--bg-gradient)}
 .screen[data-app="2"] .kb{display:none}
+.screen[data-app="3"]{background:var(--bg-gradient)}
+.screen[data-app="3"] .kb{display:none}
+/* 2026-09-06 九次修：Kevin 要"沟通→收藏→存进单词本→复习"串成一条能一眼看懂的线，
+   不是几张互不相关的功能卡。给这 4 张卡各加一个步骤角标 + 两处衔接处的高亮动画
+   （收藏那一下、新条目那一下），autoplay 5.2s/张，不用手动划也能看完整条流程。 */
+.step-tag{font-size:11px;color:var(--highlight);text-align:center;letter-spacing:.04em;margin-top:-2px}
+@keyframes step-pulse{0%,100%{box-shadow:0 0 0 0 rgba(185,139,232,.55)}50%{box-shadow:0 0 0 6px rgba(185,139,232,0)}}
+.feat.on .try-keep{animation:step-pulse 1.1s ease-out 2}
+@keyframes item-flash{0%{background:rgba(185,139,232,.38)}100%{background:var(--card-bg)}}
+.feat.on .wb-item-new{animation:item-flash 1.6s ease-out}
+@media (prefers-reduced-motion:reduce){
+  .feat.on .try-keep, .feat.on .wb-item-new{animation:none}
+}
 .wb-tag{font-size:11.5px;color:var(--text-secondary);text-align:center;margin-top:2px}
 .wb-card{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:10px;border-radius:14px;padding:20px 16px;text-align:center;
@@ -331,6 +345,18 @@ h1{
 .wb-zh{font-size:12.5px;color:var(--text-secondary)}
 .wb-actions{display:flex;gap:8px}
 .wb-actions .chip{flex:1}
+/* 单词本列表屏（WordBookActivity.card()：●○○进度 + 中文 + 英文，逐条 var(--card-bg) 玻璃卡）*/
+.wb-sub{font-size:11.5px;color:var(--text-secondary);text-align:center;margin-top:2px}
+.wb-go{background:var(--kb-accent);color:#fff;font-size:12.5px;text-align:center;
+  border-radius:10px;padding:9px;margin-top:4px}
+.wb-list{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.wb-item{position:relative;border-radius:12px;padding:10px 12px;
+  background:var(--card-bg);border:1px solid var(--card-border)}
+.wb-dots{font-size:10px;color:var(--highlight);letter-spacing:.1em}
+.wb-item-zh{font-size:13.5px;color:var(--text-primary);margin-top:3px}
+.wb-item-en{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.wb-new-tag{position:absolute;right:10px;top:10px;font-size:10px;padding:2px 8px;border-radius:999px;
+  background:rgba(139,92,246,.22);color:var(--highlight);border:1px solid rgba(185,139,232,.4)}
 .tryui{position:absolute;inset:0;padding:16px 15px 12px;display:flex;flex-direction:column;gap:9px}
 .try-bar{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:14px}
 .try-bar .back{color:var(--text-secondary);font-size:13px}
@@ -347,6 +373,7 @@ h1{
   display:flex;align-items:center;justify-content:center;text-align:center;
   color:#fff;font-size:10.5px;line-height:1.25;
   box-shadow:0 8px 24px rgba(124,92,230,.42)}
+.try-mic-ico{width:38px;height:38px;fill:#fff;opacity:.92}
 .try-card{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:12px;
   background:var(--card-bg);border:1px solid var(--card-border);overflow:hidden}
 .try-card .try-tabs{padding:9px 10px 0;gap:6px}
@@ -669,17 +696,100 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
           </div>
 
           <div class="feats" id="feats">
+            <!-- ============ 第 ①-④ 张：一条串起来的故事线（Kevin 2026-09-06 要求）============
+                 沟通 → 收藏进单词本 → 存进单词本 → 复习，四屏用同一句话("报价这边要再调一下"/
+                 "We're revisiting the quote")贯穿，5.2s 一屏自动播，不用手动划也能看懂整条链路。
+                 每张卡的控件都逐条核过对应源码，不是按感觉编的。 -->
             <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="Inglés"
-                 data-mode="tr" data-speaking="0" data-name="Traducir · Habla en chino, sale en un inglés natural">
+                 data-mode="tr" data-speaking="0" data-name="① Comunicar — habla en chino, sale en inglés natural">
               <div class="compose">
-                <span class="feat-tag">Traducir · Habla en chino, sale en un inglés natural</span>
+                <span class="feat-tag">① Comunicar — habla en chino, sale en inglés natural</span>
                 <div class="compose-label">Lo que dices</div>
                 <div class="bubble">Hay que ajustar un poco la cotización, le respondo antes del miércoles<span class="caret"></span></div>
                 <div class="compose-label">Lo que aparece</div>
                 <div class="bubble out">Hi James,<br><br><b>We&rsquo;re revisiting the quote</b> and will get back to you <b>by Wednesday next week</b>.<br><br>Best,</div>
-                
+
               </div>
             </div>
+            <div class="feat" data-app="1" data-name="② Guardarlo en tu vocabulario">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; Volver</span><b>Traducción rápida</b></div>
+                <div class="step-tag">② Guardarlo en tu vocabulario</div>
+                <div class="try-tabs">
+                  <div class="chip on">Traducir</div><div class="chip">Transcribir</div>
+                </div>
+                <div class="try-card">
+                  <div class="try-tabs">
+                    <div class="chip">Trabajo &#9662;</div><div class="chip">Inglés &#9662;</div>
+                  </div>
+                  <div class="try-sep"></div>
+                  <div class="try-result">
+                    We&rsquo;re revisiting the quote and will get back to you by Wednesday next week.
+                    <div class="try-keep">Guardar</div>
+                  </div>
+                </div>
+                <div class="try-sp"><div class="chip">Leer en voz alta</div><div class="chip">Texto grande</div></div>
+                <div class="try-mic-row">
+                  <div class="try-mic"><svg class="try-mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg></div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06 八次修：Kevin 当面抓到"点一下/开始说"这行字——TryActivity.java
+                 里麦克风只有图标(micIcon)，`micLabel`只在处理中显示"…"(第1752行)，
+                 空闲态从没显示过文字。核过那串文案(`kb_tap_speak`)在 Java 代码里
+                 零调用点，是个从没上过屏的死字符串，我却当真机UI抄了三版都没删。
+                 改成纯图标，跟真实空闲态一致。这张卡的结构逐行核过
+                 `TryActivity.java:338-754`（方案F·2026-09-06 定稿）：顶栏 → 翻译/转写Tab →
+                 一张卡(参数行+1px分隔线+结果框，结果框右下角浮着「收藏」) →
+                 朗读/大字排 → 麦克风(钉屏幕最底)。 -->
+            <div class="feat" data-app="3" data-name="③ Ya está en tu vocabulario">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; Volver</span><b>cuaderno de vocabulario</b></div>
+                <div class="step-tag">③ Ya está en tu vocabulario</div>
+                <div class="wb-sub">2 en total, 1 pendiente de repasar hoy</div>
+                <div class="wb-go">Repasar (1)</div>
+                <div class="wb-list">
+                  <div class="wb-item wb-item-new">
+                    <div class="wb-new-tag">Recién guardado</div>
+                    <div class="wb-dots">○○○</div>
+                    <div class="wb-item-zh">Hay que ajustar un poco la cotización</div>
+                    <div class="wb-item-en">We&rsquo;re revisiting the quote</div>
+                  </div>
+                  <div class="wb-item">
+                    <div class="wb-dots">●○○</div>
+                    <div class="wb-item-zh">¿Cuánto cuesta esto? ¿Me puede hacer un poco de descuento?</div>
+                    <div class="wb-item-en">Could you do a bit better on the price?</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 新增：Kevin 要"沟通→收藏→复习"能一眼看出关联，原来「随手翻译」点完收藏
+                 直接跳到复习卡，中间"东西真的存进单词本了"这一步没有画面，链路是断的。
+                 这张列表屏逐条核过 `WordBookActivity.java:120-190`：顶部数量提示(wb_count)
+                 + 到期就出现的"复习(N)"大按钮(wb_review_n) + 逐条卡片(●○○进度 + 中文 + 英文，
+                 `progress()`/`card()`)。刚收藏那条配 ○○○(0次复习) + 一次性高亮动画做衔接。 -->
+            <div class="feat" data-app="2" data-name="④ Repasar — y mejorar cada vez más">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; Volver</span><b>cuaderno de vocabulario</b></div>
+                <div class="step-tag">④ Repasar — y mejorar cada vez más</div>
+                <div class="wb-tag">Repasar (1)</div>
+                <div class="wb-card">
+                  <div class="wb-side">Mostrando: inglés</div>
+                  <div class="wb-en">We&rsquo;re revisiting the quote</div>
+                  <div class="wb-zh">Hay que ajustar un poco la cotización</div>
+                </div>
+                <div class="wb-actions">
+                  <div class="chip">Otra vez</div>
+                  <div class="chip on">Lo sé</div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06：Kevin 点名手机演示漏了单词本这个产品功能，从卡片文案到按钮
+                 都照真机字符串资源抄（wb_review_n/wb_front_fmt/wb_got/wb_card_retry，
+                 android/res/values/strings.xml），不是照记忆编的措辞。跟①②③用同一句话，
+                 呼应"刚才收藏的这句，现在拿出来复习了"。 -->
+
+            <!-- ============ 后面几张：不进故事线的其它功能，仍是真实截图级还原 ============ -->
             <div class="feat" data-sub="trans" data-sub-active="0" data-lang="Inglés"
                  data-mode="ts" data-speaking="0" data-name="Transcribir · Sale tal como lo dices">
               <div class="compose">
@@ -691,36 +801,6 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="compose-label" style="color:var(--highlight)">Transcribir no traduce. «Organizado» quita las muletillas, «Literal» no cambia ni una palabra</div>
               </div>
             </div>
-            <div class="feat" data-app="1" data-name="Traducción rápida · Sin cambiar de teclado">
-              <div class="tryui">
-                <div class="try-bar"><span class="back">&lsaquo; Volver</span><b>Traducción rápida</b></div>
-                <div class="try-tabs">
-                  <div class="chip on">Traducir</div><div class="chip">Transcribir</div>
-                </div>
-                <div class="try-card">
-                  <div class="try-tabs">
-                    <div class="chip">Trabajo &#9662;</div><div class="chip">Inglés &#9662;</div>
-                  </div>
-                  <div class="try-sep"></div>
-                  <div class="try-result">
-                    How much is this?<br>Could you do a bit better on the price?
-                    <div class="try-keep">Guardar</div>
-                  </div>
-                </div>
-                <div class="try-sp"><div class="chip">Leer en voz alta</div><div class="chip">Texto grande</div></div>
-                <div class="try-mic-row">
-                  <div class="try-mic">Toca una vez<br>para empezar</div>
-                </div>
-              </div>
-            </div>
-            <!-- 🚨 2026-09-06 七次修：Kevin 当面点名这张卡"还是跟实际产品UI完全不一样"——
-                 上一版是照 STATE.md 的文字摘要拼的，这次直接逐行读了
-                 `TryActivity.java:338-754`（方案F·2026-09-06 定稿的 onCreate 组装顺序），
-                 按真实 View 树重建：顶栏 → 翻译/转写Tab(等宽换色，不再选中拉长) →
-                 一张卡(参数行[语气▾/语言▾，转写档换成整理/逐字单个下拉]+1px分隔线+
-                 结果框，结果框右下角浮着「收藏」— 这个我上一版完全漏了) →
-                 朗读/大字排(有结果才出现) → 麦克风(钉屏幕最底)。 -->
-
             <div class="feat" data-sub="tone" data-sub-active="2" data-lang="Inglés"
                  data-mode="tr" data-speaking="0" data-name="Traducir el chino antes del cursor">
               <div class="compose">
@@ -754,24 +834,6 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                 <div class="compose-label" style="color:var(--highlight)">El reconocimiento de escritura a mano se hace localmente en tu móvil, sin conexión</div>
               </div>
             </div>
-            <div class="feat" data-app="2" data-name="Vocabulario · Mejora cuanto más lo usas">
-              <div class="tryui">
-                <div class="try-bar"><span class="back">&lsaquo; Volver</span><b>cuaderno de vocabulario</b></div>
-                <div class="wb-tag">Repasar (12)</div>
-                <div class="wb-card">
-                  <div class="wb-side">Mostrando: inglés</div>
-                  <div class="wb-en">We&rsquo;re revisiting the quote</div>
-                  <div class="wb-zh">Hay que ajustar un poco la cotización</div>
-                </div>
-                <div class="wb-actions">
-                  <div class="chip">Otra vez</div>
-                  <div class="chip on">Lo sé</div>
-                </div>
-              </div>
-            </div>
-            <!-- 🚨 2026-09-06：Kevin 点名手机演示漏了单词本这个产品功能，从卡片文案到按钮
-                 都照真机字符串资源抄（wb_review_n/wb_front_fmt/wb_got/wb_card_retry，
-                 android/res/values/strings.xml），不是照记忆编的措辞。 -->
           </div>
 
           <!-- 🚨 键盘照抄真身：顶行 翻译·英文▾ |logo| 转写·历史（四格等宽），
