@@ -147,84 +147,6 @@ body{
 
 /* 背景：整页固定渐变 + 唯一一处柔光中心 */
 .bg{position:fixed;inset:0;z-index:-2;background:var(--bg-gradient)}
-/* 2026-09-06 十二次修：Kevin 看了实际效果指出三处问题，逐条改：
-   ①原来按 8 个 <section> 各配一张图，相邻两段图不一样、中间没配图的 .pivot
-     露出裸的 .bg 底色，切面之间出现一条"杠"。→ 现在改成**大区块**：几个连续
-     section 共用同一条 background 规则，物理上就是同一张图，不存在接缝。
-   ②原来 .steps/.privacy/.faq 刻意留白，Kevin 要全站覆盖，不留白——
-     新生成一张"独处/信任"主题的图给隐私+FAQ这个区块（内容本来就是讲隐私承诺）。
-   ③原来 8 段配 4 张、切换太频繁，"说得越多"那几张卡刚出现就被滚过去看不清。
-     →区块从 8 个粒度收成 4 个大区块，每张图要撑的滚动距离变长，同一张图
-     停留时间自然变长，不用另外调时长参数。
-   路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。 */
-/* 🚨 十四次修：Kevin 截图还是能看出"但它不止是一个输入法"那条 .pivot 有一条杠——
-   根因找到了，不是"没合并"：linear-gradient 的色标是按**每个元素自己的盒高**铺开的，
-   跟 background-attachment:fixed 无关（fixed 只管图片，不管渐变怎么分布）。
-   .hero 很高（100vh），.pivot 很矮（padding 60px），同一条三段式渐变在矮盒子里
-   几乎只显示得出最深那一段颜色，看起来就是一条更暗的杠——三个 section "用的是
-   同一条 CSS 规则"，但矮的那个渲染出来的样子不一样。改成**纯色蒙层**（不用渐变），
-   高矮不同的盒子叠出来的颜色就完全一致，物理上不可能再有色差。 */
-/* 2026-09-06 Kevin 第一次:「背景图片放得太大了，看不清楚在表达啥，缩小一点」——
-   试过把 size 从 cover 改成 46%，结果 Kevin 第二次反馈：「没有铺满，截了一半，很丑」。
-   46% 治好了"太大"但破了"铺满"——size 变小之后图片box比section本身小，
-   露出了周围的纯色，两个要求其实是矛盾的：cover 是"填满不留缝"的唯一保证方式，
-   任何更小的固定百分比都不能保证在所有视口下都填满。
-   → 改法：size 换回 cover（保证不留缝），用**加深蒙层不透明度**去压视觉份量——
-   图还是铺满整个区域，但透出来的部分更淡，不会显得"图被放得很大很抢"。 */
-/* 2026-09-06 Kevin:「第一个背景图怎么是静态的？往下拉的时候这些人的脑袋能不能跟着走，
-   看着随屏幕滚动往下走」—— background-attachment:fixed 本身就是把图钉死在视口上，
-   不会跟着滚动动。加一个由 JS 按滚动距离算出来的 --px1 偏移量去动 background-position，
-   图还是钉在视口上（.hero/.pivot/#difference 三段的拼接方式完全不变，不会把杠的问题
-   带回来），只是这个"钉的位置"本身会跟着滚动慢慢往下移，看起来就是人像在缓缓下沉。 */
-/* 2026-09-06 Kevin 第四次：「这个背景色啥也看不清楚，完全偏离我的想法。我要的是有温度、
-   看得出真的有人在用产品」——之前为了压"太大/太抢"把蒙层加到 .94，结果把人像本身也压没了，
-   矫枉过正。换了一张新图（Grok 按他给的参考图风格重新生成：两人暖光贴脸看手机、
-   深紫蓝色夜景光斑，构图/配色都直接照抄参考图），蒙层大幅调淡到 .45，人像清晰可辨。
-   🚨 2026-09-06 五审：Kevin 看完 4 段落地 + 两版完整 HTML 后拍板 Plan B（照片从首屏开始），
-   场景改成"按内容换场景"而不是"同一场景数人头"：首屏=一群人（团队感），
-   往下依次是旅行两人（scene_travel，原图已经是这个新配色，没有重做）、
-   亲子两人（scene_family，同样原图直接能用）、独处一人（scene_alone，收尾呼应隐私主张）。
-   人数是跟着场景走的，不是硬凑的倒计时。
-   下面 4 个区之前只有首屏调淡到 .45，其余三个区还留着旧的 .94/.95——
-   同一套"人真的看得清"标准要對齐到全部 4 个区，不能只对了第一屏。
-   首屏再按 Kevin「更饱满一点」的要求调到 .38，比其余区更清晰一点，
-   撑住"进门第一眼"的分量，其余区维持 .45 保证下面大段文字仍然好读。 */
-.hero, .pivot, #difference{
-  background:linear-gradient(rgba(30,23,83,.38),rgba(30,23,83,.38)),
-  url('/img/scene_group5_b.jpg') center calc(30% + var(--px1,0px))/cover no-repeat fixed;
-}
-#how, #where{
-  background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
-  url('/img/scene_travel.jpg') center/cover no-repeat fixed;
-}
-#memory{
-  background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
-  url('/img/scene_family.jpg') center/cover no-repeat fixed;
-}
-#privacy{
-  background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
-  url('/img/scene_alone.jpg') center/cover no-repeat fixed;
-}
-/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
-   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
-/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
-   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
-   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
-   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
-   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
-html{scroll-snap-type:y mandatory}
-.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
-  scroll-snap-align:start;scroll-snap-stop:always;
-}
-.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
-.seam-under,.seam-over{
-  position:absolute;inset:0;background-size:cover;background-position:center;
-  background-repeat:no-repeat;background-attachment:fixed;
-}
-.seam-over{
-  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
-  mask-image:linear-gradient(to bottom,transparent,#000 92%);
-}
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
   position:fixed;z-index:-1;width:860px;height:860px;border-radius:50%;
@@ -242,11 +164,7 @@ nav{
   display:flex;align-items:center;
 }
 nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-between}
-/* 2026-09-06 Kevin:「Transless 这个名字不是很明显，别人还以为产品叫'让世界听懂你'」——
-   之前(见下面 hero-eyebrow 那条注释)特意不在 hero 里重复品牌名，是对的、不改；
-   但 nav 里唯一那处的字号只有 20px，跟 h1 的 56px 差太远，第一屏扫一眼抓不住"这叫什么"。
-   加大加粗，仍然只出现这一处，不违反"只在导航出现一次"的判断。 */
-.brand{font-weight:700;font-size:28px;letter-spacing:.02em;color:var(--text-primary)}
+.brand{font-weight:500;font-size:20px;letter-spacing:.03em;color:var(--text-primary)}
 .brand .dot{color:var(--highlight)}
 .nav-link{
   font-size:14px;letter-spacing:.02em;color:var(--text-secondary);
@@ -333,12 +251,7 @@ h1{
 }
 .screen{
   border-radius:30px;overflow:hidden;
-  /* 2026-09-06 十一次修：Kevin 当面点名键盘演示卡（黑底）跟随手翻译/单词本演示卡
-     （紫底）配色不统一。查过 Theme.java:37-38，键盘真身背景确实是 #0B1230→#231843
-     这组更暗的深蓝紫，跟 Skin.java 的 --bg-gradient 是两套真实存在、都对的颜色——
-     不是我编的哪个错了。但这里是给人看的营销演示，统一观感比"技术上两端本来就
-     不同色"更重要，按 Kevin 的话统一成主 App 那套亮紫（--bg-gradient）。 */
-  background:var(--bg-gradient);
+  background:linear-gradient(180deg,var(--kb-bg-top),var(--kb-bg-mid) 50%,var(--kb-bg-bot));
   display:flex;flex-direction:column;
   aspect-ratio:9/19.5;
 }
@@ -412,21 +325,6 @@ h1{
 .screen[data-app="2"] .kb{display:none}
 .screen[data-app="3"]{background:var(--bg-gradient)}
 .screen[data-app="3"] .kb{display:none}
-/* ============ 面对面（FaceToFaceActivity）—— 大字居中 + 手动⇄切换方向 ============ */
-.screen[data-app="4"]{background:var(--bg-gradient)}
-.screen[data-app="4"] .kb{display:none}
-.f2f-big{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:10px;text-align:center;padding:0 12px}
-.f2f-side{font-size:10.5px;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
-.f2f-text{font-size:19px;font-weight:500;color:var(--text-primary);line-height:1.5}
-.f2f-keep{align-self:center;font-size:11px;padding:5px 12px;border-radius:999px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
-  color:var(--text-secondary);margin-bottom:8px}
-.f2f-langbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
-.f2f-langbar .chip{flex:0 1 auto}
-.f2f-swap{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
-  color:var(--text-secondary);font-size:13px;flex:0 0 26px}
 /* 2026-09-06 九次修：Kevin 要"沟通→收藏→存进单词本→复习"串成一条能一眼看懂的线，
    不是几张互不相关的功能卡。给这 4 张卡各加一个步骤角标 + 两处衔接处的高亮动画
    （收藏那一下、新条目那一下），autoplay 5.2s/张，不用手动划也能看完整条流程。 */
@@ -598,9 +496,6 @@ html[lang^="en"] .kb-row.top{gap:5px}
 
 /* ================= 通用区块 ================= */
 section{padding:110px 0}
-/* Kevin：单词本这节卡片一下就被滚过去，看不清"说得越多"那几句——
-   加大上下留白，让这节多占一点滚动距离，读的时间自然变长。 */
-#memory{padding:170px 0}
 .pivot{padding:0 0 60px;text-align:center}
 .pivot-line{
   font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
@@ -777,7 +672,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">怎么用</a>
       <a class="nav-link" href="#privacy">隐私</a>
-      <a class="nav-link" href="/faq.html">常见问题</a>
+      <a class="nav-link" href="#faq">常见问题</a>
       <span class="langsw" role="group" aria-label="语言">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -915,31 +810,6 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                  android/res/values/strings.xml），不是照记忆编的措辞。跟①②③用同一句话，
                  呼应"刚才收藏的这句，现在拿出来复习了"。 -->
 
-            <div class="feat" data-app="4" data-name="面对面 · 当场翻译给对方看">
-              <div class="tryui">
-                <div class="try-bar"><span class="back">&lsaquo; 返回</span><b>面对面</b></div>
-                <div class="f2f-big">
-                  <div class="f2f-side">正在显示：英文</div>
-                  <div class="f2f-text">How much is this? Could you do a bit better on the price?</div>
-                </div>
-                <div class="f2f-keep">+ 收进单词本</div>
-                <div class="f2f-langbar">
-                  <div class="chip">中文 &#9662;</div>
-                  <div class="f2f-swap">&#8644;</div>
-                  <div class="chip">English &#9662;</div>
-                </div>
-                <div class="try-mic-row">
-                  <div class="try-mic"><svg class="try-mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg></div>
-                </div>
-              </div>
-            </div>
-            <!-- 🚨 2026-09-06 十三次修：Kevin 当面点名手机演示漏了「面对面」——他明确说这是
-                 "很好的卖点"。这张卡逐行照真实代码建：`FaceToFaceActivity.java`（A定稿）——
-                 大字整屏居中显示译文(点大字触发朗读，没有单独朗读钮)、"+单词本"chip(出结果才显示)、
-                 语言条[中文▾]中间⇄[English▾]手动切换方向、麦克风纯图标钉底。跟"随手翻译"是
-                 两个不同的 App 屏，不放进①-④故事线（面对面是平行的另一个场景，不是"沟通"
-                 那条时间线的一部分），跟转写/朗读等放在后面当独立功能展示。 -->
-
             <!-- ============ 后面几张：不进故事线的其它功能，仍是真实截图级还原 ============ -->
             <div class="feat" data-sub="trans" data-sub-active="0" data-lang="英文"
                  data-mode="ts" data-speaking="0" data-name="转写 · 说什么就出什么">
@@ -1069,11 +939,6 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<div class="seam" aria-hidden="true">
-  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
-  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
-</div>
-
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1122,28 +987,30 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>回一封英文邮件</h3>
-        <p>中文想法说出来，直接是一封完整英文邮件。</p>
+        <p>心里那套中文逻辑说出来，出来的是有称呼、分段、有落款的一封完整邮件。</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>跟海外同事对齐</h3>
-        <p>复述一遍会议内容，直接出一份带编号的要点。</p>
+        <p>会开完了，把刚才说的复述一遍，直接得到一份带编号的要点。</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>把还没想清楚的话，说成能用的中文</h3>
-        <p><b>转写</b>不翻译，把口水话归成几条能用的中文。</p>
+        <p>开完会、路上想到一件事，先说出来再说。<b>转写</b>不翻译 ——
+        「整理」替你去掉「呃…然后…就是说」，归成几条；「逐字」一字不改。</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>已经打好的中文，不用重说一遍</h3>
-        <p><b>译光标前的中文</b>，一键换成对方读得懂的那一版。</p>
+        <p>微信框里中文都打完了，才想起对方看不懂。
+        <b>译光标前的中文</b>，原地换成对方读得懂的那一版。</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>临时当个翻译</h3>
-        <p>点底部<b>「面对面」</b>，译文大字整屏显示，点一下能<b>朗读</b>，
-        <b>「⇄」</b>切换翻译方向。</p>
+        <p>点底部<b>「面对面」</b>，不用切输入法。最新一句译文<b>大字整屏居中</b>，方便对面看清；
+        点一下大字就能<b>朗读</b>；中间的<b>「⇄」</b>手动切换翻译方向；查到的表达还能一键收进单词本。</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1151,23 +1018,16 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
-             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
-             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>在国外点菜、问路</h3>
-        <p>对手机说中文，出来是当地语言，点朗读<b>用母语念给对方听。</b></p>
+        <p>对着手机说中文，出来是当地语言 —— 再点一下朗读，<b>用母语嗓音念给对方听</b>。不用比划，也不用把手机怼到人脸前。</p>
       </div>
     </div>
   </div>
 </section>
-
-<div class="seam" aria-hidden="true">
-  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
-  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
-</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1179,26 +1039,21 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>查过、用过的表达，自动收进单词本</h3>
-        <p>查过的词、纠正过的说法，一键收进<b>单词本。</b></p>
+        <p>翻译时查过的词、纠正过的说法，一键收进<b>单词本</b>，不用另外找地方记。</p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>系统挑你还没记熟的，拿出来复习</h3>
-        <p>卡片式复习：记熟了点过，没记熟的它会挑着再来。</p>
+        <p>卡片式复习：想起来了点<b>「想起来了」</b>，还没记熟点<b>「再试一次」</b>，它会挑着来。</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>说得越多，自己脱口而出的也越多</h3>
-        <p>从「查词」到「自己脱口而出」，这条闭环是 Transless 独有的。</p>
+        <p>从「查词、靠翻译」到「自己想起来、直接说出口」，这条闭环是 Transless 独有的。</p>
       </div>
     </div>
   </div>
 </section>
-
-<div class="seam" aria-hidden="true">
-  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
-  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
-</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1237,17 +1092,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
             <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
         </div>
         <div>
-          <h3>历史记录默认只留在这台设备上</h3>
-          <p>为方便你自己回看，App 会在<b>你的设备本地</b>保存最近的记录。想在手机和电脑之间互通，可以自己<b>开启云同步</b>——每台设备都要单独确认一次，不开就不会上传，我们也看不到。我们不建立对话存档、不做用户画像，也<b>不要</b>你的通讯录、相册和位置。</p>
+          <h3>历史记录只留在你手机上</h3>
+          <p>为方便你自己回看，App 会在<b>你的设备本地</b>保存最近的记录 —— 从没有传到我们的服务器，我们也看不到。我们不建立对话存档、不做用户画像，也<b>不要</b>你的通讯录、相册和位置。</p>
           <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
                本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
-               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。
-               🚨🚨 2026-09-06 深夜再改：2.1 转 Kevin 拍板——历史/单词本/常用词要上云同步
-               （跨设备互通，他说是刚需）。上一版那句"绝对不上传"型的承诺一旦同步上线就是
-               不实陈述。改成"默认本地、云同步是用户自己开的、每台设备单独确认"——
-               隐私卖点还在（默认不传），只是从"绝对不传"改成"你不开就不传"，说的是真话。
-               2.1 判据（见 tools/gate_privacy_promise.py）：①不能再出现那句绝对不上传的
-               旧承诺②必须还能查到"默认"/"本地"，不许把隐私卖点整个删掉③中英两版说同一件事。 -->
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
         </div>
       </div>
       <div class="pv">
@@ -1273,9 +1122,44 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
-     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
-     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
+<!-- ============ 屏 6 · FAQ ============ -->
+<section id="faq" class="faq reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>你多半想问的几件事</h2>
+    <div class="faq-list">
+      <div class="qa">
+        <h3>要联网吗？能离线用吗？</h3>
+        <p>要联网。语音识别和整理都在服务器上做，离线用不了。手写输入那部分是离线的，模型在你手机上。</p>
+      </div>
+      <div class="qa">
+        <h3>我说的话会被存下来吗？</h3>
+        <p>录音识别完当场丢弃，整理结果在服务器内存里最多 10 分钟。App 会在你手机本地留一份历史方便自己回看，但那份记录不会传到我们这边，我们看不到。</p>
+      </div>
+      <div class="qa">
+        <h3>需要注册吗？</h3>
+        <p>现在不用，装上就能用。以后会加登录，是为了让你换手机时能恢复 —— 到时候也不会强制，不登录照样能用。</p>
+      </div>
+      <div class="qa">
+        <h3>支持哪些语言？</h3>
+        <p>现在 31 种，含英文、日文、法文、德文、西班牙文、韩文、粤语、泰文、阿拉伯文、俄文等主流语言。说中文，选一个目标语言就行。<b>朗读会按文字本身的语种自动挑母语嗓音</b> —— 出日文就用日文嗓子念，不会拿英文腔念日文。
+        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
+      </div>
+      <div class="qa">
+        <h3>能在哪些 App 里用？</h3>
+        <p>它是一个真正的输入法，不是单独的翻译 App。任何能打字的地方都能用 —— 微信、邮件、备忘录、浏览器。</p>
+      </div>
+      <div class="qa">
+        <h3>翻得不对怎么办？</h3>
+        <p>译文由 AI 生成，会有错。所以内置了打字键盘（拼音／五笔／手写），随时能改；也可以切「逐字转录」档，那一档一个字都不改，只补标点。</p>
+      </div>
+      <div class="qa">
+        <h3>怎么完全卸载？</h3>
+        <p>先在系统「输入法设置」里把 Transless 关掉，再正常卸载 App。卸载即终止全部处理，我们这边没有需要你来删的档案。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1283,7 +1167,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>让世界听懂你</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="/faq.html">常见问题</a>
+      <a class="cta" href="#faq">常见问题</a>
       <span class="cta-note">现在免费。内测报名通道正在开通，开了会放在这里。</span>
     </div>
   </div>
@@ -1317,26 +1201,6 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 </footer>
 
 <script>
-/* 首屏背景视差：滚动时人像跟着缓缓下沉，不是钉死不动的静态图。
-   只动 CSS 变量 --px1（background-position 的偏移量），不碰 fixed 定位机制本身——
-   .hero/.pivot/#difference 三段共用同一条背景规则，偏移量对三段一起生效，
-   接缝处的拼接关系不受影响（不会把杠的问题带回来）。 */
-(function(){
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var root = document.documentElement;
-  var ticking = false;
-  function apply(){
-    ticking = false;
-    var px = Math.min(window.scrollY * 0.25, 220); // 封顶，长页面滚到底也不会跑出画面
-    root.style.setProperty('--px1', px + 'px');
-  }
-  function onScroll(){
-    if (!ticking) { ticking = true; requestAnimationFrame(apply); }
-  }
-  apply();
-  window.addEventListener('scroll', onScroll, {passive: true});
-})();
-
 /* 功能轮播。原生 setInterval，零依赖。
    每切一屏，键盘的第二排 / 语言按钮 / 模式 Tab / 朗读高亮 / 波形
    都跟着变成那个功能的真实样子 —— 演示卡是真键盘的复刻，不能只换文字。 */
@@ -1510,6 +1374,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-d5d4b6077c -->
+<!-- build-0b32141d48 -->
 </body>
 </html>
