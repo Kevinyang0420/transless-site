@@ -1314,7 +1314,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   var ticking = false;
   function apply(){
     ticking = false;
-    var px = Math.min(window.scrollY * 0.12, 160); // 封顶，长页面滚到底也不会跑出画面
+    var px = Math.min(window.scrollY * 0.25, 220); // 封顶，长页面滚到底也不会跑出画面
     root.style.setProperty('--px1', px + 'px');
   }
   function onScroll(){
