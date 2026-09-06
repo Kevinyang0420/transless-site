@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">點樣用</a>
       <a class="nav-link" href="#privacy">私隱</a>
-      <a class="nav-link" href="#faq">常見問題</a>
+      <a class="nav-link" href="/faq.html">常見問題</a>
       <span class="langsw" role="group" aria-label="語言">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1097,30 +1122,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>覆一封英文電郵</h3>
-        <p>心裡那套中文邏輯講出來，出來的是有稱呼、分段、有落款的一封完整電郵。</p>
+        <p>中文諗法講出嚟，直接係一封完整英文郵件。</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>同總部或海外同事對齊</h3>
-        <p>會開完了，把剛才講過的覆述一次，直接得到一份有編號的重點。</p>
+        <p>覆述一次開會內容，直接出一份帶編號嘅要點。</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>未想清楚的話，講成可以用的文字</h3>
-        <p>開完會、在路上想起一件事，先講出來再說。<b>轉寫</b>不翻譯 ——
-        「整理」替你去掉「呃…跟住…即係」，歸成幾條；「逐字」一個字都不改。</p>
+        <p><b>轉寫</b>唔翻譯，將口水話歸埋成幾條啱用嘅中文。</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>已經打好的中文，不用重講一次</h3>
-        <p>WhatsApp 裡中文都打完了，才記起對方看不懂。
-        <b>譯游標前面的中文</b>，原地換成對方讀得懂的那一版。</p>
+        <p><b>譯游標前面的中文</b>，一鍵換成對方睇得明嘅嗰一版。</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>臨時做個翻譯</h3>
-        <p>撳底部<b>「面對面」</b>，唔使切輸入法。最新嗰句譯文<b>大字全屏置中</b>，方便對方睇清楚；
-        㩒一下大字就可以<b>朗讀</b>；中間嗰個<b>「⇄」</b>手動切換翻譯方向；查到嘅講法仲可以一撳收入單詞本。</p>
+        <p>撳底部<b>「面對面」</b>，譯文大字全螢幕顯示，撳一下識<b>朗讀</b>，
+        <b>「⇄」</b>切換翻譯方向。</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1128,16 +1151,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>在外地叫東西吃、問路</h3>
-        <p>對住手機講中文，出來是當地語言 —— 再撳一下朗讀，<b>用母語聲線讀給對方聽</b>。不用比手勢，也不用把手機湊到人面前。</p>
+        <p>對住手機講中文，出嚟係當地語言，撳<b>朗讀用母語讀畀對方聽。</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1149,21 +1179,26 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>查過、用過嘅講法，自動收入單詞本</h3>
-        <p>翻譯時查過嘅詞、糾正過嘅講法，一撳就收入<b>單詞本</b>，唔使另外揾地方記。</p>
+        <p>查過嘅詞、糾正過嘅講法，一鍵收埋入<b>單詞本。</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>系統揀你仲未記熟嘅，攞出嚟溫習</h3>
-        <p>卡片式溫習：諗返起咗撳<b>「諗返起咗」</b>，仲未記熟撳<b>「再試一次」</b>，佢會揀住嚟。</p>
+        <p>卡片式溫習：記熟咗撳過，仲未記熟嘅佢會揀住再嚟。</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>講得越多，自己脫口而出嘅都越多</h3>
-        <p>由「查詞、靠翻譯」到「自己諗返起、直接講出口」，呢條閉環係 Transless 獨有嘅。</p>
+        <p>由「查詞」到「自己脫口而出」，呢條閉環係 Transless 獨有嘅。</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1238,44 +1273,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>你多半想問的幾件事</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>要不要上網？可以離線用嗎？</h3>
-        <p>要上網。語音辨識和整理都在伺服器做，離線用不了。手寫輸入那部分是離線的，模型在你部手機裡。</p>
-      </div>
-      <div class="qa">
-        <h3>我講的話會被存起來嗎？</h3>
-        <p>錄音一辨識完即刻丟棄，整理好嘅結果喺服務器記憶體度最多留 10 分鐘。App 預設會喺你手機本機留返一份記錄方便自己返睇；想喺幾部裝置之間互通，可以自己開啟雲端同步，每部裝置要單獨確認一次，唔開就唔會上傳。</p>
-      </div>
-      <div class="qa">
-        <h3>要註冊嗎？</h3>
-        <p>現在不用，裝了就能用。之後會加登入，是為了讓你換手機時可以恢復 —— 到時也不會強制，不登入一樣用得。</p>
-      </div>
-      <div class="qa">
-        <h3>支援哪些語言？</h3>
-        <p>而家 31 種，包括英文、日文、法文、德文、西班牙文、韓文、粵語、泰文、阿拉伯文、俄文等主流語言。中文一講，揀一個目標語言就得。<b>朗讀會按文字本身的語種自動揀母語聲線</b> —— 出日文就用日文聲線讀，不會用英文腔讀日文。
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>可以在哪些 App 裡用？</h3>
-        <p>它是一個真正的輸入法，不是獨立的翻譯 App。任何打得字的地方都用得 —— WhatsApp、電郵、備忘錄、瀏覽器。</p>
-      </div>
-      <div class="qa">
-        <h3>譯錯了怎麼辦？</h3>
-        <p>譯文由 AI 生成，會有錯。所以內置了打字鍵盤（拼音／五筆／手寫），隨時能改；也可以切「逐字轉錄」檔，那一檔一個字都不改，只補標點。</p>
-      </div>
-      <div class="qa">
-        <h3>怎樣完全解除安裝？</h3>
-        <p>先在系統「輸入法設定」裡關掉 Transless，再照常解除安裝個 App。解除安裝即終止全部處理，我們這邊沒有需要你來刪的檔案。</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1283,7 +1283,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>讓世界聽懂你</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">常見問題</a>
+      <a class="cta" href="/faq.html">常見問題</a>
       <span class="cta-note">現在免費。內測報名通道正在開通，開了會放在這裡。</span>
     </div>
   </div>
