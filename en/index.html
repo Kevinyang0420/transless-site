@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">How it works</a>
       <a class="nav-link" href="#privacy">Privacy</a>
-      <a class="nav-link" href="#faq">FAQ</a>
+      <a class="nav-link" href="/faq.html">FAQ</a>
       <span class="langsw" role="group" aria-label="Language">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1097,29 +1122,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>Reply to an email in English</h3>
-        <p>Say it in Chinese the way you think it — out comes a full email with a greeting, paragraphs and a sign-off.</p>
+        <p>Say it in Chinese, get back a complete English email.</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>Get aligned with HQ or overseas colleagues</h3>
-        <p>After the meeting, say it back once — you get a numbered summary.</p>
+        <p>Recap what was said in the meeting, get a numbered list of key points.</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>Turn half-formed thoughts into usable text</h3>
-        <p>After a meeting, on the way somewhere — just say it first. <b>Transcribe</b> No translation —
-        Clean up drops the “uh… and then… like” and groups it into points; Verbatim changes nothing.</p>
+        <p><b>Transcribe</b> doesn't translate — it turns rambling into a few lines of usable text.</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>Chinese you've already typed — no need to say it again</h3>
-        <p>You've typed the whole thing in Chinese, then remember they can't read it.
-        <b>Translate what you already typed</b> — swapped in place for the version they can read.</p>
+        <p><b>Translate what you already typed</b> — swap it for a version they'll understand, in one tap.</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>Be the interpreter for a minute</h3>
-        <p>Tap <b>"Face to Face"</b>, no keyboard switch needed. The latest translated line<b>sits centered in large text</b>, easy for the other person to read; tap the large text for<b>Speak</b>; the<b>「⇄」</b>in the middle switches the direction manually; anything you look up can also be saved to your Wordbook with one tap.</p>
+        <p>Tap <b>"Face to Face"</b>, the translation fills the screen in big text so they can read it, tap it to <b>Speak</b>，
+        <b>「⇄」</b> switches direction.</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1127,16 +1151,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>Order food and ask directions abroad</h3>
-        <p>Speak Chinese at your phone, out comes the local language — then tap Read aloud and<b>it speaks in a native voice</b>. No gestures, no shoving the phone in anyone's face.</p>
+        <p>Speak Chinese at your phone, out comes the local language — tap to hear it <b>read aloud in a native voice.</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1148,21 +1179,26 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>What you look up gets saved to your Wordbook automatically</h3>
-        <p>Words you looked up, phrasing you corrected — one tap saves them to your <b>Wordbook</b>, no need to jot them down elsewhere.</p>
+        <p>Words you've looked up or corrected go straight into your <b>Wordbook.</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>The system brings back what you haven't nailed yet</h3>
-        <p>Flashcard review: tap<b>“Got it”</b> if you remember it, or <b>“Try again”</b> if you don't — it picks what to show you.</p>
+        <p>Flip through cards: mark what you've got down, and it brings back what you haven't.</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>The more you speak, the more comes out on its own</h3>
-        <p>From looking words up to saying them without thinking — that loop is what makes Transless different.</p>
+        <p>From looking words up to saying them yourself — that loop is unique to Transless.</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1236,44 +1272,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>The things you're probably wondering</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>Does it need a connection? Can I use it offline?</h3>
-        <p>Yes, it needs one. Recognition and rewriting run on our servers. Handwriting input is the exception — that model runs on your phone.</p>
-      </div>
-      <div class="qa">
-        <h3>Is what I say stored anywhere?</h3>
-        <p>Recordings are discarded as soon as they're recognized, and the polished result stays in server memory for at most 10 minutes. By default, the app keeps a local history on your phone so you can look back; to sync across devices, you can turn on cloud sync yourself — each device has to confirm it separately, and nothing is uploaded unless you do.</p>
-      </div>
-      <div class="qa">
-        <h3>Do I need an account?</h3>
-        <p>Not now — install and go. Sign-in is coming so you can restore things on a new phone. It won't be mandatory; it'll still work without one.</p>
-      </div>
-      <div class="qa">
-        <h3>Which languages are supported?</h3>
-        <p>31 languages and counting &mdash; English, Japanese, French, German, Spanish, Korean, Cantonese, Thai, Arabic, Russian, and more. Pick a target language, then just speak.<b> Read-aloud picks a native voice to match the text</b>  — Japanese output gets a Japanese voice, not an English accent.
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>Which apps does it work in?</h3>
-        <p>It's a real keyboard, not a separate translation app. Use it anywhere you can type — WhatsApp, email, notes, your browser.</p>
-      </div>
-      <div class="qa">
-        <h3>What if it gets the translation wrong?</h3>
-        <p>AI translation makes mistakes. That's why there's a built-in typing keyboard (Pinyin / Wubi / handwriting) so you can fix anything on the spot — or switch to Verbatim, which changes nothing except punctuation.</p>
-      </div>
-      <div class="qa">
-        <h3>How do I remove it completely?</h3>
-        <p>Turn Transless off in your system keyboard settings first, then uninstall as usual. Uninstalling stops all processing — there's nothing on our side for you to delete.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1281,7 +1282,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>Say it. They'll read it.</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">FAQ</a>
+      <a class="cta" href="/faq.html">FAQ</a>
       <span class="cta-note">Free for now. Beta sign-up is opening soon — it'll appear here.</span>
     </div>
   </div>
