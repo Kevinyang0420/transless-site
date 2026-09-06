@@ -1097,30 +1097,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>回一封英文邮件</h3>
-        <p>心里那套中文逻辑说出来，出来的是有称呼、分段、有落款的一封完整邮件。</p>
+        <p>中文想法说出来，直接是一封完整英文邮件。</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>跟海外同事对齐</h3>
-        <p>会开完了，把刚才说的复述一遍，直接得到一份带编号的要点。</p>
+        <p>复述一遍会议内容，直接出一份带编号的要点。</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>把还没想清楚的话，说成能用的中文</h3>
-        <p>开完会、路上想到一件事，先说出来再说。<b>转写</b>不翻译 ——
-        「整理」替你去掉「呃…然后…就是说」，归成几条；「逐字」一字不改。</p>
+        <p><b>转写</b>不翻译，把口水话归成几条能用的中文。</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>已经打好的中文，不用重说一遍</h3>
-        <p>微信框里中文都打完了，才想起对方看不懂。
-        <b>译光标前的中文</b>，原地换成对方读得懂的那一版。</p>
+        <p><b>译光标前的中文</b>，一键换成对方读得懂的那一版。</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>临时当个翻译</h3>
-        <p>点底部<b>「面对面」</b>，不用切输入法。最新一句译文<b>大字整屏居中</b>，方便对面看清；
-        点一下大字就能<b>朗读</b>；中间的<b>「⇄」</b>手动切换翻译方向；查到的表达还能一键收进单词本。</p>
+        <p>点底部<b>「面对面」</b>，译文大字整屏显示，点一下能<b>朗读</b>，
+        <b>「⇄」</b>切换翻译方向。</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1128,12 +1126,14 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>在国外点菜、问路</h3>
-        <p>对着手机说中文，出来是当地语言 —— 再点一下朗读，<b>用母语嗓音念给对方听</b>。不用比划，也不用把手机怼到人脸前。</p>
+        <p>对手机说中文，出来是当地语言，点朗读<b>用母语念给对方听</b>。</p>
       </div>
     </div>
   </div>
@@ -1149,17 +1149,17 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>查过、用过的表达，自动收进单词本</h3>
-        <p>翻译时查过的词、纠正过的说法，一键收进<b>单词本</b>，不用另外找地方记。</p>
+        <p>查过的词、纠正过的说法，一键收进<b>单词本</b>。</p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>系统挑你还没记熟的，拿出来复习</h3>
-        <p>卡片式复习：想起来了点<b>「想起来了」</b>，还没记熟点<b>「再试一次」</b>，它会挑着来。</p>
+        <p>卡片式复习：记熟了点过，没记熟的它会挑着再来。</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>说得越多，自己脱口而出的也越多</h3>
-        <p>从「查词、靠翻译」到「自己想起来、直接说出口」，这条闭环是 Transless 独有的。</p>
+        <p>从「查词」到「自己脱口而出」，这条闭环是 Transless 独有的。</p>
       </div>
     </div>
   </div>
@@ -1510,6 +1510,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-7f7c479d9c -->
+<!-- build-2997928ffd -->
 </body>
 </html>
