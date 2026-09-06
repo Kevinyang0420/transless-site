@@ -107,6 +107,15 @@ button:disabled{opacity:.5;cursor:not-allowed}
     <h2 id="step3title"></h2>
     <div id="msg3"></div>
     <button class="btn-secondary" id="btnCancel" hidden>撤销删除请求</button>
+    <div id="cancelBox" hidden>
+      <p style="margin-top:16px">撤销是敏感操作，需要重新验证一次身份。</p>
+      <button class="btn-secondary" id="btnCancelSend">重新发送验证码</button>
+      <div id="cancelStep2" hidden style="margin-top:12px">
+        <label for="cancelCode">验证码</label>
+        <input id="cancelCode" type="text" inputmode="numeric" placeholder="6位数字" autocomplete="one-time-code">
+        <button class="btn-danger" id="btnCancelConfirm">确认撤销</button>
+      </div>
+    </div>
   </div>
 
   <p class="foot">
@@ -126,6 +135,15 @@ function showMsg(el, text, type) {
   el.innerHTML = `<div class="msg ${type}">${text}</div>`;
 }
 function clearMsg(el) { el.innerHTML = ""; }
+
+// 429 是"这个网络请求太多"，不是"操作失败"——后端 note 描述具体状态，
+// 二者都没有时才落到 fallback。三处 API 调用统一走这条，别各写各的文案。
+function statusMsg(status, data, fallback) {
+  if (status === 429) {
+    return "这个网络的请求太多，请稍后再试" + (data.retry_after ? `（${data.retry_after}秒后）` : "");
+  }
+  return data.note || data.error || fallback || "操作失败，请稍后重试";
+}
 
 let state = { kind: "", target: "" };
 
@@ -159,7 +177,7 @@ $("btnSend").addEventListener("click", async () => {
     return;
   }
   if (status === 429) {
-    showMsg(msg1, "请求太频繁，请稍后再试" + (data.retry_after ? `（${data.retry_after}秒后）` : ""), "error");
+    showMsg(msg1, statusMsg(status, data), "error");
     return;
   }
   if (status !== 200) {
@@ -187,6 +205,10 @@ $("btnConfirm").addEventListener("click", async () => {
   });
   $("btnConfirm").disabled = false;
 
+  if (status === 429) {
+    showMsg(msg2, statusMsg(status, data), "error");
+    return;
+  }
   if (status !== 200) {
     showMsg(msg2, data.error || "操作失败，请检查验证码是否正确", "error");
     return;
@@ -194,27 +216,59 @@ $("btnConfirm").addEventListener("click", async () => {
   step2.hidden = true; step3.hidden = false;
   if (data.stage === "pending") {
     $("step3title").textContent = "已进入删除冷静期";
-    showMsg(msg3, `你的账号将在 ${data.cooloff_days || 7} 天后永久删除。期间可随时撤销。`, "success");
+    showMsg(msg3, data.note || `你的账号将在 ${data.cooloff_days || 7} 天后永久删除。期间可随时撤销。`, "success");
     $("btnCancel").hidden = false;
+  } else if (data.stage === "no_account") {
+    // 🚨 这个号名下没有账号——绝不能落进"操作完成"，否则审核员/真实用户会以为删掉了
+    // 一个根本不存在的账号。1.1 2026-09-07 指出的坑。
+    $("step3title").textContent = "无法处理";
+    showMsg(msg3, data.note || "这个号码/邮箱名下没有账号。", "info");
   } else {
+    // 兜底：后端每种 stage 都带 note，显示它就不会有空白分支
     $("step3title").textContent = "操作完成";
-    showMsg(msg3, "请求已处理。", "success");
+    showMsg(msg3, data.note || "请求已处理。", "success");
   }
 });
 
-$("btnCancel").addEventListener("click", async () => {
+// 撤销要重新验一次身份：先点这个按钮换出下面的"重新发码"表单，
+// 不复用第二步用过的码——那个码验一次就用过即焚，重放必然回"验证码不对"。
+$("btnCancel").addEventListener("click", () => {
+  $("btnCancel").hidden = true;
+  $("cancelBox").hidden = false;
+});
+
+$("btnCancelSend").addEventListener("click", async () => {
   clearMsg(msg3);
-  $("btnCancel").disabled = true;
-  const { status, data } = await callApi("/api/web/account-delete/confirm", {
-    kind: state.kind, target: state.target, code: $("code").value.trim(), cancel: true
+  $("btnCancelSend").disabled = true;
+  const { status, data } = await callApi("/api/web/account-delete/request", {
+    kind: state.kind, target: state.target
   });
-  $("btnCancel").disabled = false;
-  if (status === 200 && data.cancelled) {
-    showMsg(msg3, "已撤销，账号删除请求取消。", "success");
-    $("btnCancel").hidden = true;
-  } else {
-    showMsg(msg3, data.error || "撤销失败，请重新验证后再试", "error");
+  $("btnCancelSend").disabled = false;
+
+  if (status !== 200 || (status === 200 && data.enabled === false)) {
+    showMsg(msg3, statusMsg(status, data, "发送失败，请稍后重试"), "error");
+    return;
   }
+  showMsg(msg3, "新验证码已发送，请查收。", "success");
+  $("cancelStep2").hidden = false;
+});
+
+$("btnCancelConfirm").addEventListener("click", async () => {
+  const code = $("cancelCode").value.trim();
+  if (!code) { showMsg(msg3, "请输入验证码", "error"); return; }
+
+  $("btnCancelConfirm").disabled = true;
+  const { status, data } = await callApi("/api/web/account-delete/confirm", {
+    kind: state.kind, target: state.target, code, cancel: true
+  });
+  $("btnCancelConfirm").disabled = false;
+
+  if (status === 200 && data.stage === "none") {
+    showMsg(msg3, data.note || "已撤销，账号删除请求取消。", "success");
+    $("cancelBox").hidden = true;
+    return;
+  }
+  showMsg(msg3, statusMsg(status, data, "撤销失败，请重新验证后再试"), "error");
 });
 </script>
 </body>
