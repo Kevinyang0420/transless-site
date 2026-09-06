@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">怎么用</a>
       <a class="nav-link" href="#privacy">隐私</a>
-      <a class="nav-link" href="#faq">常见问题</a>
+      <a class="nav-link" href="/faq.html">常见问题</a>
       <span class="langsw" role="group" aria-label="语言">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1133,11 +1158,16 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>在国外点菜、问路</h3>
-        <p>对手机说中文，出来是当地语言，点朗读<b>用母语念给对方听</b>。</p>
+        <p>对手机说中文，出来是当地语言，点朗读<b>用母语念给对方听。</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1149,7 +1179,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>查过、用过的表达，自动收进单词本</h3>
-        <p>查过的词、纠正过的说法，一键收进<b>单词本</b>。</p>
+        <p>查过的词、纠正过的说法，一键收进<b>单词本。</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
@@ -1164,6 +1194,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1238,44 +1273,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>你多半想问的几件事</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>要联网吗？能离线用吗？</h3>
-        <p>要联网。语音识别和整理都在服务器上做，离线用不了。手写输入那部分是离线的，模型在你手机上。</p>
-      </div>
-      <div class="qa">
-        <h3>我说的话会被存下来吗？</h3>
-        <p>录音识别完当场丢弃，整理结果在服务器内存里最多 10 分钟。App 默认会在你手机本地留一份历史方便自己回看；想在多台设备间互通，可以自己开启云同步，每台设备要单独确认一次，不开就不会上传。</p>
-      </div>
-      <div class="qa">
-        <h3>需要注册吗？</h3>
-        <p>现在不用，装上就能用。以后会加登录，是为了让你换手机时能恢复 —— 到时候也不会强制，不登录照样能用。</p>
-      </div>
-      <div class="qa">
-        <h3>支持哪些语言？</h3>
-        <p>现在 31 种，含英文、日文、法文、德文、西班牙文、韩文、粤语、泰文、阿拉伯文、俄文等主流语言。说中文，选一个目标语言就行。<b>朗读会按文字本身的语种自动挑母语嗓音</b> —— 出日文就用日文嗓子念，不会拿英文腔念日文。
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>能在哪些 App 里用？</h3>
-        <p>它是一个真正的输入法，不是单独的翻译 App。任何能打字的地方都能用 —— 微信、邮件、备忘录、浏览器。</p>
-      </div>
-      <div class="qa">
-        <h3>翻得不对怎么办？</h3>
-        <p>译文由 AI 生成，会有错。所以内置了打字键盘（拼音／五笔／手写），随时能改；也可以切「逐字转录」档，那一档一个字都不改，只补标点。</p>
-      </div>
-      <div class="qa">
-        <h3>怎么完全卸载？</h3>
-        <p>先在系统「输入法设置」里把 Transless 关掉，再正常卸载 App。卸载即终止全部处理，我们这边没有需要你来删的档案。</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1283,7 +1283,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>让世界听懂你</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">常见问题</a>
+      <a class="cta" href="/faq.html">常见问题</a>
       <span class="cta-note">现在免费。内测报名通道正在开通，开了会放在这里。</span>
     </div>
   </div>
@@ -1510,6 +1510,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-2997928ffd -->
+<!-- build-d5d4b6077c -->
 </body>
 </html>
