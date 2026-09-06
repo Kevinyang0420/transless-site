@@ -409,6 +409,11 @@ html[lang^="en"] .kb-row.top{gap:5px}
 
 /* ================= 通用区块 ================= */
 section{padding:110px 0}
+.pivot{padding:0 0 60px;text-align:center}
+.pivot-line{
+  font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
+  color:var(--text-cn);
+}
 .eyebrow{
   font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--text-secondary);margin-bottom:20px;
@@ -594,12 +599,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
 <header class="hero">
   <div class="wrap">
     <div class="hero-left">
-      <div class="hero-eyebrow">Voice keyboard &middot; Speak once, 31 languages ready</div>
+      <div class="hero-eyebrow">Voice keyboard &middot; Speak Chinese, out comes any of 31 languages</div>
       <h1>Say it. They'll read it.</h1>
       <div class="slogan-en">No Language In Between</div>
-      <p class="lede">Say what's on your mind &mdash; it comes out fluent, in the language you need.<br>Bullets where bullets belong. No need to plan the sentence first.</p>
-      <!-- 🚨 2026-09-06 二次修：昨晚只改了meta/FAQ，漏了首屏最显眼的这句——H1已是"让世界听懂你"，
-           紧跟着的lede却还写着"说中文口水话/上屏"，是Kevin否掉的原句，被 Kevin 当场抓出来。 -->
+      <p class="lede">Hold to talk. What comes out is text ready to send — in WeChat, email, any app.<br>Say what's on your mind, and it comes out as that language, spoken naturally, broken into lines where it should be.</p>
+      <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
+           "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
+           不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
       <div class="cta-row">
         <a class="cta" href="#how">See how it works</a>
         <span class="cta-note">Android beta &middot; iOS queued</span>
@@ -733,6 +739,13 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </header>
 
+<!-- ============ 过渡 · 不止是输入法 ============ -->
+<section class="pivot">
+  <div class="wrap">
+    <p class="pivot-line">But it's more than a keyboard.</p>
+  </div>
+</section>
+
 <!-- ============ 屏 2 · 结果对比 ============ -->
 <section id="difference" class="compare reveal" data-observe>
   <div class="wrap">
@@ -854,6 +867,32 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
         <div class="tag">Travel</div>
         <h3>Order food and ask directions abroad</h3>
         <p>Speak Chinese at your phone, out comes the local language — then tap Read aloud and<b>it speaks in a native voice</b>. No gestures, no shoving the phone in anyone's face.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
+<section id="memory" class="scenes reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">Beyond translation</div>
+    <h2>What you've said, it remembers;<span class="dim">what you've learned, you can say yourself.</span></h2>
+    <p class="sub">Transless isn't just a translator — it's also a wordbook that grows on its own. The longer you use it, the less you'll need it.</p>
+    <div class="scenes-grid">
+      <div class="card scene">
+        <div class="tag">Collect</div>
+        <h3>What you look up gets saved to your Wordbook automatically</h3>
+        <p>Words you looked up, phrasing you corrected — one tap saves them to your <b>Wordbook</b>, no need to jot them down elsewhere.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Review</div>
+        <h3>The system brings back what you haven't nailed yet</h3>
+        <p>Flashcard review: tap <b>“Got it”</b> if you remember it, or <b>“Try again”</b> if you don't — it picks what to show you.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Speak</div>
+        <h3>The more you speak, the more comes out on its own</h3>
+        <p>From looking words up to saying them without thinking — that loop is what makes Transless different.</p>
       </div>
     </div>
   </div>
