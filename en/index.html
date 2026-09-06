@@ -873,12 +873,15 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>Be the interpreter for a minute</h3>
-        <p>Tap <b>"Face to Face"</b> at the bottom, no keyboard switching needed. Speak Chinese, show them the translation;
-        when they reply, it figures out who's speaking and translates it back to your language.
-        There's also <b>Continuous mode </b>for back-and-forth turns, and <b>Big text </b>so they can read it across a desk.</p>
-        <!-- 🚨 2026-09-06 更新：面对面翻译已升级成底部独立 Tab（此前是随手翻译里的
-             ⇄按钮切换），改成自动判断说话方而不是手动点切换。这一段是按 STATE.md
-             的文字描述改的，没有对着真机截图核对过，建议 2.1/2.2 抽空扫一眼版式描述是否精确。 -->
+        <p>Tap <b>"Face to Face"</b>, no keyboard switch needed. The latest translated line<b>sits centered in large text</b>, easy for the other person to read; tap the large text for<b>Speak</b>; the<b>「⇄」</b>in the middle switches the direction manually; anything you look up can also be saved to your Wordbook with one tap.</p>
+        <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
+             这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
+             FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
+             （langBar 里的 swap 按钮），且朗读是**点大字触发**（"A定稿：去掉了单独的
+             朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
+             一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
+             iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
