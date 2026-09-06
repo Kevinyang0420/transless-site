@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>删除账号 - Transless</title>
+<style>
+:root{
+  --bg-gradient: linear-gradient(165deg,#0F1B4F 0%,#2A1358 45%,#431661 100%);
+  --accent-from:#8B5CF6;
+  --accent-to:#6D3FB0;
+  --highlight:#B98BE8;
+  --text-primary:#F4F1FB;
+  --text-secondary:#A99DC6;
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(185,139,232,.15);
+  --danger:#F87171;
+  --success:#6EE7B7;
+  --sans:"Roboto","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --cn:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--cn),var(--sans);
+  color:var(--text-primary);
+  background:#0F1B4F;
+  background-image:var(--bg-gradient);
+  min-height:100vh;
+  padding:48px 20px;
+  line-height:1.65;
+}
+.wrap{max-width:480px;margin:0 auto}
+h1{font-size:24px;margin-bottom:8px}
+.sub{color:var(--text-secondary);font-size:14px;margin-bottom:32px}
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:24px;margin-bottom:16px;
+}
+.card h2{font-size:16px;margin-bottom:12px}
+.card p{color:var(--text-secondary);font-size:13.5px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+select,input{
+  width:100%;padding:11px 12px;border-radius:8px;border:1px solid var(--card-border);
+  background:rgba(255,255,255,.06);color:var(--text-primary);font-size:14px;margin-bottom:14px;
+}
+select:focus,input:focus{outline:1px solid var(--highlight)}
+button{
+  width:100%;padding:12px;border-radius:8px;border:none;font-size:14.5px;font-weight:600;
+  cursor:pointer;transition:opacity .2s;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--accent-from),var(--accent-to));color:#fff}
+.btn-primary:hover:not(:disabled){opacity:.9}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){opacity:.85}
+.btn-secondary{background:transparent;border:1px solid var(--card-border);color:var(--text-secondary)}
+.checkbox-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.checkbox-row input{width:auto;margin:2px 0 0}
+.checkbox-row span{font-size:13px;color:var(--text-secondary)}
+.msg{font-size:13px;padding:10px 12px;border-radius:8px;margin-bottom:14px}
+.msg.error{background:rgba(248,113,113,.12);color:var(--danger);border:1px solid rgba(248,113,113,.3)}
+.msg.success{background:rgba(110,231,183,.12);color:var(--success);border:1px solid rgba(110,231,183,.3)}
+.msg.info{background:rgba(185,139,232,.1);color:var(--highlight);border:1px solid var(--card-border)}
+[hidden]{display:none!important}
+.foot{color:var(--text-secondary);font-size:12px;text-align:center;margin-top:24px}
+.foot a{color:var(--highlight)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>删除 Transless 账号</h1>
+  <p class="sub">卸载 App 之后，也可以在这里请求删除账号和相关数据。</p>
+
+  <!-- 步骤1：发送验证码 -->
+  <div class="card" id="step1">
+    <h2>第一步：验证身份</h2>
+    <p>输入你注册 Transless 时使用的手机号或邮箱，我们会发送验证码确认是你本人操作。</p>
+    <div id="msg1"></div>
+    <label for="kind">验证方式</label>
+    <select id="kind">
+      <option value="phone">手机号</option>
+      <option value="email">邮箱</option>
+    </select>
+    <label for="target">手机号 / 邮箱</label>
+    <input id="target" type="text" placeholder="+852 5xxx xxxx 或 you@example.com" autocomplete="off">
+    <button class="btn-primary" id="btnSend">发送验证码</button>
+  </div>
+
+  <!-- 步骤2：输验证码 + 确认 -->
+  <div class="card" id="step2" hidden>
+    <h2>第二步：输入验证码，确认删除</h2>
+    <div id="msg2"></div>
+    <label for="code">验证码</label>
+    <input id="code" type="text" inputmode="numeric" placeholder="6位数字" autocomplete="one-time-code">
+    <div class="checkbox-row">
+      <input type="checkbox" id="ack">
+      <span>我理解：这是<b style="color:var(--text-primary)">不可逆</b>操作。确认后账号进入
+        <b style="color:var(--text-primary)">7 天冷静期</b>，期间可随时撤销；7天后未撤销将
+        <b style="color:var(--text-primary)">永久删除</b>账号及已同步的历史记录、单词本、常用词。</span>
+    </div>
+    <button class="btn-danger" id="btnConfirm" disabled>确认删除账号</button>
+    <button class="btn-secondary" id="btnResend" style="margin-top:8px">重新发送验证码</button>
+  </div>
+
+  <!-- 步骤3：结果 / 撤销 -->
+  <div class="card" id="step3" hidden>
+    <h2 id="step3title"></h2>
+    <div id="msg3"></div>
+    <button class="btn-secondary" id="btnCancel" hidden>撤销删除请求</button>
+  </div>
+
+  <p class="foot">
+    有问题？联系 <a href="mailto:support@transless.net">support@transless.net</a> ·
+    <a href="/privacy">隐私政策</a>
+  </p>
+</div>
+
+<script>
+const API_BASE = "https://s473bcc0af89cidqeqrdr.apigateway-cn-beijing.volceapi.com";
+
+const $ = id => document.getElementById(id);
+const step1 = $("step1"), step2 = $("step2"), step3 = $("step3");
+const msg1 = $("msg1"), msg2 = $("msg2"), msg3 = $("msg3");
+
+function showMsg(el, text, type) {
+  el.innerHTML = `<div class="msg ${type}">${text}</div>`;
+}
+function clearMsg(el) { el.innerHTML = ""; }
+
+let state = { kind: "", target: "" };
+
+$("ack").addEventListener("change", () => {
+  $("btnConfirm").disabled = !$("ack").checked;
+});
+
+async function callApi(path, body) {
+  const res = await fetch(API_BASE + path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  let data;
+  try { data = await res.json(); } catch (e) { data = {}; }
+  return { status: res.status, data };
+}
+
+$("btnSend").addEventListener("click", async () => {
+  clearMsg(msg1);
+  const kind = $("kind").value;
+  const target = $("target").value.trim();
+  if (!target) { showMsg(msg1, "请输入手机号或邮箱", "error"); return; }
+
+  $("btnSend").disabled = true;
+  const { status, data } = await callApi("/api/web/account-delete/request", { kind, target });
+  $("btnSend").disabled = false;
+
+  if (status === 200 && data.enabled === false) {
+    showMsg(msg1, "账号删除功能暂未开放，请通过邮箱联系我们处理：support@transless.net", "info");
+    return;
+  }
+  if (status === 429) {
+    showMsg(msg1, "请求太频繁，请稍后再试" + (data.retry_after ? `（${data.retry_after}秒后）` : ""), "error");
+    return;
+  }
+  if (status !== 200) {
+    showMsg(msg1, data.error || "发送失败，请稍后重试", "error");
+    return;
+  }
+  state.kind = kind; state.target = target;
+  step1.hidden = true; step2.hidden = false;
+  showMsg(msg2, "验证码已发送，请查收", "success");
+});
+
+$("btnResend").addEventListener("click", () => {
+  step1.hidden = false; step2.hidden = true;
+  clearMsg(msg2);
+});
+
+$("btnConfirm").addEventListener("click", async () => {
+  clearMsg(msg2);
+  const code = $("code").value.trim();
+  if (!code) { showMsg(msg2, "请输入验证码", "error"); return; }
+
+  $("btnConfirm").disabled = true;
+  const { status, data } = await callApi("/api/web/account-delete/confirm", {
+    kind: state.kind, target: state.target, code, confirm: "DELETE"
+  });
+  $("btnConfirm").disabled = false;
+
+  if (status !== 200) {
+    showMsg(msg2, data.error || "操作失败，请检查验证码是否正确", "error");
+    return;
+  }
+  step2.hidden = true; step3.hidden = false;
+  if (data.stage === "pending") {
+    $("step3title").textContent = "已进入删除冷静期";
+    showMsg(msg3, `你的账号将在 ${data.cooloff_days || 7} 天后永久删除。期间可随时撤销。`, "success");
+    $("btnCancel").hidden = false;
+  } else {
+    $("step3title").textContent = "操作完成";
+    showMsg(msg3, "请求已处理。", "success");
+  }
+});
+
+$("btnCancel").addEventListener("click", async () => {
+  clearMsg(msg3);
+  $("btnCancel").disabled = true;
+  const { status, data } = await callApi("/api/web/account-delete/confirm", {
+    kind: state.kind, target: state.target, code: $("code").value.trim(), cancel: true
+  });
+  $("btnCancel").disabled = false;
+  if (status === 200 && data.cancelled) {
+    showMsg(msg3, "已撤销，账号删除请求取消。", "success");
+    $("btnCancel").hidden = true;
+  } else {
+    showMsg(msg3, data.error || "撤销失败，请重新验证后再试", "error");
+  }
+});
+</script>
+</body>
+</html>
