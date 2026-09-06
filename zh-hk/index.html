@@ -157,20 +157,27 @@ body{
      →区块从 8 个粒度收成 4 个大区块，每张图要撑的滚动距离变长，同一张图
      停留时间自然变长，不用另外调时长参数。
    路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。 */
+/* 🚨 十四次修：Kevin 截图还是能看出"但它不止是一个输入法"那条 .pivot 有一条杠——
+   根因找到了，不是"没合并"：linear-gradient 的色标是按**每个元素自己的盒高**铺开的，
+   跟 background-attachment:fixed 无关（fixed 只管图片，不管渐变怎么分布）。
+   .hero 很高（100vh），.pivot 很矮（padding 60px），同一条三段式渐变在矮盒子里
+   几乎只显示得出最深那一段颜色，看起来就是一条更暗的杠——三个 section "用的是
+   同一条 CSS 规则"，但矮的那个渲染出来的样子不一样。改成**纯色蒙层**（不用渐变），
+   高矮不同的盒子叠出来的颜色就完全一致，物理上不可能再有色差。 */
 .hero, .pivot, #difference{
-  background:linear-gradient(rgba(15,27,79,.90),rgba(42,19,88,.88),rgba(67,22,97,.90)),
+  background:linear-gradient(rgba(30,23,83,.89),rgba(30,23,83,.89)),
   url('/img/scene_friends.jpg') center 15%/cover no-repeat fixed;
 }
 #how, #where{
-  background:linear-gradient(rgba(42,19,88,.90),rgba(67,22,97,.90)),
+  background:linear-gradient(rgba(54,20,92,.90),rgba(54,20,92,.90)),
   url('/img/scene_travel.jpg') center/cover no-repeat fixed;
 }
 #memory{
-  background:linear-gradient(rgba(15,27,79,.91),rgba(67,22,97,.89)),
+  background:linear-gradient(rgba(41,24,88,.90),rgba(41,24,88,.90)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
 #privacy, #faq{
-  background:linear-gradient(rgba(15,27,79,.92),rgba(42,19,88,.90)),
+  background:linear-gradient(rgba(29,21,85,.91),rgba(29,21,85,.91)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
 }
 .bg-glow{
@@ -1166,11 +1173,17 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
             <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
         </div>
         <div>
-          <h3>歷史記錄淨係留喺你部手機度</h3>
-          <p>為方便你自己回看，App 會喺<b>你部裝置本機</b>保存最近嘅記錄 &mdash; 從來冇傳去我哋嘅伺服器，我哋都睇唔到。我哋唔會建立對話存檔、唔做用戶畫像，亦<b>不要</b>你的通訊錄、相簿和位置。</p>
+          <h3>歷史記錄預設淨係留喺呢部裝置度</h3>
+          <p>為方便你自己回看，App 會喺<b>你部裝置本機</b>為咗方便你自己返睇，App 會喺你嘅裝置本機度儲存最近嘅記錄。想喺手機同電腦之間互通，可以自己<b>開啟雲端同步</b>——每部裝置都要單獨確認一次，唔開就唔會上傳，我哋都睇唔到。我哋唔會建立對話存檔、唔做用戶畫像，都唔要<b>不要</b>你的通訊錄、相簿和位置。</p>
           <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
                本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
-               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。
+               🚨🚨 2026-09-06 深夜再改：2.1 转 Kevin 拍板——历史/单词本/常用词要上云同步
+               （跨设备互通，他说是刚需）。上面"从没有传到我们的服务器"一旦同步上线就是
+               不实陈述。改成"默认本地、云同步是用户自己开的、每台设备单独确认"——
+               隐私卖点还在（默认不传），只是从"绝对不传"改成"你不开就不传"，说的是真话。
+               2.1 判据：①不能再 grep 到"从没有传到我们的服务器"②必须还能 grep 到
+               "默认"/"本地"，不许把隐私卖点整个删掉③中英两版说同一件事。 -->
         </div>
       </div>
       <div class="pv">
@@ -1208,7 +1221,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       </div>
       <div class="qa">
         <h3>我講的話會被存起來嗎？</h3>
-        <p>錄音辨識完即刻丟棄，整理結果喺伺服器記憶體度最多留 10 分鐘。App 會喺你手機本地留返一份記錄方便你自己回看，但嗰份記錄唔會傳去我哋嗰邊，我哋睇唔到。</p>
+        <p>錄音一辨識完即刻丟棄，整理好嘅結果喺服務器記憶體度最多留 10 分鐘。App 預設會喺你手機本機留返一份記錄方便自己返睇；想喺幾部裝置之間互通，可以自己開啟雲端同步，每部裝置要單獨確認一次，唔開就唔會上傳。</p>
       </div>
       <div class="qa">
         <h3>要註冊嗎？</h3>
