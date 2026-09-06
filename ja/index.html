@@ -201,9 +201,29 @@ body{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
   url('/img/scene_family.jpg') center/cover no-repeat fixed;
 }
-#privacy, #faq{
+#privacy{
   background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
   url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-06 九次修：Kevin「还是幻灯片版好看，字精简一点」——定为正式方向。
+   每个大段都是一屏，mandatory + scroll-snap-stop:always：滚轮/触控板划一下
+   基本停在一屏，不会被滑过头跳过一整段。文字仍比一屏高的段（如隐私区），
+   落到顶部之后段内可以正常继续往下滚，只是"从上一段到这一段"这个动作被锁成一步一停。
+   切页处不再硬切一刀，用一段渐隐渐显的过渡条把两张照片糊在一起。 */
+html{scroll-snap-type:y mandatory}
+.hero,.pivot,#difference,#how,#where,#memory,#privacy,.final{
+  scroll-snap-align:start;scroll-snap-stop:always;
+}
+.seam{position:relative;height:220px;overflow:hidden;pointer-events:none}
+.seam-under,.seam-over{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  background-repeat:no-repeat;background-attachment:fixed;
+}
+.seam-over{
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 92%);
+  mask-image:linear-gradient(to bottom,transparent,#000 92%);
 }
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
@@ -757,7 +777,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">使い方</a>
       <a class="nav-link" href="#privacy">プライバシー</a>
-      <a class="nav-link" href="#faq">よくある質問</a>
+      <a class="nav-link" href="/faq.html">よくある質問</a>
       <span class="langsw" role="group" aria-label="言語">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1049,6 +1069,11 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_group5_b.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_travel.jpg')"></div>
+</div>
+
 <!-- ============ 屏 3 · 三步 ============ -->
 <section id="how" class="steps reveal" data-observe>
   <div class="wrap">
@@ -1097,29 +1122,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>英語のメールに返信する</h3>
-        <p>頭の中の中国語のロジックをそのまま話すだけで、宛名も段落も結びの言葉もある一通のメールが出来上がる。</p>
+        <p>中国語で思ったことを話すだけで、そのまま完全な英文メールに。</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>海外の同僚と認識合わせ</h3>
-        <p>会議が終わったら、話したことをもう一度話すだけで、番号付きの要点リストが手に入る。</p>
+        <p>会議の内容をもう一度話すだけで、番号付きの要点にまとめてくれる。</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>まだ整理できていない考えを、使える中国語にする</h3>
-        <p>会議の後や移動中に思いついたことを、とりあえず話してみる。<b>文字起こし</b>は翻訳しません —
-        「整理」が「えっと…それで…つまり」を削って何点かにまとめ、「逐語」は一字一句そのまま。</p>
+        <p><b>文字起こし</b>は訳さず、話し言葉を使えるいくつかの文にまとめます。</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>入力済みの中国語を、話し直さずに</h3>
-        <p>WeChatに中国語を打ち終えてから、相手が読めないことに気づく。
-        <b>カーソルの前の中国語を訳す</b>。カーソルの前の中国語を、その場で相手に伝わる言語に置き換える。</p>
+        <p><b>カーソルの前の中国語を訳す</b>を、相手が読めるバージョンにワンタップで置き換え。</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>その場で通訳役に</h3>
-        <p>下部の<b>「対面翻訳」</b>をタップ、キーボードを切り替える必要なし。最新の訳文は<b>大きな文字で画面中央に表示</b>され、相手にも読みやすい。大きな文字をタップすると<b>読み上げ</b>。中央の<b>「⇄」</b>で翻訳方向を手動切り替え。調べた表現はワンタップで単語帳にも保存できる。</p>
+        <p>下部の<b>「対面翻訳」</b>、訳文は画面いっぱいの大きな文字で表示、タップで<b>読み上げ</b>，
+        <b>「⇄」</b>翻訳の方向を切り替え。</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1127,16 +1151,23 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>海外で注文したり道を尋ねたり</h3>
-        <p>スマホに中国語で話すと現地の言語になる — さらに読み上げをタップすれば、<b>ネイティブの声で相手に読み上げてくれる</b>。身振り手振りも、スマホを相手の顔に近づける必要もなし。</p>
+        <p>スマホに向かって中国語で話すと、その場の言語になって出てきます。タップすれば<b>ネイティブの声で読み上げ。</b></p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
 
 <!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
 <section id="memory" class="scenes reveal" data-observe>
@@ -1148,21 +1179,26 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>調べた表現、使った表現は自動で単語帳に</h3>
-        <p>翻訳のときに調べた単語、直された言い回しは、ワンタップで<b>単語帳</b>に保存。別の場所にメモする必要なし。</p>
+        <p>調べた単語や直した言い方は、ワンタップで<b>単語帳。</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>まだ覚えていないものをシステムが選んで復習に出す</h3>
-        <p>カード式復習：覚えたら<b>「覚えた」</b>、まだなら<b>「もう一度」</b>をタップ。システムが選んで出してくれる。</p>
+        <p>カード式の復習：覚えたものはタップ、まだのものは自然にまた出てきます。</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>話せば話すほど、自然に出てくる言葉も増える</h3>
-        <p>「調べて、翻訳に頼る」から「自分で思い出して、そのまま口に出す」へ — このサイクルは Transless ならでは。</p>
+        <p>「調べる」から「自分から口に出す」へ——このループは Transless だけのもの。</p>
       </div>
     </div>
   </div>
 </section>
+
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
 
 <!-- ============ 屏 5 · 隐私 ============ -->
 <section id="privacy" class="privacy reveal" data-observe>
@@ -1237,44 +1273,9 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>よく聞かれる質問</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>通信は必要？オフラインで使える？</h3>
-        <p>通信が必要です。音声認識と整理はサーバー側で行うため、オフラインでは使えません。手書き入力の部分はオフラインで、モデルはスマホ内にあります。</p>
-      </div>
-      <div class="qa">
-        <h3>話した内容は保存される？</h3>
-        <p>録音は認識が終わるとすぐに破棄され、整理された結果はサーバーのメモリに最大10分だけ残ります。アプリはデフォルトでスマホ内に履歴を残して見返せるようにしています。複数端末で同期したい場合は、自分でクラウド同期をオンにできます—端末ごとに個別の確認が必要で、オンにしない限りアップロードされません。</p>
-      </div>
-      <div class="qa">
-        <h3>登録は必要？</h3>
-        <p>今は不要で、インストールすればすぐ使えます。今後、機種変更時に復元できるようログイン機能を追加予定ですが、その時も強制はせず、ログインなしでも使い続けられます。</p>
-      </div>
-      <div class="qa">
-        <h3>対応している言語は？</h3>
-        <p>現在31言語。英語・日本語・フランス語・ドイツ語・スペイン語・韓国語・広東語・タイ語・アラビア語・ロシア語など主要言語を含みます。中国語で話して、翻訳先の言語を選ぶだけです。<b>読み上げはテキスト自体の言語に合わせて自動でネイティブの声を選びます</b> — 日本語なら日本語の声で読み上げ、英語なまりの日本語にはなりません。
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>どのアプリで使える？</h3>
-        <p>独立した翻訳アプリではなく、本物のキーボードです。文字を打てる場所ならどこでも — WeChat、メール、メモ、ブラウザ。</p>
-      </div>
-      <div class="qa">
-        <h3>翻訳が間違っていたら？</h3>
-        <p>訳文はAIが生成するため、誤りが出ることもあります。そのため入力キーボード（ピンイン／五筆／手書き）を内蔵していて、いつでも修正できます。また「逐語」モードに切り替えれば、一字一句変えずに句読点だけ補います。</p>
-      </div>
-      <div class="qa">
-        <h3>完全にアンインストールするには？</h3>
-        <p>まずシステムの「キーボード設定」でTranslessをオフにしてから、通常どおりアプリをアンインストールしてください。アンインストールと同時にすべての処理が停止し、こちらにあなたが削除すべきファイルは残りません。</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
 <section class="final" id="get">
@@ -1282,7 +1283,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <h2>世界にあなたの言葉を届ける</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">よくある質問</a>
+      <a class="cta" href="/faq.html">よくある質問</a>
       <span class="cta-note">現在無料です。ベータテストの申し込み窓口は準備中で、開設したらここに掲載します。</span>
     </div>
   </div>
