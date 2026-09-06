@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transless — Damit die Welt dich versteht</title>
+<!-- 🚨 2026-09-06 改：旧文案「说中文口水话，直接上屏成…」是 Typeless 那类
+     「转换工具」的框架，Kevin 明确否掉（「不要强调上屏这种工具属性」）。
+     新文案对齐 _定位与Slogan_v2 —— 主语是「你想说的话」不是「转换动作」；
+     功能部分只写已核实的（9 种目标语言），不写「任何语言」这类未验证的功能承诺。 -->
+<meta name="description" content="Sag, was du meinst — direkt in der Welt gehört. Sprich Chinesisch, und es kommt als natürliches Englisch, Japanisch, Französisch oder eine von 31 Sprachen heraus. Die Transless Sprachtastatur.">
+<meta name="theme-color" content="#0F1B4F">
+
+<!-- 多语言。7 个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English) · /ja/ · /de/ · /es/ · /ar/
+     🚨 2026-09-06 改：界面语言现在实际支持 7 种（zh/zht/en/ja/de/es/ar，Kevin 当面点名
+     主页语言切换器跟不上这个事实——之前只列了简/繁/英三个），加齐 hreflang + 切换器。
+     🚨 canonical / og:locale / og:url 三条由 build_i18n.py 的 cmd_render **逐版改写**，
+        不要在这里手改 —— 单一配置点在 LANGS 那张表里。 -->
+<link rel="canonical" href="https://transless.net/de/">
+<link rel="alternate" hreflang="zh-Hans" href="https://transless.net/">
+<link rel="alternate" hreflang="zh-Hant-HK" href="https://transless.net/zh-hk/">
+<link rel="alternate" hreflang="en" href="https://transless.net/en/">
+<link rel="alternate" hreflang="ja" href="https://transless.net/ja/">
+<link rel="alternate" hreflang="de" href="https://transless.net/de/">
+<link rel="alternate" hreflang="es" href="https://transless.net/es/">
+<link rel="alternate" hreflang="ar" href="https://transless.net/ar/">
+<link rel="alternate" hreflang="x-default" href="https://transless.net/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Transless">
+<meta property="og:url" content="https://transless.net/de/">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Transless — Damit die Welt dich versteht">
+<meta property="og:description" content="Sag, was du meinst — direkt in der Welt gehört. Sprich Chinesisch, und es kommt als natürliches Englisch, Japanisch, Französisch oder eine von 31 Sprachen heraus. Die Transless Sprachtastatur.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- 分享大图 1200×630。🚨 每语言指自己那张、绝对 URL —— 相对路径分享平台抓不到。
+     这两行的值由 build_i18n.py cmd_render 逐版改写（`og_<lang>.png`），别手改。 -->
+<meta property="og:image" content="https://transless.net/og_de.png">
+<meta name="twitter:image" content="https://transless.net/og_de.png">
+<script>
+/* 首次进站按浏览器语言送到对应版本。四道闸，任何一道不过就**原地不动**：
+   ① 只在根目录跳（子目录里一律不跳，防环、也防覆盖他手输的地址）
+   ② 他自己点过切换器 -> 永远尊重他的选择，不再自动跳
+   ③ 本次会话已经自动跳过一次 -> 不再跳（第二道防环）
+   ④ 地址带 ?nolang -> 逃生开关
+   🚨 不用 IP 归属地：后端刚把 ip-api.com 这类外部依赖拆掉过，主页不再引第二个。
+      而且 IP 判的是"人在哪"，我们要的是"他读哪种字"，这两件事经常不是一回事
+      （他人在深圳，但可能就想看英文版）。*/
+(function () {
+  var P = location.pathname;
+  if (P !== '/' && P !== '/index.html') return;
+  if (location.search.indexOf('nolang') >= 0) return;
+  var ls, ss;
+  try { ls = localStorage; ss = sessionStorage; } catch (e) { return; }
+  try {
+    if (ls.getItem('tl_lang')) return;
+    if (ss.getItem('tl_redir')) return;
+  } catch (e) { return; }
+  var L = navigator.languages || [navigator.language || ''];
+  var to = '';
+  for (var i = 0; i < L.length; i++) {
+    var l = String(L[i]).toLowerCase();
+    if (l.indexOf('zh') === 0) {                 // 中文：只有繁体地区才跳走
+      if (/hant|-hk|-mo|-tw/.test(l)) to = '/zh-hk/';
+      break;                                      // 简体留在根目录
+    }
+    if (l.indexOf('en') === 0) { to = '/en/'; break; }
+  }
+  if (!to) return;
+  try { ss.setItem('tl_redir', '1'); } catch (e) {}
+  location.replace(to);                           // replace：不往历史里塞一层
+})();
+
+/* 他点了切换器 = 明确表态，记下来，以后**永不**再自动跳。
+   🚨 只认「点切换器」这一个动作。直接输网址进 /en/ 不算表态 ——
+      那可能是别人发的链接，不代表他想把英文版设成默认。
+   用捕获阶段的委托监听：不依赖 DOMContentLoaded，脚本在 head 里也照样生效。 */
+document.addEventListener('click', function (e) {
+  var t = e.target, a = null;
+  while (t && t !== document) {
+    if (t.tagName === 'A' && t.parentNode && t.parentNode.className === 'langsw') { a = t; break; }
+    t = t.parentNode;
+  }
+  if (!a) return;
+  try { localStorage.setItem('tl_lang', a.getAttribute('hreflang') || '1'); } catch (err) {}
+}, true);
+</script>
+<!-- 标签页图标。2026-08-26 加：之前浏览器标签上是默认的小地球。
+     🚨 图不是新画的 —— `site/make_favicon.py` 从安卓那颗 `ic_launcher.png`
+     （紫底 + T 变麦克风）缩出来的，跟手机桌面上那颗必须是同一个，
+     不然用户认不出是同一个产品。
+     🚨 apple-touch-icon 已铺不透明底：iOS 会把透明渲染成黑色。
+     这些都是**同域文件**，不违反 DESIGN.md 的「整页零外部资源」。 -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<!--
+  规格来源：site/DESIGN.md（唯一配置点）。色值与 Skin.java / Theme.java 逐字对齐。
+  🚨 改配色只改下面的 :root，别在组件里另写色值。
+  🚨 --accent-* 只许出现在 CTA 药丸上，整页 2 次。check_design.py 守着这条。
+  整页零外部资源：无外链字体、无图片、无 JS 库。
+-->
+<script>document.documentElement.className='js';</script>
+<style>
+:root{
+  /* ===== 品牌色（= Skin.java，实测采样，不许改） ===== */
+  --bg-gradient: linear-gradient(165deg,#0F1B4F 0%,#2A1358 45%,#431661 100%);
+  --glow: rgba(150,90,230,.34);
+  --accent-from:#8B5CF6;
+  --accent-to:#6D3FB0;
+  --highlight:#B98BE8;
+  --text-primary:#F4F1FB;
+  --text-secondary:#A99DC6;
+  --text-cn:#D4CDE8;
+  --success:#6EE7B7;
+  --card-bg:rgba(255,255,255,.04);
+  --card-border:rgba(185,139,232,.15);
+
+  /* ===== 键盘复刻件用色（= Theme.java 变体 A） ===== */
+  --kb-bg-top:#0B1230;
+  --kb-bg-mid:#141033;
+  --kb-bg-bot:#231843;
+  --kb-key:rgba(255,255,255,.086);
+  --kb-key-on:rgba(255,255,255,.22);
+  --kb-text:#F2EFFA;
+  --kb-accent:#7C5CE6;
+  --kb-rim:rgba(255,255,255,.078);
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --maxw:1280px;
+  --pad:80px;
+  /* 🚨 Windows 上没有 Roboto，直接写 Roboto 会掉到 Arial —— 正是 Kevin 嫌丑的那个。
+     所以按平台各取其系统字：Android=Roboto，Win=Segoe UI，mac/iOS=SF。零外链。 */
+  --sans:"Roboto","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --cn:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  color:var(--text-primary);
+  background:#0F1B4F;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* 背景：整页固定渐变 + 唯一一处柔光中心 */
+.bg{position:fixed;inset:0;z-index:-2;background:var(--bg-gradient)}
+.bg-glow{
+  /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
+  position:fixed;z-index:-1;width:860px;height:860px;border-radius:50%;
+  left:70%;top:40%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,var(--glow) 0%,transparent 60%);
+  filter:blur(120px);pointer-events:none;
+  transition:transform .9s var(--ease);
+}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
+
+/* ================= 导航：只有 Logo + 一个文字链接 ================= */
+nav{
+  position:absolute;top:0;left:0;right:0;height:64px;z-index:10;
+  display:flex;align-items:center;
+}
+nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:500;font-size:20px;letter-spacing:.03em;color:var(--text-primary)}
+.brand .dot{color:var(--highlight)}
+.nav-link{
+  font-size:14px;letter-spacing:.02em;color:var(--text-secondary);
+  text-decoration:none;transition:color .25s var(--ease);
+}
+.nav-link:hover{color:var(--text-primary)}
+.nav-right{display:flex;align-items:center;gap:26px}
+/* 语言切换器。三个标签写成各自语言的字（简/繁/EN），所以 data-i18n="no" ——
+   它们三版必须一模一样，被当成待译文案就废了。
+   🚨 当前版本的高亮**纯 CSS**，靠 <html lang> 选，不靠 JS：
+      JS 挂了的话切换器还得能用、还得看得出现在在哪一版。 */
+.langsw{display:flex;align-items:center;gap:2px;
+  border:1px solid var(--hairline,rgba(255,255,255,.18));border-radius:999px;padding:2px}
+.langsw a{
+  font-size:12px;line-height:1;padding:5px 8px;border-radius:999px;
+  color:var(--text-secondary);text-decoration:none;white-space:nowrap;
+  transition:color .25s var(--ease),background .25s var(--ease);
+}
+.langsw a:hover{color:var(--text-primary)}
+html[lang^="zh-CN"]      .langsw a[hreflang="zh-Hans"],
+html[lang^="zh-Hans"]    .langsw a[hreflang="zh-Hans"],
+html[lang="zh-Hant-HK"]  .langsw a[hreflang="zh-Hant-HK"],
+html[lang^="en"]         .langsw a[hreflang="en"],
+html[lang^="ja"]         .langsw a[hreflang="ja"],
+html[lang^="de"]         .langsw a[hreflang="de"],
+html[lang^="es"]         .langsw a[hreflang="es"],
+html[lang^="ar"]         .langsw a[hreflang="ar"]{
+  color:var(--text-primary);background:rgba(255,255,255,.10);
+}
+
+/* ================= 屏 1 · Hero ================= */
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px}
+/* 🚨 width:100% 不能省 —— .hero 是 flex，.wrap 作为 flex item 默认 flex:0 1 auto，
+   宽度被内容撑出来。演示卡一改窄，整个 wrap 跟着缩、左栏被连坐、
+   中文 slogan 从 1 行折成 2 行。nav .wrap 早就写了这句，hero 一直漏着。 */
+.hero .wrap{width:100%;display:grid;grid-template-columns:42% 58%;align-items:center;gap:0}
+.hero-left{padding-right:48px}
+/* 🚨 这里原来又写了一遍 "Transless"，跟导航栏上那个隔 6cm 重复。
+   RedotPay / Typeless 都只在导航出现一次，所以换成品类标签。 */
+.hero-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-secondary)}
+h1{
+  font-family:var(--cn);font-weight:500;font-size:56px;line-height:1.15;
+  letter-spacing:.06em;color:var(--text-cn);margin-top:48px;
+}
+.slogan-en{
+  font-weight:300;font-size:28px;line-height:1.3;letter-spacing:.12em;
+  color:var(--text-secondary);margin-top:12px;
+  white-space:nowrap;   /* 0.12em 字距下它会折成两行，很难看 */
+}
+.lede{
+  font-size:18px;line-height:1.6;color:var(--text-secondary);
+  max-width:460px;margin-top:32px;
+}
+.cta-row{margin-top:48px;display:flex;align-items:center;gap:20px}
+
+/* CTA 药丸 —— 整页唯一用强调色的元素 */
+.cta{
+  display:inline-flex;align-items:center;gap:10px;
+  height:52px;padding:0 32px;border-radius:9999px;border:0;
+  font-family:var(--sans);font-size:16px;font-weight:500;letter-spacing:.02em;
+  color:var(--text-primary);text-decoration:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent-from),var(--accent-to));
+  box-shadow:0 8px 32px rgba(139,92,246,.28);
+  transition:transform .25s var(--ease),filter .25s var(--ease),box-shadow .25s var(--ease);
+}
+.cta{white-space:nowrap}
+.cta:hover{transform:scale(1.02);filter:brightness(1.12);box-shadow:0 12px 40px rgba(139,92,246,.38)}
+.cta:active{transform:scale(.98);transition-duration:.1s}
+.cta-note{font-size:13px;color:var(--text-secondary)}
+/* 八种目标语言，跟 engine.LANGS 一致 —— 加语言要两边一起改 */
+.langs{margin-top:26px;font-size:12px;letter-spacing:.04em;color:var(--text-secondary);
+       opacity:.72;line-height:1.9}
+
+/* ================= 演示卡：按 Theme.java 复刻的键盘 ================= */
+/* 🚨 原来 560px 宽 / min-height 560px，宽高比接近 1:1 ——
+   所以 Kevin 说「太宽了，看起来不像是一个手机」。改成真手机比例 9:19.5。 */
+.demo{justify-self:end;width:340px;max-width:100%}
+.phone{
+  position:relative;border-radius:38px;padding:10px;
+  background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.02));
+  border:1.5px solid var(--card-border);
+  box-shadow:0 40px 100px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset,
+             0 0 90px var(--glow);
+}
+.screen{
+  border-radius:30px;overflow:hidden;
+  background:linear-gradient(180deg,var(--kb-bg-top),var(--kb-bg-mid) 50%,var(--kb-bg-bot));
+  display:flex;flex-direction:column;
+  aspect-ratio:9/19.5;
+}
+.statusbar{
+  height:28px;flex:0 0 28px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 15px;
+  font-size:11px;color:var(--text-secondary);
+}
+.sb-right{display:flex;align-items:center;gap:5px}
+.sb-bars{display:flex;align-items:flex-end;gap:1.5px;height:9px}
+.sb-bars i{width:2.5px;background:var(--text-secondary);border-radius:1px;display:block}
+.sb-bars i:nth-child(1){height:3px}.sb-bars i:nth-child(2){height:5px}
+.sb-bars i:nth-child(3){height:7px}.sb-bars i:nth-child(4){height:9px}
+.sb-batt{width:18px;height:9px;border:1px solid var(--text-secondary);border-radius:2.5px;
+  position:relative;padding:1px}
+.sb-batt::after{content:"";position:absolute;right:-3px;top:2.5px;width:1.5px;height:3px;
+  background:var(--text-secondary);border-radius:0 1px 1px 0}
+.sb-batt span{display:block;height:100%;width:72%;background:var(--text-secondary);border-radius:1px}
+.home-ind{flex:0 0 16px;display:flex;align-items:center;justify-content:center}
+.home-ind i{display:block;width:112px;height:4px;border-radius:2px;background:rgba(244,241,251,.28)}
+/* 上半：6 个功能叠在一起切换 */
+.feats{position:relative;flex:1;min-height:0}
+/* 🚨 先出后进，不要交叉淡。原来出场入场都是 .22s 同时跑，
+   那 220ms 里两屏文字都半透明可见 —— 每次切换闪一下重影，线上实拍到了。
+   现在：出场 .12s 立刻走完，入场延迟 .12s 才开始，两者几乎不重叠。 */
+.feat{position:absolute;inset:0;opacity:0;pointer-events:none;transform:translateY(6px);
+  transition:opacity .12s cubic-bezier(0.16,1,0.3,1),transform .12s cubic-bezier(0.16,1,0.3,1)}
+.feat.on{opacity:1;transform:none;pointer-events:auto;
+  transition:opacity .22s cubic-bezier(0.16,1,0.3,1) .12s,
+             transform .22s cubic-bezier(0.16,1,0.3,1) .12s}
+.feat-tag{display:inline-block;align-self:flex-start;font-size:10px;letter-spacing:.1em;
+  padding:4px 9px;border-radius:999px;background:var(--card-bg);
+  border:1px solid var(--card-border);color:var(--text-secondary);margin-bottom:2px}
+.feat.on .bubble{animation:rise .42s cubic-bezier(0.16,1,0.3,1) both}
+.feat.on .bubble.out{animation-delay:.34s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* 圆点：激活 --highlight，未激活 --card-border。不许用 accent */
+/* 🚨 原来这里是一排 7px 的小圆点。Kevin 2026-08-26：「那个小点太难点了，不好看」
+   —— 改成**按住拖动切换**，圆点整排去掉。
+   留一根进度条：圆点没了得有别的办法知道现在是第几屏，
+   但它**不可点**（不可点就不会再有"太小点不中"的问题），只负责告知。 */
+.prog{display:flex;gap:6px;justify-content:center;margin-top:16px}
+.prog i{display:block;width:26px;height:3px;border-radius:2px;
+  background:rgba(255,255,255,.18);transition:background .25s var(--ease),width .25s var(--ease)}
+.prog i.on{background:var(--highlight);width:40px}
+/* 拖动面：横向手势归我们，纵向仍然让页面正常滚 */
+.demo{touch-action:pan-y}
+.demo.dragging{cursor:grabbing}
+.demo:focus-visible{outline:2px solid var(--highlight);outline-offset:6px;border-radius:18px}
+.feat-name{text-align:center;margin-top:9px;font-size:12.5px;color:var(--text-secondary);
+  min-height:1.4em;transition:opacity .18s cubic-bezier(0.16,1,0.3,1)}
+.feat-name b{color:var(--text-primary);font-weight:500}
+/* ============ 随手翻译（TryActivity）——它不是键盘，是独立 Activity ============
+   🚨 Kevin 2026-08-26:「随手翻译那个没有加」。我原来给它画的还是键盘，
+   所以它跟旁边几屏长得一模一样 = 等于没加。
+   真身用的是 App 的 Skin 配色（不是键盘的 Theme），没有键盘，
+   麦克风是 dp(96) 的大圆、里面写「点一下 / 开始说」（TryActivity.java:203-213）。 */
+.screen[data-app="1"]{background:var(--bg-gradient)}
+.screen[data-app="1"] .kb{display:none}
+.tryui{position:absolute;inset:0;padding:16px 15px 12px;display:flex;flex-direction:column;gap:9px}
+.try-bar{display:flex;align-items:center;gap:8px;color:var(--text-primary);font-size:14px}
+.try-bar .back{color:var(--text-secondary);font-size:13px}
+.try-tabs,.try-sp{display:flex;gap:6px;flex-wrap:wrap}
+.try-mic-row{display:flex;align-items:center;justify-content:center;gap:9px;margin:6px 0 2px}
+.try-mic{width:64px;height:64px;border-radius:50%;flex:0 0 64px;
+  /* 🚨 真身是 Skin.ACCENT #8B5CF6（TryActivity.java:209），而这里用的是
+     --kb-accent #7C5CE6。**这是个有意的偏差，不是抄错了**：
+     `.cta` 那条渐变已经用掉「强调色只许 CTA 用、整页 ≤2 次」的全部配额，
+     再引一次 var(--accent-*) 会被 check_design 的 D1 当场判红。
+     两个紫相差 2 个色阶，在 64px 的圆上看不出来；
+     要严格照抄就得先改 DESIGN.md 那条铁律 —— 那是 Kevin 的决定，不是我的。 */
+  background:var(--kb-accent);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  color:#fff;font-size:10.5px;line-height:1.25;
+  box-shadow:0 8px 24px rgba(124,92,230,.42)}
+.try-result{flex:1;min-height:0;border-radius:12px;padding:11px 12px;font-size:13px;line-height:1.6;
+  background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-primary)}
+/* 贴着键盘往上排：真手机上最新的内容就压在键盘上方 */
+.compose{position:absolute;inset:0;padding:18px 15px 12px;display:flex;flex-direction:column;
+  justify-content:flex-end;gap:8px;overflow:hidden}
+.compose-label{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);
+}
+.bubble{
+  border-radius:14px;padding:10px 12px;font-size:12.5px;line-height:1.6;
+  background:rgba(255,255,255,.06);color:var(--text-secondary);
+  border:1px solid rgba(255,255,255,.05);
+}
+.bubble.out{
+  background:var(--card-bg);color:var(--kb-text);
+  border:1px solid rgba(185,139,232,.22);
+}
+.bubble.out b{font-weight:500;color:var(--text-primary)}
+.caret{
+  display:inline-block;width:2px;height:1em;vertical-align:-2px;margin-left:2px;
+  background:var(--highlight);animation:blink 1.1s steps(1) infinite;
+}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+/* 下半：键盘本体 —— PAD 18 / GAP 12 / R_KEY 12 照抄 Theme.java */
+.kb{padding:11px;display:flex;flex-direction:column;gap:7px;
+    border-top:1px solid var(--kb-rim)}
+.kb-row{display:flex;gap:6px;align-items:center}
+/* 顶行：四格等宽 + logo 钉正中。照抄 VoiceImeService 的 weight=1 四格布局 */
+.kb-row.top .chip{flex:1 1 0;min-width:0}
+/* 英文版把键盘上的字缩到 11px。**不是为了好看，是量出来必须缩**：
+   顶行四格**等宽 51px**（`flex:1 1 0`），所以约束是**单格**不是整行 ——
+   `Transcribe` 12px 要 53px，超出可用的 49px；`English ▾` 正好 51px 也贴死。
+   11px 下分别是 49 / 47，都进得去。
+   🚨 繁体那半完全不用管（翻譯/轉寫/歷史 各 24px），所以只给 en 加。
+   🚨 语言 chip 的名字一律用**那门语言自己的写法**（日本語 / 한국어 / English）——
+      译成 `Japanese ▾`(61px) / `Cantonese ▾`(69px) 的话，缩到 10px 都放不下。 */
+html[lang^="en"] .kb .chip,
+html[lang^="en"] .kb .key{font-size:10px}
+/* 🚨 英文版顶行**取消等宽**。中文四个标签都是 2 字，等宽好看；
+   英文 History(7) 和 Transcribe(10) 差一倍，等宽等于让短的白占地方、长的撑破。
+   实测：11px + 等宽时 `Transcribe` 内容 45px 塞进 40px 的格子；
+   改成按内容分配后行内需要 214px，而行宽正好 214px —— **富余 0**，
+   换台机器字体一变就爆，所以再降到 10px 换出真富余。 */
+html[lang^="en"] .kb-row.top .chip{flex:0 1 auto}
+html[lang^="en"] .kb-row.top{gap:5px}
+.kb-logo{flex:0 0 24px;height:20px;margin:0 3px;display:flex;align-items:center;justify-content:center}
+.kb-logo svg{width:100%;height:100%;fill:var(--text-secondary);opacity:.75}
+.chip{
+  flex:1;height:32px;border-radius:12px;background:var(--kb-key);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--kb-text);border:1px solid var(--kb-rim);
+}
+.chip.on{background:var(--kb-key-on)}
+.kb-mid{display:flex;align-items:center;justify-content:center;padding:14px 0 6px}
+/* 🚨 麦克风保持 var(--kb-accent) —— 那是键盘自己的 ACCENT（Theme.java #7C5CE6），
+   不是网站的 --accent-*。演示卡是真键盘的复刻，改了就跟真键盘对不上。 */
+.mic{
+  width:54px;height:54px;border-radius:50%;
+  background:var(--kb-accent);
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  box-shadow:0 10px 30px rgba(124,92,230,.45),0 0 0 1px rgba(255,255,255,.10) inset;
+}
+/* 🚨 待命时不显示波形 —— VoiceImeService.java:481「他明确说没点录音前不该有波形」。
+   只有 data-speaking="1" 的那一屏才让它出现。 */
+.mic .wave{display:none}
+.screen[data-speaking="1"] .mic .wave{display:flex}
+.mic-ico{width:32px;height:32px;fill:#fff;opacity:.92}
+/* 🚨 2026-09-06 五次修：Kevin 点名首屏演示卡 UI 过时后逐张核实，这处是真发现——
+   22/54=0.41，而 STATE.md item 39（真机已实测、构建1094）三端话筒图标比例统一到
+   0.60（54*0.6=32.4→32px）。之前这张卡的比例是自己写的，没有跟已定的真机比例核对过。 */
+.screen[data-speaking="1"] .mic-ico{display:none}
+.wave{align-items:center;gap:3px;height:22px}
+.wave i{
+  display:block;width:4px;border-radius:2px;background:#fff;
+  animation:breathe 1.8s ease-in-out infinite;
+}
+.wave i:nth-child(1){height:12px;animation-delay:0s}
+.wave i:nth-child(2){height:26px;animation-delay:.3s}
+.wave i:nth-child(3){height:16px;animation-delay:.6s}
+@keyframes breathe{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+/* 发送键：真键盘用 Theme.accentBg（键盘自己的强调色），不是网站 accent */
+.key.send{background:var(--kb-accent);color:#fff}
+.key.lit{background:rgba(185,139,232,.22);color:var(--text-primary)}
+.kb-bottom{display:flex;gap:6px}
+.key{
+  flex:1;height:38px;border-radius:12px;background:var(--kb-key);
+  border:1px solid var(--kb-rim);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--kb-text);
+}
+
+/* ================= 通用区块 ================= */
+section{padding:110px 0}
+.pivot{padding:0 0 60px;text-align:center}
+.pivot-line{
+  font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
+  color:var(--text-cn);
+}
+.eyebrow{
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-secondary);margin-bottom:20px;
+}
+h2{
+  font-family:var(--cn);font-weight:500;font-size:40px;line-height:1.25;
+  letter-spacing:.04em;color:var(--text-primary);
+}
+h2 .dim{color:var(--text-secondary)}
+.sub{font-size:16px;line-height:1.7;color:var(--text-secondary);margin-top:18px;max-width:520px}
+
+.card{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:20px;padding:32px;backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+/* ---- 屏 2 · 结果对比 ---- */
+.compare{display:flex;align-items:center}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:56px;align-items:stretch}
+.compare-head{
+  display:flex;align-items:center;gap:10px;
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-secondary);margin-bottom:18px;
+}
+.compare-body{font-size:17px;line-height:1.85;color:var(--text-secondary)}
+.compare-body.en{color:var(--text-primary);font-size:16px}
+.compare-body.en ol{margin:12px 0 0 20px;display:flex;flex-direction:column;gap:8px}
+.filler{color:rgba(169,157,198,.42);text-decoration:line-through}
+.tick{width:22px;height:22px;flex:0 0 22px;transition:transform .4s var(--ease) .4s}
+.js .tick{transform:scale(0)}
+.in-view .tick{transform:scale(1)}
+.meter{height:2px;border-radius:2px;background:rgba(255,255,255,.06);margin-top:24px;overflow:hidden}
+.meter i{display:block;height:100%;width:100%;background:var(--success);
+         transition:width 1.1s var(--ease) .3s}
+.js .meter i{width:0}
+.in-view .meter i{width:100%}
+
+/* ---- 屏 3 · 三步 ---- */
+.steps{display:flex;align-items:center;text-align:center}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:64px}
+.step{display:flex;flex-direction:column;align-items:center;gap:18px;transition:all .5s var(--ease)}
+.js .step{opacity:0;transform:translateY(20px)}
+.in-view .step{opacity:1;transform:none}
+.in-view .step:nth-child(2){transition-delay:.12s}
+.in-view .step:nth-child(3){transition-delay:.24s}
+.step-ico{
+  width:56px;height:56px;border-radius:16px;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  display:flex;align-items:center;justify-content:center;
+}
+.step h3{font-family:var(--cn);font-weight:500;font-size:19px;letter-spacing:.04em}
+.step p{font-size:14px;line-height:1.7;color:var(--text-secondary);max-width:260px}
+
+/* ---- 屏 4 · 场景 ---- */
+.scenes{display:flex;align-items:center}
+.scenes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.scene{transition:transform .3s var(--ease),border-color .3s var(--ease)}
+.scene:hover{transform:translateY(-4px);border-color:rgba(185,139,232,.3)}
+.scene .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--highlight)}
+.scene h3{font-family:var(--cn);font-weight:500;font-size:20px;letter-spacing:.04em;margin:16px 0 12px}
+.scene p{font-size:14px;line-height:1.75;color:var(--text-secondary)}
+.scene p b{color:var(--text-primary);font-weight:500}
+
+/* ---- 屏 5 · 隐私 ----
+   🚨 每条承诺都绑一个**可验证的机制**，不写形容词。
+      「不留存」配的是「不写磁盘、重启即消失」，不是「我们很重视隐私」。 */
+.privacy{display:flex;align-items:center}
+.privacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px}
+.pv{display:flex;gap:16px;align-items:flex-start}
+.pv-ico{
+  width:38px;height:38px;flex:0 0 38px;border-radius:11px;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  display:flex;align-items:center;justify-content:center;
+}
+.pv h3{font-family:var(--cn);font-weight:500;font-size:16px;letter-spacing:.03em;margin-bottom:6px}
+.pv p{font-size:14px;line-height:1.7;color:var(--text-secondary)}
+.caveat{
+  margin-top:40px;padding:22px 26px;border-radius:16px;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  font-size:14px;line-height:1.8;color:var(--text-secondary);
+}
+.caveat b{color:var(--text-primary);font-weight:500}
+
+/* ---- 屏 6 · FAQ ---- */
+.faq{display:flex;align-items:center}
+.faq-list{margin-top:48px;border-top:1px solid rgba(255,255,255,.07)}
+.qa{border-bottom:1px solid rgba(255,255,255,.07);padding:22px 0}
+.qa h3{
+  font-family:var(--cn);font-weight:500;font-size:17px;letter-spacing:.03em;
+  color:var(--text-primary);margin-bottom:10px;
+}
+.qa p{font-size:14.5px;line-height:1.8;color:var(--text-secondary);max-width:70ch}
+.qa p b{color:var(--text-primary);font-weight:500}
+
+/* ---- 屏 7 · 收口 ---- */
+.final{display:flex;align-items:center;text-align:center;padding:130px 0 90px}
+.final .wrap{display:flex;flex-direction:column;align-items:center}
+.final h2{font-size:52px;letter-spacing:.06em;color:var(--text-cn)}
+.final .slogan-en{font-size:22px;margin-top:14px}
+.final .cta-row{margin-top:44px;flex-direction:column;gap:16px}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:36px 0}
+footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot-links{display:flex;gap:28px}
+.foot-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;
+              transition:color .25s var(--ease)}
+.foot-links a:hover{color:var(--text-primary)}
+.copy{font-size:13px;color:var(--text-secondary)}
+
+/* ---- 进场动画 ----
+   🚨 初始隐藏只在 JS 起来之后才生效（html.js 由文首那段内联脚本加）。
+      不这样的话，JS 挂了 / IntersectionObserver 没跑 / 爬虫不执行 JS ——
+      这三屏就**永远是透明的**，跟 App 开屏那条淡入链断掉的坑一模一样。 */
+.js .reveal{opacity:0;transform:translateY(24px);
+        transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.in-view,.in-view>.reveal{opacity:1;transform:none}
+.js .hero-left>*{opacity:0;transform:translateY(24px);
+             animation:rise .6s var(--ease) forwards}
+.hero-left>*:nth-child(1){animation-delay:0s}
+.hero-left>*:nth-child(2){animation-delay:.1s}
+.hero-left>*:nth-child(3){animation-delay:.2s}
+.hero-left>*:nth-child(4){animation-delay:.3s}
+.hero-left>*:nth-child(5){animation-delay:.4s}
+@keyframes rise{to{opacity:1;transform:none}}
+.js .demo{opacity:0;transform:translateX(40px) scale(.96);
+      animation:slidein .8s var(--ease) .2s forwards}
+@keyframes slidein{to{opacity:1;transform:none}}
+
+/* ================= 响应式 ================= */
+@media (max-width:1100px){
+  :root{--pad:48px}
+  .hero .wrap{grid-template-columns:1fr;gap:64px}
+  .hero-left{padding-right:0}
+  .demo{justify-self:center;width:100%;max-width:340px}
+}
+@media (max-width:768px){
+  :root{--pad:24px}
+  .nav-right{gap:14px}
+  .nav-link{font-size:13px}
+  h1{font-size:36px}
+  .slogan-en{font-size:20px}
+  h2{font-size:28px}
+  .final h2{font-size:32px}
+  section{padding:80px 0}
+  .compare-grid,.steps-grid,.scenes-grid{grid-template-columns:1fr}
+  .cta-row{flex-direction:column;align-items:flex-start;gap:14px}
+}
+@media (max-width:560px){
+  /* 窄屏藏掉三个锚点链接，只留品牌 + 语言切换器。
+     锚点是便利不是必需（整页往下滚就是全部内容），而语言切换器是必需 ——
+     看不懂这一版的人，唯一的出路就是它。 */
+  .nav-right .nav-link{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.hero-left>*,.demo,.step{opacity:1!important;transform:none!important}
+  .tick{transform:scale(1)!important}
+  .meter i{width:100%!important}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg-glow" id="glow"></div>
+
+<nav>
+  <div class="wrap">
+    <span class="brand">Transless<span class="dot">.</span></span>
+    <span class="nav-right">
+      <a class="nav-link" href="#how">So geht's</a>
+      <a class="nav-link" href="#privacy">Datenschutz</a>
+      <a class="nav-link" href="#faq">Häufige Fragen</a>
+      <span class="langsw" role="group" aria-label="Sprache">
+        <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
+        <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
+        <a data-i18n="no" href="/en/"    hreflang="en"        lang="en">EN</a>
+        <a data-i18n="no" href="/ja/"    hreflang="ja"        lang="ja">日</a>
+        <a data-i18n="no" href="/de/"    hreflang="de"        lang="de">DE</a>
+        <a data-i18n="no" href="/es/"    hreflang="es"        lang="es">ES</a>
+        <a data-i18n="no" href="/ar/"    hreflang="ar"        lang="ar">AR</a>
+      </span>
+    </span>
+  </div>
+</nav>
+
+<!-- ============ 屏 1 · Hero ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Sprachtastatur &middot; Chinesisch sprechen, in 31 Sprachen heraus</div>
+      <h1>Damit die Welt dich versteht</h1>
+      <div class="slogan-en">No Language In Between</div>
+      <p class="lede">Gedrückt halten und sprechen — heraus kommt Text, der sofort versendet werden kann. WeChat, E-Mail, jede App.<br>Sag, was du meinst, und es kommt in dieser Sprache heraus, ganz natürlich, mit Absätzen wo es sie braucht.</p>
+      <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
+           "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
+           不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
+      <div class="cta-row">
+        <a class="cta" href="#how">So funktioniert's</a>
+        <span class="cta-note">Android im Betatest &middot; iOS in Warteschlange</span>
+      </div>
+      <div class="langs">English &middot; 日本語 &middot; Français &middot; Deutsch &middot; Español &middot; 한국어 &middot; 粵語 &middot; 繁體中文 &middot; 简体中文</div>
+    </div>
+
+    <!-- 演示卡：按 Theme.java 复刻的键盘，不是截图 -->
+    <div class="demo" data-a11y-role="Funktions-Karussell" data-a11y-label="Funktionsdemo, mit den Pfeiltasten oder durch Ziehen wechseln">
+      <div class="phone">
+        <div class="screen" id="screen" data-speaking="0">
+          <div class="statusbar">
+            <span>9:41</span>
+            <span class="sb-right">
+              <span class="sb-bars"><i></i><i></i><i></i><i></i></span>
+              <span class="sb-batt"><span></span></span>
+            </span>
+          </div>
+
+          <div class="feats" id="feats">
+            <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="Englisch"
+                 data-mode="tr" data-speaking="0" data-name="Übersetzen · Chinesisch sprechen, natürliches Englisch bekommen">
+              <div class="compose">
+                <span class="feat-tag">Übersetzen · Chinesisch sprechen, natürliches Englisch bekommen</span>
+                <div class="compose-label">Du sagst</div>
+                <div class="bubble">Das Angebot müssen wir noch anpassen, ich melde mich bis Mittwoch bei ihm<span class="caret"></span></div>
+                <div class="compose-label">Es erscheint</div>
+                <div class="bubble out">Hi James,<br><br><b>We&rsquo;re revisiting the quote</b> and will get back to you <b>by Wednesday next week</b>.<br><br>Best,</div>
+                
+              </div>
+            </div>
+            <div class="feat" data-sub="trans" data-sub-active="0" data-lang="Englisch"
+                 data-mode="ts" data-speaking="0" data-name="Transkribieren · Was du sagst, kommt so heraus">
+              <div class="compose">
+                <span class="feat-tag">Transkribieren · Was du sagst, kommt so heraus</span>
+                <div class="compose-label">Du sagst</div>
+                <div class="bubble">äh... beim Design brauchen wir wohl zwei Tage mehr, die Entwicklung läuft, das Testen müssen wir straffen<span class="caret"></span></div>
+                <div class="compose-label">Es erscheint</div>
+                <div class="bubble out">Design braucht zwei Tage mehr; Entwicklung im Plan; Testing gestrafft.<br>Insgesamt verschiebt sich alles um etwa drei Tage.</div>
+                <div class="compose-label" style="color:var(--highlight)">Transkribieren übersetzt nicht. „Bereinigt“ entfernt Füllwörter, „Wortwörtlich“ ändert keinen Buchstaben</div>
+              </div>
+            </div>
+            <div class="feat" data-app="1" data-name="Schnellübersetzer · Ohne die Tastatur zu wechseln">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; Zurück</span><b>Schnellübersetzer</b></div>
+                <div class="try-tabs">
+                  <div class="chip on">Übersetzen</div><div class="chip">Transkribieren</div>
+                </div>
+                <div class="try-tabs">
+                  <div class="chip">Beruflich &#9662;</div><div class="chip">Englisch &#9662;</div>
+                </div>
+                <div class="try-result">
+                  How much is this?<br>Could you do a bit better on the price?
+                </div>
+                <div class="try-sp"><div class="chip">Vorlesen</div><div class="chip">Große Schrift</div></div>
+                <div class="try-mic-row">
+                  <div class="try-mic">Antippen<br>zum Start</div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06 四次修：Kevin 当面指出这张卡的 UI 已经过时——真机早就简化了
+                 （STATE.md item 17/19/24：语气/语言合并成两个玻璃下拉、⇄对方说已移到独立的
+                 「面对面」Tab、历史/引导/听到预览整块删除只剩空结果框）。按已实测的真机改动
+                 改这张卡，不是按感觉简化的。 -->
+
+            <div class="feat" data-sub="tone" data-sub-active="2" data-lang="Englisch"
+                 data-mode="tr" data-speaking="0" data-name="Chinesisch vor dem Cursor übersetzen">
+              <div class="compose">
+                <span class="feat-tag">Chinesisch vor dem Cursor übersetzen</span>
+                <div class="compose-label">Du sagst</div>
+                <div class="bubble">(Chinesischer Text, bereits im Feld getippt)<br>Bitte bis Mittwoch bei mir melden<span class="caret"></span></div>
+                <div class="compose-label">Es erscheint</div>
+                <div class="bubble out">Please get back to me by <b>Wednesday next week</b>.</div>
+                <div class="compose-label" style="color:var(--highlight)">Kein erneutes Sprechen nötig — fertig getippter chinesischer Text wird mit einem Klick zu Fremdsprache</div>
+              </div>
+            </div>
+            <div class="feat" data-sub="tone" data-sub-active="0" data-lang="日本語"
+                 data-mode="tr" data-speak="1" data-speaking="0" data-name="Vorlesen · Mit einer Muttersprachler-Stimme für dein Gegenüber">
+              <div class="compose">
+                <span class="feat-tag">Vorlesen · Mit einer Muttersprachler-Stimme für dein Gegenüber</span>
+                <div class="compose-label">Du sagst</div>
+                <div class="bubble">Wie viel kostet das? Geht es etwas günstiger?<span class="caret"></span></div>
+                <div class="compose-label">Es erscheint</div>
+                <div class="bubble out">これはいくらですか？<br>もう少し安くできますか？</div>
+                <div class="compose-label" style="color:var(--highlight)">Auf „Vorlesen“ tippen, es wird auf Japanisch gesprochen. Kein Handy mehr vors Gesicht halten</div>
+              </div>
+            </div>
+            <div class="feat" data-sub="tone" data-sub-active="0" data-lang="한국어"
+                 data-mode="tr" data-speaking="0" data-name="31 Sprachen · Auch mit Handschrift">
+              <div class="compose">
+                <span class="feat-tag">31 Sprachen · Auch mit Handschrift</span>
+                <div class="compose-label">Du sagst</div>
+                <div class="bubble">Wie komme ich zur U-Bahn-Station<span class="caret"></span></div>
+                <div class="compose-label">Es erscheint</div>
+                <div class="bubble out">지하철역은 어떻게 가나요?</div>
+                <div class="compose-label" style="color:var(--highlight)">Handschrifterkennung läuft komplett lokal auf deinem Handy, ohne Internet</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 🚨 键盘照抄真身：顶行 翻译·英文▾ |logo| 转写·历史（四格等宽），
+               第二排跟着模式换，底排四个键含发送。出处见规格文件末尾那张对照表。 -->
+          <div class="kb" data-sub-tone="Locker|Beruflich|E-Mail" data-sub-trans="Bereinigt|Wortwörtlich">
+            <div class="kb-row top">
+              <div class="chip on" data-slot="tab-tr">Übersetzen</div>
+              <div class="chip" data-slot="lang">Englisch &#9662;</div>
+              <div class="kb-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="2.2" width="17" height="3.4" rx="1.3"/><rect x="8.6" y="6" width="6.8" height="10.4" rx="3.4"/><rect x="11.3" y="16.6" width="1.4" height="3" rx=".7"/><rect x="8" y="19.4" width="8" height="2.1" rx="1.05"/></svg></div>
+              <div class="chip" data-slot="tab-ts">Transkribieren</div>
+              <div class="chip dim">Verlauf</div>
+            </div>
+            <div class="kb-row" data-slot="subrow"></div>
+            <div class="kb-mid">
+              <div class="mic">
+                <svg class="mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg>
+                <div class="wave"><i></i><i></i><i></i></div>
+              </div>
+            </div>
+            <div class="kb-bottom">
+              <div class="key">&#9000; Tippen</div>
+              <div class="key" data-slot="speak">&#128264; Vorlesen</div>
+              <div class="key">&#9003;</div>
+              <div class="key send">Senden</div>
+            </div>
+          </div>
+
+          <div class="home-ind"><i></i></div>
+        </div>
+      </div>
+      <div class="prog" id="prog" aria-hidden="true"></div>
+      <div class="feat-name" id="featName"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 过渡 · 不止是输入法 ============ -->
+<section class="pivot">
+  <div class="wrap">
+    <p class="pivot-line">Aber es ist mehr als nur eine Tastatur.</p>
+  </div>
+</section>
+
+<!-- ============ 屏 2 · 结果对比 ============ -->
+<section id="difference" class="compare reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">The difference</div>
+    <h2>Sag, was dir durch den Kopf geht —<span class="dim">gehört wird, was du gesagt hättest, wenn du es dir vorher überlegt hättest.</span></h2>
+    <p class="sub">Keine Wort-für-Wort-Übersetzung. Es fasst dein loses Gerede zu einer Sache zusammen, bringt Ordnung rein und schreibt es im Ton, den du wählst, fertig.</p>
+    <!-- 🚨 2026-09-06 三次修：旧标题"口水话进去,英文出来"仍是Typeless式转换框架,
+         且锁死"出英文"跟"不锁死中文→英文"的定位冲突。第911行同样含"口水话/英文"
+         但在隐私披露段,是如实说明数据流向,判断后没动——不是所有出现都要改,要按上下文判断是不是定位语言。 -->
+
+    <div class="compare-grid">
+      <div class="card">
+        <div class="compare-head">Was du ins Handy sprichst</div>
+        <div class="compare-body">
+          „Äh... unser Zeitplan diesmal, also<span class="filler">sozusagen</span>beim Design brauchen wir wohl zwei Tage mehr,
+          <span class="filler">dann</span>läuft die Entwicklung eigentlich gut,<span class="filler">äh</span>
+          beim Testen müssen wir vielleicht straffen,<span class="filler">also im Grunde</span>verschiebt sich alles um etwa drei Tage.“
+        </div>
+      </div>
+      <div class="card">
+        <div class="compare-head">
+          <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Was bei Transless erscheint
+        </div>
+        <div class="compare-body en">
+          Here's where the timeline stands:
+          <ol>
+            <li>Design needs roughly two extra days.</li>
+            <li>Development is on track.</li>
+            <li>QA will have to be compressed.</li>
+          </ol>
+          <div style="margin-top:14px">Net effect: the schedule shifts out by about three days.</div>
+        </div>
+        <div class="meter"><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 3 · 三步 ============ -->
+<section id="how" class="steps reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Drei Schritte, keinen vierten.</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/>
+            <path d="M12 17v5"/></svg>
+        </div>
+        <h3>Gedrückt halten, sprechen</h3>
+        <p>Pausen, Versprecher, Nachdenken — alles kein Problem. Zum Stoppen einmal antippen.</p>
+      </div>
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>
+        </div>
+        <h3>Es schreibt für dich um</h3>
+        <p>Entfernt Füllwörter, bündelt die Kernpunkte, ordnet neu — im Ton Locker, Beruflich oder E-Mail.</p>
+      </div>
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/><path d="M7 15h10"/>
+            <path d="M6.5 10.5h.01M10 10.5h.01M13.5 10.5h.01M17 10.5h.01"/></svg>
+        </div>
+        <h3>Direkt im Textfeld</h3>
+        <p>Es ist eine Tastatur — das Ergebnis landet genau dort, wo du sonst tippen würdest: WeChat, E-Mail, jede App.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 4 · 场景 ============ -->
+<section id="where" class="scenes reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">Where it earns its place</div>
+    <h2>Für die Momente, in denen<span class="dim">„dir die Worte auf der Zunge liegen, aber nicht rauswollen“</span>.</h2>
+    <div class="scenes-grid">
+      <div class="card scene">
+        <div class="tag">Work</div>
+        <h3>Eine englische E-Mail beantworten</h3>
+        <p>Sprich deine Gedanken auf Chinesisch aus — heraus kommt eine fertige E-Mail mit Anrede, Absätzen und Gruß.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Cross-border</div>
+        <h3>Mit Kollegen im Ausland abstimmen</h3>
+        <p>Nach dem Meeting einmal kurz zusammenfassen, was gesagt wurde — fertig ist eine nummerierte Liste der Kernpunkte.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Notes</div>
+        <h3>Halb durchdachte Gedanken zu brauchbarem Chinesisch machen</h3>
+        <p>Nach dem Meeting, unterwegs fällt dir etwas ein — sprich es einfach aus.<b>Transkribieren</b>übersetzt nicht —
+        „Bereinigt“ entfernt „äh... also... sozusagen“ und bündelt in Punkte; „Wortwörtlich“ ändert keinen Buchstaben.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Rewrite</div>
+        <h3>Fertig getippter chinesischer Text, ohne erneutes Sprechen</h3>
+        <p>Der chinesische Text in WeChat ist fertig getippt, und dann fällt dir ein: dein Gegenüber versteht kein Chinesisch.
+        <b>Chinesisch vor dem Cursor übersetzen</b>. Chinesisch vor dem Cursor wird an Ort und Stelle zu einer verständlichen Version.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Face to face</div>
+        <h3>Spontan als Dolmetscher</h3>
+        <p>Tippe unten auf<b>„Von Angesicht zu Angesicht“</b>, ohne die Tastatur zu wechseln. Du sprichst Chinesisch, es erscheint als Fremdsprache für dein Gegenüber;
+        spricht die andere Person die Fremdsprache, erkennt es automatisch, wer spricht, und übersetzt zurück in deine Sprache.
+        Dazu gibt es<b>den Dauermodus</b>für Satz für Satz, und<b>Große Schrift</b>große Schrift, damit dein Gegenüber gut lesen kann.</p>
+        <!-- 🚨 2026-09-06 更新：面对面翻译已升级成底部独立 Tab（此前是随手翻译里的
+             ⇄按钮切换），改成自动判断说话方而不是手动点切换。这一段是按 STATE.md
+             的文字描述改的，没有对着真机截图核对过，建议 2.1/2.2 抽空扫一眼版式描述是否精确。 -->
+      </div>
+      <div class="card scene">
+        <div class="tag">Travel</div>
+        <h3>Im Ausland bestellen, nach dem Weg fragen</h3>
+        <p>Sprich Chinesisch ins Handy, heraus kommt die Landessprache — tippe zusätzlich auf Vorlesen, und<b>es wird mit einer Muttersprachler-Stimme für dein Gegenüber vorgelesen</b>. Kein Gestikulieren, kein Handy vors Gesicht halten.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
+<section id="memory" class="scenes reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">Beyond translation</div>
+    <h2>Was du gesagt hast, merkt es sich;<span class="dim">was du gelernt hast, kannst du bald selbst sagen.</span></h2>
+    <p class="sub">Transless ist mehr als ein Übersetzer — es ist auch ein Vokabelheft, das von selbst wächst. Je länger du es nutzt, desto weniger brauchst du es.</p>
+    <div class="scenes-grid">
+      <div class="card scene">
+        <div class="tag">Collect</div>
+        <h3>Nachgeschlagene, genutzte Ausdrücke landen automatisch im Vokabelheft</h3>
+        <p>Wörter, die du beim Übersetzen nachgeschlagen hast, korrigierte Formulierungen — mit einem Tippen landen sie in deinem<b>Vokabelheft</b>, ohne sie woanders zu notieren.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Review</div>
+        <h3>Das System holt hervor, was du noch nicht sicher kannst</h3>
+        <p>Karteikarten-Wiederholung: Tippe auf<b>„Kann ich“</b>, wenn du es kannst, oder auf<b>„Noch mal“</b>, wenn nicht — es wählt selbst aus, was drankommt.</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Speak</div>
+        <h3>Je mehr du sprichst, desto mehr kommt von selbst heraus</h3>
+        <p>Vom „Nachschlagen, auf Übersetzung angewiesen sein“ zum „Es fällt dir ein, du sagst es direkt“ — diesen Kreislauf gibt es nur bei Transless.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 5 · 隐私 ============ -->
+<section id="privacy" class="privacy reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">Privacy</div>
+    <h2>Was du sagst,<span class="dim">behalten wir nicht.</span></h2>
+    <p class="sub">Jeder Punkt hier entspricht einem im Code nachprüfbaren Verhalten, kein Werbespruch. Ändert sich das Backend, ändert sich diese Seite mit.</p>
+
+    <div class="privacy-grid">
+      <div class="pv">
+        <div class="pv-ico">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>
+        </div>
+        <div>
+          <h3>Nach der Spracherkennung sofort gelöscht</h3>
+          <p>Die Audio-Übertragung dient nur der Erkennung dessen, was du gesagt hast. Sobald die Erkennung fertig ist, wird sie<b>sofort verworfen</b>, ohne auf Festplatte zu landen, ohne Kopie.</p>
+        </div>
+      </div>
+      <div class="pv">
+        <div class="pv-ico">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <div>
+          <h3>Ergebnis nur 10 Minuten im Arbeitsspeicher</h3>
+          <p>Der überarbeitete Text liegt im Arbeitsspeicher bereit, bis dein Handy ihn abholt, und wird<b>nach höchstens 10 Minuten</b>automatisch gelöscht — bei einem Neustart des Dienstes verschwindet er sofort. Nie auf Festplatte.</p>
+        </div>
+      </div>
+      <div class="pv">
+        <div class="pv-ico">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
+        </div>
+        <div>
+          <h3>Der Verlauf bleibt nur auf deinem Handy</h3>
+          <p>Damit du selbst zurückblättern kannst, speichert die App deinen letzten Verlauf<b>lokal auf deinem Gerät</b>— er wird nie an unsere Server übertragen, wir sehen ihn nie. Wir legen kein Gesprächsarchiv an, erstellen kein Nutzerprofil, und wir wollen<b>auch nicht</b>dein Adressbuch, deine Fotos oder deinen Standort.</p>
+          <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
+               本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
+        </div>
+      </div>
+      <div class="pv">
+        <div class="pv-ico">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l7 3v6c0 4.4-3 8.1-7 9-4-.9-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div>
+          <h3>Niemand liest mit, was du sagst</h3>
+          <p>Die für die Compliance nötige Erkennung von Verstößen ist<b>programmatischer Regelabgleich</b>, keine manuelle Durchsicht. Wir verkaufen oder vermieten deine Inhalte nicht, nutzen sie nicht für Werbung.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="caveat">
+      <b>Eines müssen wir aber klarstellen:</b>Um aus gesprochener Umgangssprache natürliches Englisch zu machen,
+      muss der erkannte<b>Text</b>an einen KI-Modell-Anbieter weitergegeben werden — diesen Schritt können wir nicht umgehen,
+      und wir tun nicht so, als gäbe es ihn nicht. Also gilt:<b>Diktiere keine Passwörter, Kartennummern, Ausweisnummern oder Inhalte, die einer Geheimhaltungspflicht unterliegen.</b>
+      <br><br>
+      Vollständige Bedingungen siehe <a href="/privacy.html" style="color:var(--highlight)">Datenschutzerklärung</a>。
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 6 · FAQ ============ -->
+<section id="faq" class="faq reveal" data-observe>
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>Die Fragen, die dich wohl am meisten interessieren</h2>
+    <div class="faq-list">
+      <div class="qa">
+        <h3>Braucht es Internet? Geht es offline?</h3>
+        <p>Es braucht Internet. Spracherkennung und Überarbeitung laufen auf dem Server, offline geht das nicht. Die Handschrifterkennung läuft offline, das Modell liegt auf deinem Handy.</p>
+      </div>
+      <div class="qa">
+        <h3>Wird gespeichert, was ich sage?</h3>
+        <p>Die Aufnahme wird nach der Erkennung sofort verworfen, das überarbeitete Ergebnis liegt höchstens 10 Minuten im Server-Arbeitsspeicher. Die App speichert lokal auf deinem Handy einen Verlauf zum Zurückblättern, aber der wird nie zu uns übertragen — wir sehen ihn nicht.</p>
+      </div>
+      <div class="qa">
+        <h3>Muss ich mich registrieren?</h3>
+        <p>Aktuell nicht, es funktioniert direkt nach der Installation. Später kommt ein Login dazu, damit du bei einem Handywechsel wiederherstellen kannst — auch dann wird es nicht erzwungen, ohne Login geht es weiterhin.</p>
+      </div>
+      <div class="qa">
+        <h3>Welche Sprachen werden unterstützt?</h3>
+        <p>Aktuell 31, darunter Englisch, Japanisch, Französisch, Deutsch, Spanisch, Koreanisch, Kantonesisch, Thailändisch, Arabisch, Russisch und weitere gängige Sprachen. Du sprichst Chinesisch und wählst eine Zielsprache.<b>Beim Vorlesen wird automatisch die passende Muttersprachler-Stimme zur Sprache des Textes gewählt</b> — bei japanischem Text spricht eine japanische Stimme, nicht Japanisch mit englischem Akzent.
+        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
+      </div>
+      <div class="qa">
+        <h3>In welchen Apps funktioniert es?</h3>
+        <p>Es ist eine echte Tastatur, keine separate Übersetzungs-App. Überall, wo du tippen kannst — WeChat, E-Mail, Notizen, Browser.</p>
+      </div>
+      <div class="qa">
+        <h3>Was, wenn die Übersetzung falsch ist?</h3>
+        <p>Die Übersetzung wird von einer KI erstellt und kann Fehler enthalten. Deshalb ist eine Tipptastatur eingebaut (Pinyin/Wubi/Handschrift), mit der du jederzeit korrigieren kannst; du kannst auch in den Modus „Wortwörtlich“ wechseln, der keinen Buchstaben ändert und nur Satzzeichen ergänzt.</p>
+      </div>
+      <div class="qa">
+        <h3>Wie deinstalliere ich vollständig?</h3>
+        <p>Schalte Transless zuerst in den System-Tastatureinstellungen aus, dann deinstalliere die App normal. Mit der Deinstallation stoppt jede Verarbeitung — es gibt bei uns keine Dateien, die du extra löschen müsstest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 屏 7 · 收口 ============ -->
+<section class="final" id="get">
+  <div class="wrap">
+    <h2>Damit die Welt dich versteht</h2>
+    <div class="slogan-en">No Language In Between</div>
+    <div class="cta-row">
+      <a class="cta" href="#faq">Häufige Fragen</a>
+      <span class="cta-note">Aktuell kostenlos. Die Anmeldung für den Betatest wird gerade freigeschaltet und erscheint dann hier.</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand" style="font-size:16px">Transless<span class="dot">.</span></span>
+    <div class="foot-links">
+      <a href="/privacy.html">Datenschutzerklärung</a>
+      <a href="/terms.html">Nutzungsbedingungen</a>
+      <a href="/company.html">Unternehmensangaben</a>
+      <a href="mailto:support@transless.net">Kontakt</a>
+      <!-- 2026-08-26：联系邮箱放出来了。它不是占位符 —— transless.net 的 MX
+           指向 ImprovMX，08-25 实测「外部发信 → support@transless.net → Kevin 的 Gmail」
+           整条链通了（收件人那栏写的就是 support@），发信侧走 Resend 已验证域名。
+           2026-08-26：服务条款也放出来了，源是 `dist/terms.html`（中文·内测版 v1.0）。
+           🚨 **不是** `legal/terms.en.DRAFT.html` —— 那份英文草稿里写着
+           「Free 10 条/天 + Pro 月付/年付」，那套订阅根本不存在，挂上去比没有条款更糟。
+           现在这份只写当下成立的：免费内测、按设备每日额度（后端 FREE_DAILY 真机制）、
+           AI 会出错要自己复核、香港法律、运营方是 Luminate Pacific。 -->
+    </div>
+    <!-- 2026-08-26 Kevin 定：一步到位署公司主体。
+         三个理由：① 商标申请人就是它，官网是「实际使用」证据，署名对不上这份证据要打折
+         ② GDPR 要求披露数据控制者身份，早晚要写 ③ 现在改一次，晚改要动页脚/隐私/条款三处。
+         🚨 只写「运营」，不写「App Store 上的开发者是公司」——
+         苹果账号目前仍是个人主体（个人账号不能转公司，只能新开 Organization 再转移 App），
+         那句话现在会被现实打脸。 -->
+    <span class="copy">&copy; 2026 Luminate Pacific Consulting Service Limited</span>
+  </div>
+</footer>
+
+<script>
+/* 功能轮播。原生 setInterval，零依赖。
+   每切一屏，键盘的第二排 / 语言按钮 / 模式 Tab / 朗读高亮 / 波形
+   都跟着变成那个功能的真实样子 —— 演示卡是真键盘的复刻，不能只换文字。 */
+(function(){
+  var scenes = [].slice.call(document.querySelectorAll('#feats .feat'));
+  var progBox = document.getElementById('prog');
+  var screen = document.getElementById('screen');
+  var featName = document.getElementById('featName');
+  // 🚨 原来这里是 `if (!scenes.length || !dotsBox) return;`。
+  //    去掉圆点时如果忘了改这一行，整个轮播会当场早退、一屏都不动。
+  if (!scenes.length) return;
+
+  var subrow = document.querySelector('[data-slot="subrow"]');
+  var langChip = document.querySelector('[data-slot="lang"]');
+  var tabTr = document.querySelector('[data-slot="tab-tr"]');
+  var tabTs = document.querySelector('[data-slot="tab-ts"]');
+  var speakKey = document.querySelector('[data-slot="speak"]');
+  /* 🚨 档位名以前写死在这里，而 data-sub-active 拿**文字**去匹配它 ——
+     多语言下必然对不上（属性翻了、这个数组没翻 → 一个都不高亮）。
+     文字挪到 .kb 的 data-sub-tone / data-sub-trans（会被抽取器翻），
+     选中项改用**序号**，两边彻底解耦。*/
+  var kbEl = document.querySelector('.kb');
+  var SUB = {
+    tone:  ((kbEl && kbEl.getAttribute('data-sub-tone'))  || '随意|工作|邮件').split('|'),
+    trans: ((kbEl && kbEl.getAttribute('data-sub-trans')) || '整理|逐字').split('|')
+  };
+  var i = 0, timer = null, paused = false;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 进度条：一屏一根，**不可点**（不可点就不会再有"太小点不中"的问题）
+  var bars = [];
+  if (progBox) {
+    scenes.forEach(function(){
+      var t = document.createElement('i');
+      progBox.appendChild(t);
+      bars.push(t);
+    });
+  }
+
+  function go(n){
+    i = (n + scenes.length) % scenes.length;
+    var cur = scenes[i];
+    scenes.forEach(function(s, k){ s.classList.toggle('on', k === i); });
+    bars.forEach(function(d, k){ d.classList.toggle('on', k === i); });
+
+    // 第二排跟着模式换：翻译档 随意/工作/邮件，转写档 整理/逐字
+    var kind = cur.getAttribute('data-sub') || 'tone';
+    var active = parseInt(cur.getAttribute('data-sub-active'), 10);
+    subrow.innerHTML = '';
+    SUB[kind].forEach(function(t, n){
+      var c = document.createElement('div');
+      c.className = 'chip' + (n === active ? ' on' : '');
+      c.textContent = t;
+      subrow.appendChild(c);
+    });
+
+    if (langChip) langChip.innerHTML = (cur.getAttribute('data-lang') || '') + ' \u25BE';
+    /* 🚨 下面这三行以前拿**显示文案**当判据（mode === '翻译'、/朗读/.test(data-name)）。
+       做多语言时立刻暴露：文案一翻，Tab 不高亮、朗读键永远不亮，而**页面看着完全正常**。
+       现在一律用**从不显示给用户的枚举/开关**匹配，显示文案怎么翻都不影响逻辑。
+       —— 3 获客与市场 2026-08-28 指出，且坚持"别只改正则，那是把坑往后挪一版"。*/
+    var mode = cur.getAttribute('data-mode') || 'tr';
+    if (tabTr) tabTr.classList.toggle('on', mode === 'tr');
+    if (tabTs) tabTs.classList.toggle('on', mode === 'ts');
+    if (speakKey) speakKey.classList.toggle('lit', cur.getAttribute('data-speak') === '1');
+    if (screen) {
+      screen.setAttribute('data-speaking', cur.getAttribute('data-speaking') || '0');
+      // 随手翻译那一屏不是键盘，是独立页面 —— 整屏换掉，键盘藏起来
+      screen.setAttribute('data-app', cur.getAttribute('data-app') || '0');
+    }
+    if (featName) featName.innerHTML = '<b>' + (cur.getAttribute('data-name')||'') + '</b>';
+  }
+  function pause(){ paused = true; if (timer) { clearInterval(timer); timer = null; } }
+
+  /* ---------------- 按住拖一下换屏 ----------------
+     Kevin 2026-08-26：「鼠标按住滑一下就能切换到下一屏，不要下面这种小圆点」。
+
+     🚨 用 Pointer Events：鼠标和触屏同一套代码，不用写两遍、也不会两套互相触发。
+     🚨 CSS 上给拖动面 `touch-action:pan-y` —— **横向手势归我们，纵向仍然让页面正常滚**。
+        不写这条，手机上想往下滑页面会被我们吃掉，比小圆点还难用。
+     🚨 只有横向位移**大于**纵向时才算换屏（`|dx| > |dy|`），
+        否则斜着滑一下也会误切。
+     🚨 阈值 44px：太小会误触（手指按下时本来就会抖几像素），
+        太大就变成"要用力拖"，失去"滑一下"的手感。 */
+  var DRAG_MIN = 44;
+  var demoEl = document.querySelector('.demo');
+  if (demoEl) {
+    var sx = 0, sy = 0, down = false, moved = false;
+    demoEl.addEventListener('pointerdown', function(ev){
+      if (ev.button !== undefined && ev.button !== 0) return;   // 右键/中键不算
+      down = true; moved = false; sx = ev.clientX; sy = ev.clientY;
+      demoEl.classList.add('dragging');
+      pause();                       // 一上手就停掉自动轮播，别跟人抢
+    });
+    demoEl.addEventListener('pointermove', function(ev){
+      if (!down || moved) return;
+      var dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (Math.abs(dx) < DRAG_MIN || Math.abs(dx) <= Math.abs(dy)) return;
+      moved = true;                  // 一次按下只切一屏，别拖得远就连翻好几屏
+      go(dx < 0 ? i + 1 : i - 1);    // 往左拖 = 看下一屏（跟手）
+    });
+    function up(){ down = false; demoEl.classList.remove('dragging'); }
+    demoEl.addEventListener('pointerup', up);
+    demoEl.addEventListener('pointercancel', up);
+    demoEl.addEventListener('pointerleave', up);
+
+    /* 🚨 可达性：圆点没了之后，不能只剩"会拖的人才用得了"。
+       左右方向键照样能切，而且这块要能被 Tab 到。 */
+    demoEl.setAttribute('tabindex', '0');
+    demoEl.setAttribute('role', 'group');
+    // 🚨 这两条以前写死在 JS 里，而抽取器不碰 <script> —— 三语页面都会念简体。
+    //    屏幕阅读器会读出来，它是**真·用户可见内容**，只是眼睛看不见。
+    //    挪到 .demo 的 data-* 上，跟别的文案走同一条翻译链路。
+    demoEl.setAttribute('aria-roledescription',
+      demoEl.getAttribute('data-a11y-role') || '');
+    demoEl.setAttribute('aria-label',
+      demoEl.getAttribute('data-a11y-label') || '');
+    demoEl.addEventListener('keydown', function(ev){
+      if (ev.key === 'ArrowRight') { pause(); go(i + 1); ev.preventDefault(); }
+      else if (ev.key === 'ArrowLeft') { pause(); go(i - 1); ev.preventDefault(); }
+    });
+    // 屏读器靠这个知道换到哪一屏了（进度条是 aria-hidden 的，纯视觉）
+    if (featName) featName.setAttribute('aria-live', 'polite');
+  }
+
+  go(0);
+  if (!still) {
+    timer = setInterval(function(){ if (!paused) go(i + 1); }, 5200);
+    var demo = document.querySelector('.demo');
+    demo.addEventListener('mouseenter', function(){ paused = true; });
+    demo.addEventListener('mouseleave', function(){ if (timer) paused = false; });
+  }
+})();
+
+// 进视口才播动画（IntersectionObserver），一次性
+var io = new IntersectionObserver(function(es){
+  es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
+}, {threshold:.18});
+document.querySelectorAll('[data-observe]').forEach(function(el){ io.observe(el); });
+
+// 🚨 兜底：IO 不管什么原因没触发（headless、被拦、老浏览器），2.5s 后一律点亮。
+//    宁可少一次动效，也不能让整屏内容永久不可见。
+setTimeout(function(){
+  document.querySelectorAll('[data-observe]').forEach(function(el){ el.classList.add('in-view'); });
+}, 2500);
+
+// 背景柔光跟随鼠标，最大偏移 40px；reduced-motion 时不挂
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  var glow = document.getElementById('glow');
+  window.addEventListener('mousemove', function(ev){
+    var dx = (ev.clientX / window.innerWidth  - .5) * 80;
+    var dy = (ev.clientY / window.innerHeight - .5) * 80;
+    dx = Math.max(-40, Math.min(40, dx));
+    dy = Math.max(-40, Math.min(40, dy));
+    glow.style.transform = 'translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px))';
+  }, {passive:true});
+}
+</script>
+</body>
+</html>
