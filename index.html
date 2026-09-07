@@ -147,6 +147,195 @@ body{
 
 /* 背景：整页固定渐变 + 唯一一处柔光中心 */
 .bg{position:fixed;inset:0;z-index:-2;background:var(--bg-gradient)}
+/* 2026-09-06 十二次修：Kevin 看了实际效果指出三处问题，逐条改：
+   ①原来按 8 个 <section> 各配一张图，相邻两段图不一样、中间没配图的 .pivot
+     露出裸的 .bg 底色，切面之间出现一条"杠"。→ 现在改成**大区块**：几个连续
+     section 共用同一条 background 规则，物理上就是同一张图，不存在接缝。
+   ②原来 .steps/.privacy/.faq 刻意留白，Kevin 要全站覆盖，不留白——
+     新生成一张"独处/信任"主题的图给隐私+FAQ这个区块（内容本来就是讲隐私承诺）。
+   ③原来 8 段配 4 张、切换太频繁，"说得越多"那几张卡刚出现就被滚过去看不清。
+     →区块从 8 个粒度收成 4 个大区块，每张图要撑的滚动距离变长，同一张图
+     停留时间自然变长，不用另外调时长参数。
+   路径用绝对路径 /img/...，因为 en/ja/de/es/ar/zh-hk 几个子目录页面也要引用同一份图。 */
+/* 🚨 十四次修：Kevin 截图还是能看出"但它不止是一个输入法"那条 .pivot 有一条杠——
+   根因找到了，不是"没合并"：linear-gradient 的色标是按**每个元素自己的盒高**铺开的，
+   跟 background-attachment:fixed 无关（fixed 只管图片，不管渐变怎么分布）。
+   .hero 很高（100vh），.pivot 很矮（padding 60px），同一条三段式渐变在矮盒子里
+   几乎只显示得出最深那一段颜色，看起来就是一条更暗的杠——三个 section "用的是
+   同一条 CSS 规则"，但矮的那个渲染出来的样子不一样。改成**纯色蒙层**（不用渐变），
+   高矮不同的盒子叠出来的颜色就完全一致，物理上不可能再有色差。 */
+/* 2026-09-06 Kevin 第一次:「背景图片放得太大了，看不清楚在表达啥，缩小一点」——
+   试过把 size 从 cover 改成 46%，结果 Kevin 第二次反馈：「没有铺满，截了一半，很丑」。
+   46% 治好了"太大"但破了"铺满"——size 变小之后图片box比section本身小，
+   露出了周围的纯色，两个要求其实是矛盾的：cover 是"填满不留缝"的唯一保证方式，
+   任何更小的固定百分比都不能保证在所有视口下都填满。
+   → 改法：size 换回 cover（保证不留缝），用**加深蒙层不透明度**去压视觉份量——
+   图还是铺满整个区域，但透出来的部分更淡，不会显得"图被放得很大很抢"。 */
+/* 2026-09-06 Kevin:「第一个背景图怎么是静态的？往下拉的时候这些人的脑袋能不能跟着走，
+   看着随屏幕滚动往下走」—— background-attachment:fixed 本身就是把图钉死在视口上，
+   不会跟着滚动动。加一个由 JS 按滚动距离算出来的 --px1 偏移量去动 background-position，
+   图还是钉在视口上（.hero/.pivot/#difference 三段的拼接方式完全不变，不会把杠的问题
+   带回来），只是这个"钉的位置"本身会跟着滚动慢慢往下移，看起来就是人像在缓缓下沉。 */
+/* 2026-09-06 Kevin 第四次：「这个背景色啥也看不清楚，完全偏离我的想法。我要的是有温度、
+   看得出真的有人在用产品」——之前为了压"太大/太抢"把蒙层加到 .94，结果把人像本身也压没了，
+   矫枉过正。换了一张新图（Grok 按他给的参考图风格重新生成：两人暖光贴脸看手机、
+   深紫蓝色夜景光斑，构图/配色都直接照抄参考图），蒙层大幅调淡到 .45，人像清晰可辨。
+   🚨 2026-09-06 五审：Kevin 看完 4 段落地 + 两版完整 HTML 后拍板 Plan B（照片从首屏开始），
+   场景改成"按内容换场景"而不是"同一场景数人头"：首屏=一群人（团队感），
+   往下依次是旅行两人（scene_travel，原图已经是这个新配色，没有重做）、
+   亲子两人（scene_family，同样原图直接能用）、独处一人（scene_alone，收尾呼应隐私主张）。
+   人数是跟着场景走的，不是硬凑的倒计时。
+   下面 4 个区之前只有首屏调淡到 .45，其余三个区还留着旧的 .94/.95——
+   同一套"人真的看得清"标准要對齐到全部 4 个区，不能只对了第一屏。
+   首屏再按 Kevin「更饱满一点」的要求调到 .38，比其余区更清晰一点，
+   撑住"进门第一眼"的分量，其余区维持 .45 保证下面大段文字仍然好读。 */
+.hero{
+  background:linear-gradient(rgba(30,23,83,.38),rgba(30,23,83,.38)),
+  url('/img/scene_hero_diverse.jpg') center calc(30% + var(--px1,0px))/cover no-repeat fixed;
+}
+/* 2026-09-07：Kevin「这几个图都太偏社交了，第二张图可以放个工作场景，比如跟海外
+   同事对齐」——原来 hero/pivot/difference 三屏连续共用同一张"朋友夜聚"合影，
+   等于同一种"社交"氛围连着出现三次。pivot 只是一句过渡文案、difference 讲的正是
+   "中文口水话→英文工作邮件"这个工作场景，两者天然适合换成同一张新拍的工作照
+   （多元同事围着笔记本开会、办公室暖光+城市夜景），hero 保留原来的合影不变——
+   这样整条页面的场景才是 社交(hero)→工作(pivot/difference)→旅行(how/where)→
+   家人(memory)→独处(privacy)→世界(final)，跟"话在嘴边说不出来"那屏列的
+   六种场景对得上，不再是清一色的"朋友聚会"。 */
+.pivot, #difference{
+  background:linear-gradient(rgba(30,23,83,.42),rgba(30,23,83,.42)),
+  url('/img/scene_work.jpg') center/cover no-repeat fixed;
+}
+#how, #where{
+  background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
+  url('/img/scene_travel.jpg') center/cover no-repeat fixed;
+}
+#memory{
+  background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
+  url('/img/scene_family.jpg') center/cover no-repeat fixed;
+}
+#privacy{
+  background:linear-gradient(rgba(29,21,85,.45),rgba(29,21,85,.45)),
+  url('/img/scene_alone.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-07：Kevin 反馈"最后一页跟倒数第二页(privacy)重了"——.final 之前没有
+   自己的背景图，视觉上直接沿用了 #privacy 的底色。换成独立的多元人群夜景图，
+   跟隐私页(独处一人)、首屏(多元朋友合影)都区分开。 */
+.final{
+  background:linear-gradient(rgba(26,19,80,.45),rgba(26,19,80,.45)),
+  url('/img/scene_world.jpg') center/cover no-repeat fixed;
+}
+/* 2026-09-06 八次修：Kevin 要幻灯片模式后 FAQ 挪成独立页 faq.html（问答体裁本来就
+   不适合塞进"一屏一页"），这里 #faq 从选择器里去掉——它已经不在这个文档里了。 */
+/* 2026-09-07 十次修：Kevin「幻灯片不是从上往下滚出来的，是点一下直接翻页」——
+   上一版用 scroll-snap 还是"滚"，只是滚到半路吸一下，长内容照样在半截被切断，
+   这次改成**真幻灯片**：每屏 position:fixed 铺满整个视口，同一时间只有一屏
+   opacity:1 可见，翻页 = 换哪屏是 active，不是滚动位置变了。html/body 关掉滚动，
+   靠右下角箭头 + 键盘（↓/→/空格/PageDown 下一页，↑/←/PageUp 上一页）+ 触屏滑动 +
+   鼠标滚轮（每次滚动只翻一页，不是连续滚）来切页。原来的 .seam 渐隐过渡条是给
+   "滚动经过接缝"设计的，现在两屏是硬切换（配合淡入淡出动画），不再需要，直接隐藏。 */
+html,body{height:100%;overflow:hidden}
+.seam{display:none}
+nav{position:fixed}
+/* 🚨 第一版这里用 visibility:hidden 来"藏"非当前屏，结果 Kevin 反馈"基本没有任何动效"——
+   visibility 不在 transition 的属性列表里，退场那一刻直接瞬间隐形，等于把淡出砍掉了，
+   只剩淡入还在动、而且动得很轻，看着就跟没做动画一样。改成完全靠 opacity + transform
+   （只做视觉隐藏，不做 DOM 级隐藏），退场和进场才会真的在同一段时间里一起动：
+   退场那屏边淡出边微微下沉，进场那屏边淡入边从下方"浮现"上来——这才是"淡入、浮现"。 */
+/* 2026-09-07 第一版「fancy」：blur(14px)+scale(.9)+回弹曲线，Kevin 反馈「太 low 了」——
+   回弹(back-out overshoot)那种"弹一下再停"的手感是 PPT 模板的标志性动作，幅度又大，
+   看着廉价。撤掉回弹，改成 easeOutExpo 单一曲线（业内公认的"高级感"缓动，
+   没有过冲、减速非常绵密），模糊/位移/缩放三个幅度都收窄成"电影运镜"级别的克制量，
+   时长拉长到 1.1s 让它看起来是"精心设计的"而不是"赶时间的"。
+   另外加一层：屏内文字/卡片延后 .25s 才开始淡入+微微上浮，比背景晚一拍到位——
+   背景先稳住，文字再"落"进来，这是高端网站常见的分层揭幕手法，
+   比"整屏一起动"更有层次，也是"太 low"这类反馈通常真正缺的东西。 */
+.slide{
+  position:fixed;inset:0;top:0;left:0;right:0;bottom:0;height:100vh;min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:76px 0 20px;margin:0;
+  opacity:0;pointer-events:none;z-index:1;
+  transform:translateY(18px) scale(.97);
+  filter:blur(6px);
+  transition:opacity 1.1s cubic-bezier(.19,1,.22,1),
+             transform 1.1s cubic-bezier(.19,1,.22,1),
+             filter 1.1s cubic-bezier(.19,1,.22,1),
+             z-index 0s 1.1s;
+  overflow:hidden;
+}
+.slide.slide-active{
+  opacity:1;pointer-events:auto;z-index:2;
+  transform:translateY(0) scale(1);
+  filter:blur(0);
+  transition:opacity 1.1s cubic-bezier(.19,1,.22,1),
+             transform 1.1s cubic-bezier(.19,1,.22,1),
+             filter 1.1s cubic-bezier(.19,1,.22,1),
+             z-index 0s;
+}
+.slide .wrap{max-height:100%}
+.slide .wrap>*{
+  opacity:0;transform:translateY(12px);
+  transition:opacity .7s cubic-bezier(.19,1,.22,1) .25s,
+             transform .7s cubic-bezier(.19,1,.22,1) .25s;
+}
+.slide.slide-active .wrap>*{opacity:1;transform:translateY(0)}
+/* 每屏都要在一屏内装完，不留内部滚动条——间距/字号整体收紧 */
+h2{font-size:30px}
+.eyebrow{margin-bottom:10px}
+.sub{margin-top:8px;font-size:14.5px}
+.compare-grid{margin-top:22px;gap:18px}
+.card{padding:18px}
+.compare-body{font-size:14.5px;line-height:1.6}
+.compare-body.en{font-size:13.5px}
+.steps-grid{margin-top:28px;gap:18px}
+.scenes-grid{margin-top:20px;gap:14px}
+.privacy-grid{margin-top:18px;gap:12px}
+/* 2026-09-07：Kevin「你说的话我们不留那部分字有点小、看不清，是不是字太多了」——
+   两个问题都对，先把上面第三张卡的长段文字砍到跟其他卡同一量级、caveat 也精简，
+   腾出的行高就用来放大这几处字号；只放大这一屏，不影响别的屏的"单屏装完"预算。 */
+#privacy h2{font-size:37px}
+#privacy .sub{font-size:16.5px}
+#privacy .pv h3{font-size:18.5px}
+#privacy .pv p{font-size:16px;line-height:1.6}
+#privacy .caveat{font-size:15.5px;line-height:1.65;padding:24px 28px}
+#privacy .privacy-grid{margin-top:26px;gap:20px 32px}
+#privacy .pv{gap:18px}
+#memory{padding:76px 0 20px}
+.final{padding:76px 0 20px}
+.final h2{font-size:38px}
+/* 2026-09-07 Kevin：「配合这个图看，字有点看不清楚，被遮住了一点」——
+   蒙层调淡到能看清人像之后，浅色文字直接落在照片亮部（脸、光斑）上时对比度
+   就不够了。不再靠加深蒙层去救（会把上一轮"图太暗看不清"的问题带回来），
+   改成给文字本身加一圈实体投影——不管落在照片哪个亮度区都能读，副作用是
+   零（纯文字效果，不影响图片本身的可见度）。 */
+/* 2026-09-07 二次修：Kevin 反馈加了阴影之后"还是有点看不清"——原来那组阴影
+   偏软（大范围模糊、alpha 不够高），远处看有效果，凑近细读还是被亮部背景吃掉。
+   加一层贴着字形的窄阴影(0 1px 2px 高不透明度)负责"抠出清晰边缘"，
+   外层大扩散阴影负责"跟背景整体拉开层次"，两层分工不叠加削弱。 */
+h1,h2,.hero-eyebrow,.eyebrow,.slogan-en,.lede,.sub,
+.step h3,.step p,.pv h3,.pv p,.card h3,.card p,
+.final-brand,.compare-head,.compare-body{
+  text-shadow:0 1px 2px rgba(0,0,0,.9),0 2px 8px rgba(0,0,0,.75),0 4px 22px rgba(0,0,0,.6);
+}
+/* 翻页控件：右下角箭头，点一下翻下一页；左侧一串小圆点，点哪个跳到哪屏 */
+#slideNav{position:fixed;right:28px;bottom:28px;z-index:20;display:flex;flex-direction:column;gap:10px}
+#slideNav button{
+  width:44px;height:44px;border-radius:50%;border:1px solid var(--card-border);
+  background:rgba(255,255,255,.06);backdrop-filter:blur(12px);color:var(--text-primary);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s var(--ease);
+}
+#slideNav button:hover{background:rgba(255,255,255,.14)}
+#slideNav button:disabled{opacity:.25;cursor:default}
+#slideDots{
+  position:fixed;left:22px;top:50%;transform:translateY(-50%);z-index:20;
+  display:flex;flex-direction:column;gap:10px;
+}
+#slideDots i{
+  width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);
+  cursor:pointer;transition:background .2s var(--ease),transform .2s var(--ease);
+}
+#slideDots i.on{background:var(--highlight);transform:scale(1.4)}
+@media (max-width:768px){#slideDots{display:none}}
 .bg-glow{
   /* 只改几何不改色：1100px 时右半屏被冲淡，深紫读不出来。色值仍是 --glow 原值。 */
   position:fixed;z-index:-1;width:860px;height:860px;border-radius:50%;
@@ -164,7 +353,11 @@ nav{
   display:flex;align-items:center;
 }
 nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-between}
-.brand{font-weight:500;font-size:20px;letter-spacing:.03em;color:var(--text-primary)}
+/* 2026-09-06 Kevin:「Transless 这个名字不是很明显，别人还以为产品叫'让世界听懂你'」——
+   之前(见下面 hero-eyebrow 那条注释)特意不在 hero 里重复品牌名，是对的、不改；
+   但 nav 里唯一那处的字号只有 20px，跟 h1 的 56px 差太远，第一屏扫一眼抓不住"这叫什么"。
+   加大加粗，仍然只出现这一处，不违反"只在导航出现一次"的判断。 */
+.brand{font-weight:700;font-size:28px;letter-spacing:.02em;color:var(--text-primary)}
 .brand .dot{color:var(--highlight)}
 .nav-link{
   font-size:14px;letter-spacing:.02em;color:var(--text-secondary);
@@ -251,7 +444,12 @@ h1{
 }
 .screen{
   border-radius:30px;overflow:hidden;
-  background:linear-gradient(180deg,var(--kb-bg-top),var(--kb-bg-mid) 50%,var(--kb-bg-bot));
+  /* 2026-09-06 十一次修：Kevin 当面点名键盘演示卡（黑底）跟随手翻译/单词本演示卡
+     （紫底）配色不统一。查过 Theme.java:37-38，键盘真身背景确实是 #0B1230→#231843
+     这组更暗的深蓝紫，跟 Skin.java 的 --bg-gradient 是两套真实存在、都对的颜色——
+     不是我编的哪个错了。但这里是给人看的营销演示，统一观感比"技术上两端本来就
+     不同色"更重要，按 Kevin 的话统一成主 App 那套亮紫（--bg-gradient）。 */
+  background:var(--bg-gradient);
   display:flex;flex-direction:column;
   aspect-ratio:9/19.5;
 }
@@ -325,6 +523,21 @@ h1{
 .screen[data-app="2"] .kb{display:none}
 .screen[data-app="3"]{background:var(--bg-gradient)}
 .screen[data-app="3"] .kb{display:none}
+/* ============ 面对面（FaceToFaceActivity）—— 大字居中 + 手动⇄切换方向 ============ */
+.screen[data-app="4"]{background:var(--bg-gradient)}
+.screen[data-app="4"] .kb{display:none}
+.f2f-big{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;text-align:center;padding:0 12px}
+.f2f-side{font-size:10.5px;letter-spacing:.1em;color:var(--text-secondary);text-transform:uppercase}
+.f2f-text{font-size:19px;font-weight:500;color:var(--text-primary);line-height:1.5}
+.f2f-keep{align-self:center;font-size:11px;padding:5px 12px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:var(--text-secondary);margin-bottom:8px}
+.f2f-langbar{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.f2f-langbar .chip{flex:0 1 auto}
+.f2f-swap{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  color:var(--text-secondary);font-size:13px;flex:0 0 26px}
 /* 2026-09-06 九次修：Kevin 要"沟通→收藏→存进单词本→复习"串成一条能一眼看懂的线，
    不是几张互不相关的功能卡。给这 4 张卡各加一个步骤角标 + 两处衔接处的高亮动画
    （收藏那一下、新条目那一下），autoplay 5.2s/张，不用手动划也能看完整条流程。 */
@@ -496,14 +709,39 @@ html[lang^="en"] .kb-row.top{gap:5px}
 
 /* ================= 通用区块 ================= */
 section{padding:110px 0}
+/* 🚨 2026-09-07：上面这条"加大 #memory 留白让人多停一会"是给**滚动阅读**设计的——
+   幻灯片模式下每屏只有一次曝光时间由用户点下一页决定，不是靠留白拖住滚动速度，
+   170px 反而会把内容顶出一屏（跟前面 #memory{padding:76px 0 20px} 那条压缩规则打架，
+   而且这条写在**后面**，同选择器同优先级下是它赢，把压缩效果整个盖掉了）。改回跟
+   其他屏一致的收紧值，具体数字以前面 #memory{padding:76px 0 20px} 那条为准。 */
+#memory{padding:76px 0 20px}
 .pivot{padding:0 0 60px;text-align:center}
+/* 2026-09-07：这句话单独浮在照片正中间，背景又是一群人+一部发光手机，
+   光靠 text-shadow 压不住——加一块半透明深色胶囊衬底，把它从"贴在照片上的字"
+   变成"一张卡片"，跟背景彻底分层，不管背景图换成什么都不会被吃掉。 */
 .pivot-line{
+  display:inline-block;
   font-family:var(--cn);font-weight:500;font-size:22px;letter-spacing:.04em;
   color:var(--text-cn);
+  background:rgba(12,9,36,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  padding:14px 32px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
 }
 .eyebrow{
   font-size:11px;letter-spacing:.18em;text-transform:uppercase;
   color:var(--text-secondary);margin-bottom:20px;
+}
+/* 2026-09-07：Kevin 的"说+记"两条主线——单靠 pivot 那一句转折，读者划过后面几屏
+   时早就忘了这个结构。给每屏顶一个小角标，说这条线上的屏都挂"说"、记这条线上
+   的屏挂"记"，划到哪屏都知道自己在哪条线上，不用回头翻。 */
+.act-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--cn);font-weight:600;font-size:12px;letter-spacing:.08em;
+  color:var(--highlight);margin-bottom:10px;
+}
+.act-tag::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--highlight);flex:0 0 5px;
 }
 h2{
   font-family:var(--cn);font-weight:500;font-size:40px;line-height:1.25;
@@ -542,7 +780,16 @@ h2 .dim{color:var(--text-secondary)}
 /* ---- 屏 3 · 三步 ---- */
 .steps{display:flex;align-items:center;text-align:center}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:64px}
-.step{display:flex;flex-direction:column;align-items:center;gap:18px;transition:all .5s var(--ease)}
+/* 2026-09-07：Kevin「有些卡有玻璃磨砂底，有些没有，不统一——三步那屏和隐私那屏都没有」——
+   查了一遍，#difference/#where/#memory 的 .card 一直有 var(--card-bg)+blur(20px) 的
+   磨砂玻璃底，但 .step（三步）和 .pv（隐私）当初只给了图标小圆圈一个磨砂底、
+   整块内容是裸的，直接贴在照片上。统一补上跟 .card 同一套磨砂玻璃处理。 */
+.step{
+  display:flex;flex-direction:column;align-items:center;gap:18px;transition:all .5s var(--ease);
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:20px;padding:28px 22px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
 .js .step{opacity:0;transform:translateY(20px)}
 .in-view .step{opacity:1;transform:none}
 .in-view .step:nth-child(2){transition-delay:.12s}
@@ -558,6 +805,8 @@ h2 .dim{color:var(--text-secondary)}
 /* ---- 屏 4 · 场景 ---- */
 .scenes{display:flex;align-items:center}
 .scenes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+/* memory 屏从 3 卡改 4 卡（加了记事本），3 列会挤出第二行的 1 张孤卡，改 2x2 更匀称 */
+.mem-grid{grid-template-columns:repeat(2,1fr)}
 .scene{transition:transform .3s var(--ease),border-color .3s var(--ease)}
 .scene:hover{transform:translateY(-4px);border-color:rgba(185,139,232,.3)}
 .scene .tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--highlight)}
@@ -570,7 +819,12 @@ h2 .dim{color:var(--text-secondary)}
       「不留存」配的是「不写磁盘、重启即消失」，不是「我们很重视隐私」。 */
 .privacy{display:flex;align-items:center}
 .privacy-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px}
-.pv{display:flex;gap:16px;align-items:flex-start}
+.pv{
+  display:flex;gap:16px;align-items:flex-start;
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:18px;padding:18px 20px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
 .pv-ico{
   width:38px;height:38px;flex:0 0 38px;border-radius:11px;
   background:var(--card-bg);border:1px solid var(--card-border);
@@ -596,19 +850,34 @@ h2 .dim{color:var(--text-secondary)}
 .qa p{font-size:14.5px;line-height:1.8;color:var(--text-secondary);max-width:70ch}
 .qa p b{color:var(--text-primary);font-weight:500}
 
-/* ---- 屏 7 · 收口 ---- */
-.final{display:flex;align-items:center;text-align:center;padding:130px 0 90px}
+/* ---- 屏 7 · 收口 ----
+   🚨 这条规则原来在 .final{padding:76px 0 20px} 后面重复定义了一遍 130px/90px 的大留白
+   （在文件更前面加的"幻灯片单屏收紧"没生效，就是因为同选择器、同优先级下**后写的赢**，
+   这条一直躺在这里把前面压缩的值又盖回去了）——现在这份就是唯一有效的最终版本，
+   不要再在别处加同名规则，改这里就够。 */
+.final{display:flex;align-items:center;text-align:center;padding:60px 0 20px}
 .final .wrap{display:flex;flex-direction:column;align-items:center}
-.final h2{font-size:52px;letter-spacing:.06em;color:var(--text-cn)}
-.final .slogan-en{font-size:22px;margin-top:14px}
-.final .cta-row{margin-top:44px;flex-direction:column;gap:16px}
-footer{border-top:1px solid rgba(255,255,255,.06);padding:36px 0}
-footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.foot-links{display:flex;gap:28px}
-.foot-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;
+/* Kevin：最后一屏得看得出这是"Transless"，不是"让世界听懂你"——
+   品牌名放最大最上面，中文口号降一级。 */
+.final-brand{
+  font-weight:700;font-size:44px;letter-spacing:.02em;color:var(--text-primary);
+  margin-bottom:18px;
+}
+.final-brand .dot{color:var(--highlight)}
+.final h2{font-size:34px;letter-spacing:.06em;color:var(--text-cn)}
+.final .slogan-en{font-size:18px;margin-top:10px}
+.final .cta-row{margin-top:26px;flex-direction:column;gap:12px}
+/* 原来页面底部单独的 <footer> 在幻灯片模式下变成脱离 slide 系统、悬空叠在画面上的孤儿
+   元素（Kevin 看到的"下面还有个小 Transless"）——法务链接现在直接搬进这一屏，
+   不再有独立的 footer。 */
+.final-legal{
+  margin-top:22px;display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:16px 22px;
+}
+.final-legal a{font-size:12.5px;color:var(--text-secondary);text-decoration:none;
               transition:color .25s var(--ease)}
-.foot-links a:hover{color:var(--text-primary)}
-.copy{font-size:13px;color:var(--text-secondary)}
+.final-legal a:hover{color:var(--text-primary)}
+.final-legal .copy{font-size:12px;color:var(--text-secondary);width:100%;text-align:center;margin-top:4px}
 
 /* ---- 进场动画 ----
    🚨 初始隐藏只在 JS 起来之后才生效（html.js 由文首那段内联脚本加）。
@@ -672,7 +941,7 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     <span class="nav-right">
       <a class="nav-link" href="#how">怎么用</a>
       <a class="nav-link" href="#privacy">隐私</a>
-      <a class="nav-link" href="#faq">常见问题</a>
+      <a class="nav-link" href="/faq.html">常见问题</a>
       <span class="langsw" role="group" aria-label="语言">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -686,14 +955,28 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </nav>
 
+<!-- 翻页控件：点右下角箭头或左侧圆点切页，纯 UI 骨架，文字/aria-label 由 JS 填，
+     不进 i18n 抽取（都是通用符号，不含语种相关文案）。 -->
+<div id="slideDots" aria-hidden="true"></div>
+<div id="slideNav">
+  <button type="button" id="slidePrev" aria-label="Previous">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+  <button type="button" id="slideNext" aria-label="Next">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+</div>
+
 <!-- ============ 屏 1 · Hero ============ -->
-<header class="hero">
+<header class="hero slide">
   <div class="wrap">
     <div class="hero-left">
       <div class="hero-eyebrow">语音输入法 &middot; 中文说，31 种语言出</div>
       <h1>让世界听懂你</h1>
       <div class="slogan-en">No Language In Between</div>
-      <p class="lede">按住说话，出来的就是能直接发送的文字——微信、邮件、任何 App 都能用。<br>想说的话，说出来就是地道的那门语言，该分点的自动分点。</p>
+      <p class="lede">按住说话，AI 把你的话理成能直接发送的文字——微信、邮件、任何 App 都能用。<br>想说的话，说出来就是地道的那门语言，该分点的自动分点。</p>
       <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
            "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
            不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
@@ -810,6 +1093,31 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
                  android/res/values/strings.xml），不是照记忆编的措辞。跟①②③用同一句话，
                  呼应"刚才收藏的这句，现在拿出来复习了"。 -->
 
+            <div class="feat" data-app="4" data-name="面对面 · 当场翻译给对方看">
+              <div class="tryui">
+                <div class="try-bar"><span class="back">&lsaquo; 返回</span><b>面对面</b></div>
+                <div class="f2f-big">
+                  <div class="f2f-side">正在显示：英文</div>
+                  <div class="f2f-text">How much is this? Could you do a bit better on the price?</div>
+                </div>
+                <div class="f2f-keep">+ 收进单词本</div>
+                <div class="f2f-langbar">
+                  <div class="chip">中文 &#9662;</div>
+                  <div class="f2f-swap">&#8644;</div>
+                  <div class="chip">English &#9662;</div>
+                </div>
+                <div class="try-mic-row">
+                  <div class="try-mic"><svg class="try-mic-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><rect x="11.1" y="18" width="1.8" height="3.4" rx=".9"/></svg></div>
+                </div>
+              </div>
+            </div>
+            <!-- 🚨 2026-09-06 十三次修：Kevin 当面点名手机演示漏了「面对面」——他明确说这是
+                 "很好的卖点"。这张卡逐行照真实代码建：`FaceToFaceActivity.java`（A定稿）——
+                 大字整屏居中显示译文(点大字触发朗读，没有单独朗读钮)、"+单词本"chip(出结果才显示)、
+                 语言条[中文▾]中间⇄[English▾]手动切换方向、麦克风纯图标钉底。跟"随手翻译"是
+                 两个不同的 App 屏，不放进①-④故事线（面对面是平行的另一个场景，不是"沟通"
+                 那条时间线的一部分），跟转写/朗读等放在后面当独立功能展示。 -->
+
             <!-- ============ 后面几张：不进故事线的其它功能，仍是真实截图级还原 ============ -->
             <div class="feat" data-sub="trans" data-sub-active="0" data-lang="英文"
                  data-mode="ts" data-speaking="0" data-name="转写 · 说什么就出什么">
@@ -892,19 +1200,73 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </header>
 
-<!-- ============ 过渡 · 不止是输入法 ============ -->
-<section class="pivot">
+<!-- 2026-09-07：Kevin「前面说'不止是一个输入法'，后面三步/直接上屏讲的全是输入法，
+     前后不搭」——查完发现根因是顺序反了：hero 的 lede 已经按"先说清楚这是输入法"
+     的既定设计（见上面 hero 段 2026-09-06 三次修那条注释）交代了基本功能，
+     "三步"这段讲的正是"怎么用这个输入法"，属于同一个"先说基本功能"的阶段，
+     不该排在"不止是"那句转折之后——排在后面就变成刚说完"不止是"又立刻讲回
+     "怎么打字"，读起来是接不住的。挪到 hero 和 pivot 之间：hero 交代"这是什么"，
+     "三步"交代"怎么用"，两者都是基本功能说明；pivot 转折"不止是"之后紧跟的
+     difference/where/memory 才是"不止是"的证据（智能改写/真实场景/单词本），
+     不再被"三步"打断。背景图仍用原来的 scene_travel.jpg，没有另外重做。 -->
+<!-- ============ 屏 2 · 三步 ============ -->
+<section id="how" class="steps reveal slide" data-observe>
   <div class="wrap">
-    <p class="pivot-line">但它不止是一个输入法。</p>
+    <div class="act-tag">说</div>
+    <div class="eyebrow">How it works</div>
+    <h2>三步，没有第四步。</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/>
+            <path d="M12 17v5"/></svg>
+        </div>
+        <h3>按住说</h3>
+        <p>中途停顿、改口、想一想都没关系，说完再点一下停。</p>
+      </div>
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>
+        </div>
+        <h3>AI 替你重写</h3>
+        <p>去口水、归并要点、按随意／工作／邮件三档语气重新组织。</p>
+      </div>
+      <div class="step">
+        <div class="step-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/><path d="M7 15h10"/>
+            <path d="M6.5 10.5h.01M10 10.5h.01M13.5 10.5h.01M17 10.5h.01"/></svg>
+        </div>
+        <h3>直接上屏</h3>
+        <p>它是输入法，结果落在你原本要打字的那个框里 —— 微信、邮件、任何 App。</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ============ 屏 2 · 结果对比 ============ -->
-<section id="difference" class="compare reveal" data-observe>
+<!-- 2026-09-07：Kevin「跳出现有框框重新想」——原来这句"但它不止是一个输入法"
+     只是个否定式的转折，没有承接住他说的核心定位"我口说我心"：想的、说的、说过的话
+     都能表达出来，AI 帮你记住，下次说得更好。改写成正面陈述"说"+"记"两条主线，
+     后面 #how/#difference/#where 三屏（说）、#memory 一屏（记）现在各自
+     顶着一个"说"/"记"角标（见下面 .act-tag），呼应这句话立的结构。 -->
+<section class="pivot slide">
   <div class="wrap">
+    <p class="pivot-line">说给它听，它帮你记住、说得更好。</p>
+  </div>
+</section>
+
+<!-- ============ 屏 3 · 结果对比 ============ -->
+<section id="difference" class="compare reveal slide" data-observe>
+  <div class="wrap">
+    <div class="act-tag">说</div>
     <div class="eyebrow">The difference</div>
     <h2>想到什么说什么，<span class="dim">听到的是想清楚了才说的样子。</span></h2>
-    <p class="sub">不是逐字翻译。它会把你说的那堆碎话归并成一件事、排出顺序、按你选的语气写完。</p>
+    <p class="sub">不是逐字翻译。AI 会把你说的那堆碎话归并成一件事、排出顺序、按你选的语气写完。</p>
     <!-- 🚨 2026-09-06 三次修：旧标题"口水话进去,英文出来"仍是Typeless式转换框架,
          且锁死"出英文"跟"不锁死中文→英文"的定位冲突。第911行同样含"口水话/英文"
          但在隐私披露段,是如实说明数据流向,判断后没动——不是所有出现都要改,要按上下文判断是不是定位语言。 -->
@@ -939,78 +1301,39 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
   </div>
 </section>
 
-<!-- ============ 屏 3 · 三步 ============ -->
-<section id="how" class="steps reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">How it works</div>
-    <h2>三步，没有第四步。</h2>
-    <div class="steps-grid">
-      <div class="step">
-        <div class="step-ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/>
-            <path d="M12 17v5"/></svg>
-        </div>
-        <h3>按住说</h3>
-        <p>中途停顿、改口、想一想都没关系，说完再点一下停。</p>
-      </div>
-      <div class="step">
-        <div class="step-ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>
-        </div>
-        <h3>它替你重写</h3>
-        <p>去口水、归并要点、按随意／工作／邮件三档语气重新组织。</p>
-      </div>
-      <div class="step">
-        <div class="step-ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B98BE8"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="6" width="20" height="12" rx="2"/><path d="M7 15h10"/>
-            <path d="M6.5 10.5h.01M10 10.5h.01M13.5 10.5h.01M17 10.5h.01"/></svg>
-        </div>
-        <h3>直接上屏</h3>
-        <p>它是输入法，结果落在你原本要打字的那个框里 —— 微信、邮件、任何 App。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ 屏 4 · 场景 ============ -->
-<section id="where" class="scenes reveal" data-observe>
+<section id="where" class="scenes reveal slide" data-observe>
   <div class="wrap">
+    <div class="act-tag">说</div>
     <div class="eyebrow">Where it earns its place</div>
     <h2>给那些<span class="dim">「话在嘴边，就是说不出来」</span>的时刻。</h2>
+    <p class="sub">不是英语不够好，是临场转不过那口气。下面这些，都是真的会撞上的时刻。</p>
     <div class="scenes-grid">
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>回一封英文邮件</h3>
-        <p>心里那套中文逻辑说出来，出来的是有称呼、分段、有落款的一封完整邮件。</p>
+        <p>中文想法说出来，直接是一封完整英文邮件。</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
         <h3>跟海外同事对齐</h3>
-        <p>会开完了，把刚才说的复述一遍，直接得到一份带编号的要点。</p>
+        <p>复述一遍会议内容，直接出一份带编号的要点。</p>
       </div>
       <div class="card scene">
         <div class="tag">Notes</div>
         <h3>把还没想清楚的话，说成能用的中文</h3>
-        <p>开完会、路上想到一件事，先说出来再说。<b>转写</b>不翻译 ——
-        「整理」替你去掉「呃…然后…就是说」，归成几条；「逐字」一字不改。</p>
+        <p>脑子里一团乱麻先说出来，<b>转写</b>把口水话理成几条你看得懂的中文。</p>
       </div>
       <div class="card scene">
         <div class="tag">Rewrite</div>
         <h3>已经打好的中文，不用重说一遍</h3>
-        <p>微信框里中文都打完了，才想起对方看不懂。
-        <b>译光标前的中文</b>，原地换成对方读得懂的那一版。</p>
+        <p>发出去怕对方看不懂？<b>光标前的中文</b>一键换成对方能懂的那版。</p>
       </div>
       <div class="card scene">
         <div class="tag">Face to face</div>
         <h3>临时当个翻译</h3>
-        <p>点底部<b>「面对面」</b>，不用切输入法。最新一句译文<b>大字整屏居中</b>，方便对面看清；
-        点一下大字就能<b>朗读</b>；中间的<b>「⇄」</b>手动切换翻译方向；查到的表达还能一键收进单词本。</p>
+        <p>点底部<b>「面对面」</b>，译文大字整屏显示，点一下能<b>朗读</b>，
+        <b>「⇄」</b>切换翻译方向。</p>
         <!-- 🚨 2026-09-06 六次修：Kevin 当面点名"其他演示卡你都得对比着看"后逐屏核对，
              这处是真发现——上一版写的"自动判断是谁在说、连续模式"跟安卓
              FaceToFaceActivity.java 的真实代码不符：那是**手动**⇄切换语言方向
@@ -1018,45 +1341,69 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
              朗读钮"），全文没有"连续模式"或自动判方向的代码。上一版是照 STATE.md
              一句文字描述改的、没读代码，这次直接读了 FaceToFaceActivity.java 源码改。
              iOS 端 STATE.md 里另有 `Reverse.isMine` 自动判方向的记录，但也有笔记提到
-             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。 -->
+             "该接而没接"、两端不一定一致——本页按跨端都成立的最小公倍数描述，不提自动判断。
+             2026-09-06 七次修：Kevin 要幻灯片模式，字太多单屏放不下，卡片文案统一
+             精简到一行——"收进单词本"这个点 memory 屏已经讲过，这里就不重复了。 -->
       </div>
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>在国外点菜、问路</h3>
-        <p>对着手机说中文，出来是当地语言 —— 再点一下朗读，<b>用母语嗓音念给对方听</b>。不用比划，也不用把手机怼到人脸前。</p>
+        <p>对手机说中文，出来是当地语言，点朗读<b>用母语念给对方听。</b></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 屏 4.5 · 单词本（越用越会） ============ -->
-<section id="memory" class="scenes reveal" data-observe>
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
+</div>
+
+<!-- ============ 屏 4.5 ·"记"这条线（单词本 + 记事本） ============ -->
+<!-- 2026-09-07：Kevin"跳出框框重新想"要求的一部分——"记"这条主线原来只讲单词本
+     （语言学习向），没提到记事本（说话记录里想留的内容存成笔记，NotesCore/Notes
+     已经做完数据层，见 STATE.md）。这屏文案改成同时覆盖两个"记"能力，
+     四卡变 2x2（原来 3 卡一排），配合下面第 4 张卡新增记事本。
+     🚨 记事本卡片文案只写用户能感知的动作（"一键存下来"），不写它还没做的 UI
+     细节（编辑/标签/搜索界面）——那些还在做，不能在官网上先承诺。 -->
+<section id="memory" class="scenes reveal slide" data-observe>
   <div class="wrap">
+    <div class="act-tag">记</div>
     <div class="eyebrow">Beyond translation</div>
-    <h2>说过的，它记得；<span class="dim">记住的，你自己也会说了。</span></h2>
-    <p class="sub">Transless 不止是翻译工具，也是一本会自己长大的单词本——用得越久，你需要它的地方越少。</p>
-    <div class="scenes-grid">
+    <h2>说过的，都留得住；<span class="dim">记住的，你会说得更好。</span></h2>
+    <p class="sub">Transless 不只帮你翻译，还帮你把说过的话、学会的词都留住——单词本会自己长大，记事本替你存住你说过的内容。</p>
+    <div class="scenes-grid mem-grid">
       <div class="card scene">
         <div class="tag">Collect</div>
         <h3>查过、用过的表达，自动收进单词本</h3>
-        <p>翻译时查过的词、纠正过的说法，一键收进<b>单词本</b>，不用另外找地方记。</p>
+        <p>查过的词、纠正过的说法，一键收进<b>单词本。</b></p>
       </div>
       <div class="card scene">
         <div class="tag">Review</div>
         <h3>系统挑你还没记熟的，拿出来复习</h3>
-        <p>卡片式复习：想起来了点<b>「想起来了」</b>，还没记熟点<b>「再试一次」</b>，它会挑着来。</p>
+        <p>卡片式复习：记熟了点过，没记熟的它会挑着再来。</p>
       </div>
       <div class="card scene">
         <div class="tag">Speak</div>
         <h3>说得越多，自己脱口而出的也越多</h3>
-        <p>从「查词、靠翻译」到「自己想起来、直接说出口」，这条闭环是 Transless 独有的。</p>
+        <p>从「查词」到「自己脱口而出」，这条闭环是 Transless 独有的。</p>
+      </div>
+      <div class="card scene">
+        <div class="tag">Keep</div>
+        <h3>想留的话，一键存下来</h3>
+        <p>说话记录里看到想留的内容，点一下就存进<b>记事本</b>，想不起来的时候翻得到。</p>
       </div>
     </div>
   </div>
 </section>
 
+<div class="seam" aria-hidden="true">
+  <div class="seam-under" style="background-image:url('/img/scene_family.jpg')"></div>
+  <div class="seam-over" style="background-image:url('/img/scene_alone.jpg')"></div>
+</div>
+
 <!-- ============ 屏 5 · 隐私 ============ -->
-<section id="privacy" class="privacy reveal" data-observe>
+<section id="privacy" class="privacy reveal slide" data-observe>
   <div class="wrap">
     <div class="eyebrow">Privacy</div>
     <h2>你说的话，<span class="dim">我们不留。</span></h2>
@@ -1092,11 +1439,21 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
             <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><path d="M3 3l18 18"/></svg>
         </div>
         <div>
-          <h3>历史记录只留在你手机上</h3>
-          <p>为方便你自己回看，App 会在<b>你的设备本地</b>保存最近的记录 —— 从没有传到我们的服务器，我们也看不到。我们不建立对话存档、不做用户画像，也<b>不要</b>你的通讯录、相册和位置。</p>
+          <h3>历史记录默认只留在这台设备上</h3>
+          <p>默认只存在<b>你的设备本地</b>。要跨设备互通可以自己<b>开云同步</b>——每台单独确认，不开就不传。不建通讯录、相册、位置这些画像数据。</p>
           <!-- 🚨 2026-09-06 更正：旧文案"没有历史记录"跟已上线的功能矛盾——iOS/安卓现在都有
                本地历史（最多2000条，纯本地存储、零服务端同步，见STATE.md）。改成准确表述：
-               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。 -->
+               历史确实存在，但只在设备本地，这反而是更强的隐私说法，不是弱化。
+               🚨🚨 2026-09-06 深夜再改：2.1 转 Kevin 拍板——历史/单词本/常用词要上云同步
+               （跨设备互通，他说是刚需）。上一版那句"绝对不上传"型的承诺一旦同步上线就是
+               不实陈述。改成"默认本地、云同步是用户自己开的、每台设备单独确认"——
+               隐私卖点还在（默认不传），只是从"绝对不传"改成"你不开就不传"，说的是真话。
+               2.1 判据（见 tools/gate_privacy_promise.py）：①不能再出现那句绝对不上传的
+               旧承诺②必须还能查到"默认"/"本地"，不许把隐私卖点整个删掉③中英两版说同一件事。
+               2026-09-07：Kevin 反馈这屏"字有点小、看不清，是不是字太多了"——这条原来
+               比其他三条长两三倍，是整屏最挤的一段，先把它压到跟别的卡片同一个量级，
+               腾出空间才有资格把字号整体调大（见下面 #privacy 专属字号覆盖）。
+               三条判据仍然全部保留：默认/本地/不建画像，没有为了短而丢隐私卖点。 -->
         </div>
       </div>
       <div class="pv">
@@ -1113,94 +1470,132 @@ footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-
     </div>
 
     <div class="caveat">
-      <b>但有一件事我们必须说清楚：</b>要把口水话整理成地道英文，
-      识别出的<b>文字</b>需要交给 AI 模型服务商处理 —— 这一步绕不开，
-      我们也不会假装它不存在。所以：<b>别口述密码、银行卡号、身份证号，或受保密协议约束的内容。</b>
-      <br><br>
-      完整条款见 <a href="/privacy.html" style="color:var(--highlight)">隐私政策</a>。
+      <b>但有一件事说清楚：</b>要把口水话整理成地道语言，识别出的<b>文字</b>得交给
+      AI 模型服务商处理，这一步绕不开。所以：<b>别口述密码、银行卡号、身份证号，
+      或受保密协议约束的内容。</b>完整条款见 <a href="/privacy.html" style="color:var(--highlight)">隐私政策</a>。
     </div>
   </div>
 </section>
 
-<!-- ============ 屏 6 · FAQ ============ -->
-<section id="faq" class="faq reveal" data-observe>
-  <div class="wrap">
-    <div class="eyebrow">FAQ</div>
-    <h2>你多半想问的几件事</h2>
-    <div class="faq-list">
-      <div class="qa">
-        <h3>要联网吗？能离线用吗？</h3>
-        <p>要联网。语音识别和整理都在服务器上做，离线用不了。手写输入那部分是离线的，模型在你手机上。</p>
-      </div>
-      <div class="qa">
-        <h3>我说的话会被存下来吗？</h3>
-        <p>录音识别完当场丢弃，整理结果在服务器内存里最多 10 分钟。App 会在你手机本地留一份历史方便自己回看，但那份记录不会传到我们这边，我们看不到。</p>
-      </div>
-      <div class="qa">
-        <h3>需要注册吗？</h3>
-        <p>现在不用，装上就能用。以后会加登录，是为了让你换手机时能恢复 —— 到时候也不会强制，不登录照样能用。</p>
-      </div>
-      <div class="qa">
-        <h3>支持哪些语言？</h3>
-        <p>现在 31 种，含英文、日文、法文、德文、西班牙文、韩文、粤语、泰文、阿拉伯文、俄文等主流语言。说中文，选一个目标语言就行。<b>朗读会按文字本身的语种自动挑母语嗓音</b> —— 出日文就用日文嗓子念，不会拿英文腔念日文。
-        <!-- 🚨 2026-09-06 改：旧文案"九种"是过期数字。今晚三方独立确认(2.1源码链/1.1生成物/0数dex)界面菜单本来就是31种可滚动，不是9种，这条没有依赖，直接改。跟"现在免费"那句不一样——那句要等Kevin对价格发布时机的确认，这句不用等。 --></p>
-      </div>
-      <div class="qa">
-        <h3>能在哪些 App 里用？</h3>
-        <p>它是一个真正的输入法，不是单独的翻译 App。任何能打字的地方都能用 —— 微信、邮件、备忘录、浏览器。</p>
-      </div>
-      <div class="qa">
-        <h3>翻得不对怎么办？</h3>
-        <p>译文由 AI 生成，会有错。所以内置了打字键盘（拼音／五笔／手写），随时能改；也可以切「逐字转录」档，那一档一个字都不改，只补标点。</p>
-      </div>
-      <div class="qa">
-        <h3>怎么完全卸载？</h3>
-        <p>先在系统「输入法设置」里把 Transless 关掉，再正常卸载 App。卸载即终止全部处理，我们这边没有需要你来删的档案。</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2026-09-06 八次修：原"屏 6 · FAQ"整段挪到独立页 /faq.html——
+     Kevin 要幻灯片模式，问答体裁本来就不适合塞进"一屏一页"，导航和结尾 CTA
+     两处"常见问题"链接已改指向 /faq.html，内容原样搬过去，一字没删。 -->
 
 <!-- ============ 屏 7 · 收口 ============ -->
-<section class="final" id="get">
+<section class="final slide" id="get">
   <div class="wrap">
+    <!-- 🚨 2026-09-07 Kevin：「最后一页别人会以为 App 就叫'让世界听懂你'，
+         得把 Transless 的 logo 弄上去」——加大加粗的品牌名放在最上面，
+         "让世界听懂你"降级成它下面的中文口号，主次关系倒过来了。
+         原来页面最下面还有一个独立的 <footer>，装着法务链接——幻灯片模式下
+         页面不再滚动，那个 footer 变成"挂在body正常流里、跟所有.slide叠在一起
+         的孤儿元素"，视觉上就是 Kevin 说的"下面还有个小 Transless"（footer 自己
+         也重复了一次品牌名）。现在把 footer 整个拆掉，法务链接搬进这一屏底部，
+         不再有游离在 slide 系统之外的元素。 -->
+    <div class="final-brand">Transless<span class="dot">.</span></div>
     <h2>让世界听懂你</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="#faq">常见问题</a>
+      <a class="cta" href="/faq.html">常见问题</a>
       <span class="cta-note">现在免费。内测报名通道正在开通，开了会放在这里。</span>
     </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <span class="brand" style="font-size:16px">Transless<span class="dot">.</span></span>
-    <div class="foot-links">
+    <div class="final-legal">
       <a href="/privacy.html">隐私政策</a>
       <a href="/terms.html">服务条款</a>
       <a href="/company.html">公司信息</a>
       <a href="mailto:support@transless.net">联系我们</a>
-      <!-- 2026-08-26：联系邮箱放出来了。它不是占位符 —— transless.net 的 MX
-           指向 ImprovMX，08-25 实测「外部发信 → support@transless.net → Kevin 的 Gmail」
-           整条链通了（收件人那栏写的就是 support@），发信侧走 Resend 已验证域名。
-           2026-08-26：服务条款也放出来了，源是 `dist/terms.html`（中文·内测版 v1.0）。
-           🚨 **不是** `legal/terms.en.DRAFT.html` —— 那份英文草稿里写着
-           「Free 10 条/天 + Pro 月付/年付」，那套订阅根本不存在，挂上去比没有条款更糟。
-           现在这份只写当下成立的：免费内测、按设备每日额度（后端 FREE_DAILY 真机制）、
-           AI 会出错要自己复核、香港法律、运营方是 Luminate Pacific。 -->
+      <span class="copy">&copy; 2026 Luminate Pacific Consulting Service Limited</span>
     </div>
-    <!-- 2026-08-26 Kevin 定：一步到位署公司主体。
-         三个理由：① 商标申请人就是它，官网是「实际使用」证据，署名对不上这份证据要打折
-         ② GDPR 要求披露数据控制者身份，早晚要写 ③ 现在改一次，晚改要动页脚/隐私/条款三处。
-         🚨 只写「运营」，不写「App Store 上的开发者是公司」——
-         苹果账号目前仍是个人主体（个人账号不能转公司，只能新开 Organization 再转移 App），
-         那句话现在会被现实打脸。 -->
-    <span class="copy">&copy; 2026 Luminate Pacific Consulting Service Limited</span>
   </div>
-</footer>
+</section>
 
 <script>
+/* 2026-09-07：真幻灯片翻页引擎。
+   之前那版"滚动视差"（scrollY 驱动 --px1）现在没用了——html/body 已经关掉滚动，
+   scrollY 永远是 0，留着也是死代码，直接拿掉，换成真正驱动翻页的脚本。
+   翻页 = 给目标 .slide 加 slide-active、给其余的去掉，纯 opacity 切换，
+   不挪动任何元素的位置——这样"从上一段到这一段"不会再出现内容被滚动切断的情况。 */
+(function(){
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  if (!slides.length) return;
+  var idx = 0;
+  var dotsBox = document.getElementById('slideDots');
+  var prevBtn = document.getElementById('slidePrev');
+  var nextBtn = document.getElementById('slideNext');
+  var dots = slides.map(function(){
+    var i = document.createElement('i');
+    if (dotsBox) dotsBox.appendChild(i);
+    return i;
+  });
+
+  function render(){
+    slides.forEach(function(s, k){ s.classList.toggle('slide-active', k === idx); });
+    dots.forEach(function(d, k){ d.classList.toggle('on', k === idx); });
+    if (prevBtn) prevBtn.disabled = (idx === 0);
+    if (nextBtn) nextBtn.disabled = (idx === slides.length - 1);
+    try { history.replaceState(null, '', idx === 0 ? location.pathname : '#' + (slides[idx].id || '')); } catch (e) {}
+  }
+  function go(i){
+    idx = Math.max(0, Math.min(slides.length - 1, i));
+    render();
+  }
+  function next(){ go(idx + 1); }
+  function prev(){ go(idx - 1); }
+
+  dots.forEach(function(d, k){ d.addEventListener('click', function(){ go(k); }); });
+  if (prevBtn) prevBtn.addEventListener('click', prev);
+  if (nextBtn) nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', function(e){
+    if (e.target && /input|textarea/i.test(e.target.tagName)) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    }
+  });
+
+  // 鼠标滚轮/触控板：一次手势只翻一页，翻完前锁住，不会被连续滚动一次拖过好几屏。
+  var wheelLocked = false;
+  window.addEventListener('wheel', function(e){
+    e.preventDefault();
+    if (wheelLocked || Math.abs(e.deltaY) < 8) return;
+    wheelLocked = true;
+    if (e.deltaY > 0) next(); else prev();
+    setTimeout(function(){ wheelLocked = false; }, 600);
+  }, {passive: false});
+
+  // 触屏上下滑动
+  var touchStartY = null;
+  window.addEventListener('touchstart', function(e){ touchStartY = e.touches[0].clientY; }, {passive: true});
+  window.addEventListener('touchend', function(e){
+    if (touchStartY === null) return;
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 40) { if (dy > 0) next(); else prev(); }
+    touchStartY = null;
+  }, {passive: true});
+
+  // 站内锚点（导航"怎么用/隐私"、hero 的"看看它怎么工作"CTA）改成翻页，不是原生滚动锚点——
+  // 反正滚动已经关了，原生锚点跳转什么也不会发生。
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    var target = document.getElementById(id) || document.querySelector('.' + id);
+    var i = slides.indexOf(target);
+    if (i < 0) return;
+    a.addEventListener('click', function(e){ e.preventDefault(); go(i); });
+  });
+
+  // 打开时带 #hash 的话直接定位到那一屏（例如从 faq.html 回主页带着 #privacy）
+  var startId = location.hash.slice(1);
+  if (startId) {
+    var startEl = document.getElementById(startId) || document.querySelector('.' + startId);
+    var si = slides.indexOf(startEl);
+    if (si >= 0) idx = si;
+  }
+  render();
+})();
+
 /* 功能轮播。原生 setInterval，零依赖。
    每切一屏，键盘的第二排 / 语言按钮 / 模式 Tab / 朗读高亮 / 波形
    都跟着变成那个功能的真实样子 —— 演示卡是真键盘的复刻，不能只换文字。 */
@@ -1374,6 +1769,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-0b32141d48 -->
+<!-- build-36bcd2b020 -->
 </body>
 </html>
