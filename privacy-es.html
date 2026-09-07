@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Política de privacidad de Transless</title>
+<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;padding:24px 18px 60px;background:#14141a;color:#e6e3da;
+ font:16px/1.75 -apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+ max-width:760px;margin-inline:auto}
+h1{font-size:26px;margin:0 0 6px;color:#fff}
+h2{font-size:19px;margin:32px 0 10px;color:#9fd0ff;border-left:3px solid #9fd0ff;padding-left:10px}
+p{margin:10px 0}
+ul{margin:10px 0;padding-left:22px}li{margin:5px 0}
+strong{color:#fff}
+code{background:#25252e;padding:1px 6px;border-radius:5px;font-size:14px;color:#c9c08a}
+blockquote{margin:14px 0;padding:10px 14px;background:#1d1d26;border-left:3px solid #55556a;
+ border-radius:0 8px 8px 0;color:#b8b4a8;font-size:14.5px}
+hr{border:0;border-top:1px solid #2c2c38;margin:26px 0}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;table-layout:fixed}
+th,td{border:1px solid #2f2f3c;padding:8px 9px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
+th{background:#20202a;color:#fff}
+a{color:#9fd0ff}
+</style></head><body>
+<h1>Política de privacidad de Transless</h1>
+<p><strong>Fecha de entrada en vigor: 2026-08-28</strong>&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Versión: v2.2</strong></p>
+<p><strong>Responsable del tratamiento (el controlador de datos conforme a esta política)</strong>:
+Luminate Pacific Consulting Service Limited, empresa registrada en Hong Kong.
+Contacto: <a href="mailto:support@transless.net">support@transless.net</a>.</p>
+<p>Qué cambió en esta versión (v2.1 &rarr; v2.2): <strong>se lanzó el inicio de sesión con
+cuenta.</strong> Actualizamos "Qué procesamos", "Terceros y transferencias transfronterizas" y
+"Tus derechos" para reflejar las credenciales de inicio de sesión, las señales regionales y
+todos los proveedores ahora involucrados en el tratamiento. La forma en que realmente
+manejamos tus datos no ha cambiado.</p>
+<hr>
+
+<h2>1. Qué procesamos</h2>
+<p>Transless es un teclado / método de entrada que convierte tu chino hablado en inglés (u otro
+idioma de destino). Para lograrlo, procesamos:</p>
+<div class="tw"><table><thead><tr><th>Tipo</th><th>Qué es</th><th>Por qué lo necesitamos</th></tr></thead><tbody>
+<tr><td><strong>Voz</strong></td><td>El audio grabado mientras mantienes pulsado el botón de hablar</td><td>Para reconocer lo que dijiste</td></tr>
+<tr><td><strong>Texto</strong></td><td>El texto reconocido y la traducción generada</td><td>Para reformularlo y traducirlo</td></tr>
+<tr><td><strong>Identificador de dispositivo</strong></td><td>Un ID aleatorio generado la primera vez que se abre la app (un token de dispositivo)</td><td>Prevención de abusos, contabilidad de la cuota gratuita por dispositivo y conteo de uso</td></tr>
+</tbody></table></div>
+<p><strong>Sobre ese identificador de dispositivo</strong>: se genera de forma aleatoria por la
+app y <strong>no contiene</strong> tu número de teléfono, IMEI, identificador publicitario ni
+ninguna información de identidad de tu teléfono — <strong>no podemos</strong> usarlo para saber
+quién eres. Su único propósito es permitir que nuestro servidor identifique que las solicitudes
+provienen del mismo dispositivo. Deja de tener sentido en cuanto desinstalas la app.</p>
+<p><strong>No recopilamos</strong>: tu nombre, documento de identidad oficial, ubicación,
+contactos, biblioteca de fotos, identificadores publicitarios ni identificadores de dispositivo
+a nivel de sistema (IMEI / Android ID / IDFA).<br>
+(El número de teléfono o correo electrónico con el que inicias sesión se trata por separado en
+"Información de la cuenta" más abajo.)</p>
+<h3>Información de la cuenta</h3>
+<p><strong>El inicio de sesión con cuenta ya está disponible.</strong> Las funciones principales
+funcionan sin iniciar sesión; el inicio de sesión solo es necesario para funciones que requieren
+reconocerte (por ejemplo, la cuota de pago). El inicio de sesión utiliza tu <strong>número de
+teléfono o correo electrónico + un código de un solo uso</strong> — <strong>no hay
+contraseña</strong>.</p>
+<p>Al crear una cuenta, registramos:</p>
+<ul>
+<li><strong>El número de teléfono o correo electrónico con el que inicias sesión</strong>;</li>
+<li><strong>Cuatro señales usadas únicamente para contar usuarios por país</strong>: la
+configuración regional de tu dispositivo, tu zona horaria, tu idioma y un <strong>código de
+país de dos letras</strong> derivado de tu dirección IP en ese momento.</li>
+</ul>
+<p>🔒 <strong>No almacenamos tu dirección IP y nunca la enviamos a ningún tercero</strong> — el
+código de país (por ejemplo, <code>HK</code>, <code>CN</code>) se determina <strong>en nuestro
+propio servidor consultando una tabla de rangos de direcciones almacenada sin conexión</strong>;
+tu IP nunca sale de nuestro servidor, y después solo quedan esas dos letras.</p>
+<p>Consideramos las cuatro señales en conjunto porque cualquiera de ellas por sí sola puede ser
+engañosa (la configuración regional se puede cambiar manualmente, una IP puede enmascararse con
+una VPN) — cruzarlas entre sí da una distribución por país razonablemente precisa.</p>
+<p>🔒 El inicio de sesión por número de teléfono utiliza el servicio de verificación telefónica
+de Alibaba Cloud — <strong>el código de un solo uso lo genera y verifica Alibaba Cloud; nosotros
+nunca vemos esos 6 dígitos</strong>.</p>
+<strong>No iniciar sesión no afecta a las funciones principales.</strong></p>
+
+<h2>2. Como esto es un teclado, hay algo que debe decirse con claridad</h2>
+<p>Un teclado puede, técnicamente, leer cualquier cosa que se escriba en cualquier campo de
+texto. Transless necesita que actives "Permitir acceso completo" en la configuración del sistema
+para funcionar en línea. Por eso trazamos el límite explícitamente:</p>
+<ul>
+<li><strong>Solo empezamos a grabar y subir audio después de que pulsas activamente el botón de
+hablar.</strong></li>
+<li>En cualquier otro momento, <strong>no leemos, registramos ni subimos</strong> nada de lo que
+escribes.</li>
+<li>La función "traducir el texto en chino antes del cursor" lee un fragmento de texto anterior
+al cursor <strong>solo cuando la pulsas activamente.</strong></li>
+<li><strong>No</strong> registramos las pulsaciones de teclas (keylogging) ni recopilamos tus
+patrones de escritura para ningún tipo de análisis.</li>
+</ul>
+
+<h2>3. A dónde va esto y cuánto tiempo lo conservamos</h2>
+<p>1. <strong>Tu voz</strong> se sube a nuestro servidor, que la reenvía a nuestro proveedor de
+reconocimiento de voz. Nuestro servidor <strong>nunca escribe tu voz o tu texto en disco</strong>
+— se descartan en cuanto se han procesado.<br>(El registro de uso es un asunto aparte — solo
+contiene una marca de tiempo, qué función se usó y un identificador con hash, y <strong>no
+contiene ningún contenido</strong>; ver §10.)</p>
+<p>2. <strong>El texto reconocido</strong> se envía a un proveedor de modelos de IA (ver §4) para
+ser reformulado y traducido.</p>
+<p>3. <strong>La traducción generada</strong> (así como cualquier voz sintetizada de la función
+de lectura en voz alta) permanece brevemente en la <strong>memoria</strong> de nuestro servidor
+mientras tu dispositivo la recupera. <strong>En el momento en que tu dispositivo la recoge, la
+marcamos para su eliminación</strong>, y se borra automáticamente en un plazo de <strong>1
+minuto</strong>; si tu dispositivo nunca llega a recogerla (por ejemplo, se corta la conexión),
+se borra a más tardar en <strong>3 minutos</strong>.</p>
+<blockquote>Por qué la retenemos: usamos el patrón "enviar la tarea y luego consultar el
+resultado", porque nuestra puerta de enlace agota el tiempo de espera en solicitudes de larga
+duración — así que el resultado tiene que quedarse en algún sitio hasta que tu dispositivo vaya
+a buscarlo. <strong>Solo existe en memoria; un reinicio del servidor lo borra, y nunca se escribe
+en disco.</strong><br>
+Por qué lo conservamos 1 minuto tras la recogida en lugar de borrarlo de inmediato: si el
+resultado se pierde en el camino de vuelta, tu dispositivo lo reintentará — borrarlo de
+inmediato haría parecer que no llegó nada después de que hablaste. Ese minuto existe para esos
+reintentos.</blockquote>
+<p>4. <strong>No creamos ningún historial, archivo de conversaciones ni perfil de usuario.</strong></p>
+
+<h2>4. Terceros y transferencias transfronterizas</h2>
+<p>Para realizar el reconocimiento y la traducción, tu voz y tu texto se envían a los siguientes
+proveedores para su procesamiento:</p>
+<div class="tw"><table><thead><tr><th>Proveedor</th><th>Qué procesa</th><th>Ubicación del servidor</th></tr></thead><tbody>
+<tr><td><strong>DeepSeek</strong> (Hangzhou DeepSeek)</td><td>Reformulación y traducción de texto (procesador principal)</td><td><strong>China continental</strong></td></tr>
+<tr><td><strong>Volcano Engine</strong> (ByteDance, Pekín)</td><td>Reconocimiento de voz; canal de respaldo para el procesamiento de texto; almacenamiento de registros de uso</td><td><strong>China continental</strong></td></tr>
+<tr><td><strong>Alibaba Cloud</strong> (servicio de verificación telefónica)</td><td>Emisión y verificación de códigos de un solo uso para el inicio de sesión por teléfono</td><td><strong>China continental</strong></td></tr>
+<tr><td><strong>Resend</strong></td><td>Entrega de códigos de un solo uso para el inicio de sesión por correo electrónico</td><td><strong>Estados Unidos</strong></td></tr>
+<tr><td><strong>Supabase</strong></td><td>Almacenamiento de los registros de cuenta (teléfono/correo de inicio de sesión, señales regionales anteriores)</td><td><strong>Singapur</strong></td></tr>
+</tbody></table></div>
+<p><strong>Distintos tipos de datos van a distintos lugares — para ser precisos:</strong></p>
+<ul>
+<li><strong>El contenido de tu voz y tu texto</strong> &rarr; <strong>China continental</strong>
+(DeepSeek, Volcano Engine). Si estás fuera de China continental, esto constituye una
+transferencia transfronteriza.</li>
+<li><strong>La información de tu cuenta</strong> (teléfono/correo de inicio de sesión, señales
+regionales) &rarr; <strong>Singapur</strong> (Supabase).</li>
+<li><strong>La entrega de códigos de un solo uso</strong> &rarr; por correo electrónico a través
+de <strong>Estados Unidos</strong> (Resend), por teléfono a través de <strong>China
+continental</strong> (Alibaba Cloud).</li>
+</ul>
+<p>El tratamiento de datos por parte de cada uno de estos proveedores se rige por su propia
+política de privacidad.</p>
+<p>Dado lo anterior, te recomendamos evitar dictar:</p>
+<ul>
+<li>Contraseñas, números de tarjetas bancarias, números de documento de identidad u otra
+información personal sensible</li>
+<li>Secretos comerciales o contenido sujeto a un acuerdo de confidencialidad</li>
+</ul>
+<p><strong>No</strong> vendemos, alquilamos ni usamos tu contenido con fines publicitarios.</p>
+<p>La app <strong>no incluye ningún SDK de análisis, informes de fallos o publicidad de
+terceros</strong>. El reconocimiento de escritura a mano se realiza enteramente en tu dispositivo
+y no requiere conexión a internet.</p>
+
+<h2>5. Tus datos no se usan para entrenar modelos</h2>
+<p><strong>Nosotros mismos nunca</strong> usamos tu voz o tu texto para entrenar ningún modelo,
+ni los usamos para publicidad, venta o alquiler.</p>
+<p>Sobre los proveedores externos, lo decimos con honestidad en lugar de suavizarlo:</p>
+<ul>
+<li><strong>DeepSeek (procesador principal para la reformulación y traducción de texto)</strong>
+— sus términos de plataforma abierta <strong>no indican expresamente si los datos de la API se
+usan para entrenamiento</strong>. No podemos hacer esa promesa en su nombre, así que te lo
+decimos con claridad en lugar de ofrecerte una garantía que no podemos respaldar.</li>
+<li><strong>Volcano Engine (reconocimiento de voz; canal de respaldo para el procesamiento de
+texto)</strong> — su compromiso público establece que "Volcano Engine no accederá ni usará tus
+datos sin tu autorización", y ofrece cifrado y aislamiento de extremo a extremo.</li>
+</ul>
+<blockquote>Por qué incluimos esta sección: preferimos ser precisos antes que hacer un
+compromiso que no podemos garantizar. Revisamos esta sección periódicamente; última revisión:
+2026-08-25.</blockquote>
+
+<h2>6. Lo que no tenemos</h2>
+<p>Esto es lo que muchos productos similares hacen y que nosotros <strong>deliberadamente no
+hacemos</strong>:</p>
+<ul>
+<li><strong>Ningún SDK de análisis, informes de fallos o publicidad de terceros en ningún lugar
+de la app.</strong></li>
+<li><strong>Ningún script de rastreo en nuestro sitio web</strong> (sin Google Analytics, sin
+píxeles publicitarios).</li>
+<li><strong>No recopilamos</strong> tu historial de navegación, las URL visitadas, los títulos de
+ventana ni qué otras apps usas.</li>
+<li><strong>El reconocimiento de escritura a mano se realiza enteramente en tu dispositivo</strong>
+— tu escritura nunca se sube.</li>
+</ul>
+
+<h2>7. Seguridad</h2>
+<ul>
+<li>Todo el tráfico entre la app y nuestro servidor está <strong>cifrado de extremo a extremo
+mediante HTTPS</strong>.</li>
+<li>Nuestro servidor <strong>nunca escribe tu voz o tu texto en disco</strong> — solo pasan por
+la memoria.</li>
+<li>Las claves necesarias para llamar a servicios de terceros <strong>residen únicamente en
+nuestro servidor</strong> y nunca se incluyen dentro de la app.</li>
+</ul>
+
+<h2>8. Aviso sobre contenido generado por IA</h2>
+<p>Las traducciones son generadas por IA y <strong>pueden contener errores u omisiones</strong>.
+Revísalas antes de enviarlas. La app lo indica claramente en cada lugar donde se muestra una
+traducción.</p>
+
+<h2>9. Moderación de contenido</h2>
+<p>Según lo exigido por la normativa aplicable y por nuestros proveedores, realizamos
+<strong>comprobaciones automatizadas de contenido que infrinja las normas</strong>, tanto sobre
+lo que dices como sobre lo que se genera. Se trata de una verificación programática basada en
+palabras clave y reglas — <strong>ninguna persona lee tu contenido</strong> como parte de este
+proceso.</p>
+
+<h2>10. Tus derechos</h2>
+<p><strong>No conservamos</strong> el contenido de tu voz ni de tu texto, por lo que no existe
+un archivo de contenido que podamos ofrecerte consultar, exportar o eliminar. Desinstalar la app
+detiene todo procesamiento en cualquier momento.</p>
+<p>Puedes solicitarnos la eliminación de tu cuenta en cualquier momento contactando la dirección
+de correo electrónico indicada abajo. Una vez recibida esa solicitud, eliminamos la cuenta junto
+con la información que te <strong>identifica directamente</strong> (el número de teléfono o
+correo electrónico de inicio de sesión).</p>
+<p>Para la contabilidad de uso, la prevención de abusos y la fiabilidad del servicio, conservamos
+un registro de uso que <strong>no contiene ningún contenido</strong> — solo una marca de tiempo,
+qué función se usó y un <strong>identificador con hash y sal</strong>. Una vez eliminada tu
+cuenta, <strong>ya no podemos vincular ese registro contigo</strong>.</p>
+<p>Si te encuentras en el Espacio Económico Europeo, el Reino Unido o Suiza, nuestras bases
+jurídicas para el tratamiento son: el tratamiento de tu voz y tu texto se basa en la
+<strong>necesidad de ejecutar nuestro contrato contigo</strong> (nos pediste que lo
+tradujéramos); el tratamiento del identificador de dispositivo se basa en nuestro
+<strong>interés legítimo</strong> (prevenir abusos, mantener el servicio en funcionamiento). La
+transferencia a China continental se basa en la <strong>necesidad de ejecutar el contrato</strong>
+(artículo 49, apartado 1, letra b) del RGPD).</p>
+<p>Si eres residente de California: no <strong>vendemos</strong> ni <strong>"compartimos"</strong>
+(según se definen esos términos en la CCPA/CPRA) tu información personal, ni la usamos para
+publicidad conductual entre contextos.</p>
+<p>Para ejercer cualquier derecho, o si tienes preguntas sobre esta política, contáctanos en:
+<a href="mailto:support@transless.net">support@transless.net</a>.</p>
+
+<h2>11. Menores</h2>
+<p>Esta app no está diseñada para menores de <strong>13 años</strong> y no recopilamos
+información de ellos a sabiendas. En el Espacio Económico Europeo, esta app no está dirigida a
+usuarios menores de <strong>16 años</strong> (o la edad inferior que establezca tu estado
+miembro, cuando sea aplicable). Si crees que un menor nos ha proporcionado información, contacta
+con nosotros en la dirección de correo electrónico indicada arriba.</p>
+
+<h2>12. Cambios y contacto</h2>
+<p>Si esta política cambia, actualizamos la versión y la fecha en la parte superior de esta
+página.</p>
+<p>Preguntas: <a href="mailto:support@transless.net">support@transless.net</a></p>
+</body></html>
