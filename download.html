@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>获取 Transless · 说中文，出地道英文</title>
+<meta name="description" content="Transless 是输入法：装上之后，在微信、邮件、任何 App 里打字的地方，说中文就能出地道英文。">
+<meta property="og:title" content="Transless — 让世界听懂你">
+<meta property="og:description" content="说中文，出地道英文。31 种目标语言，随意／工作／邮件三档语气。">
+<meta property="og:image" content="https://transless.net/og_zh-CN.png">
+<link rel="icon" href="/favicon.ico">
+
+<!--
+  🚨🚨 这个页面唯一的 TODO：下面 STORE 里的两个链接。
+  商店链接是**事实**，不是文案 —— 没上架就留空，页面会自己显示「即将上线」。
+  编一个假链接下去，用户点进去是别人的 App，那比显示「还没好」严重得多。
+
+  改完记得：py site/deploy_site.py 重新发布一次。
+-->
+<style>
+/* 🚨 色值全部来自 site/DESIGN.md（源头是 android/.../Skin.java）—— 一个都不许新增 */
+:root{
+  --bg-gradient: linear-gradient(165deg, #0F1B4F 0%, #2A1358 45%, #431661 100%);
+  --glow: rgba(150, 90, 230, 0.34);
+  --accent-from: #8B5CF6;
+  --accent-to: #6D3FB0;
+  --highlight: #B98BE8;
+  --text-primary: #F4F1FB;
+  --text-secondary: #A99DC6;
+  --text-cn: #D4CDE8;
+  --success: #6EE7B7;
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(185,139,232,0.15);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; padding:56px 22px 72px;
+  background: var(--bg-gradient); background-attachment: fixed;
+  color: var(--text-primary);
+  font-family:-apple-system, "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+  line-height:1.75; font-size:16px;
+}
+.wrap{max-width:640px; margin:0 auto; text-align:left}
+.brand{font-size:20px; letter-spacing:.03em; color:var(--text-primary)}
+h1{font-size:34px; letter-spacing:.04em; margin:22px 0 10px; color:var(--text-cn); font-weight:500}
+.sub{color:var(--text-secondary); font-size:15px; margin-bottom:32px}
+.card{
+  background:var(--card-bg); border:1px solid var(--card-border);
+  border-radius:16px; padding:22px 24px; margin-bottom:16px;
+}
+.note{
+  background:rgba(185,139,232,.10); border:1px solid rgba(185,139,232,.25);
+  border-radius:14px; padding:16px 20px; margin-bottom:24px;
+  color:var(--text-cn); font-size:14.5px;
+}
+.btn{
+  display:block; text-decoration:none; text-align:center;
+  background:linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+  color:var(--text-primary); border-radius:999px; padding:15px 0;
+  font-size:16px; letter-spacing:.02em; margin-bottom:12px;
+}
+.btn-off{
+  background:rgba(255,255,255,.05); color:var(--text-secondary);
+  border:1px solid var(--card-border); cursor:default;
+}
+.store{font-size:13px; color:var(--text-secondary); margin:-6px 0 16px}
+.goon{color:var(--success); font-size:14.5px; margin-bottom:18px}
+.jump{font-size:14.5px; color:var(--highlight)}
+.jump a{color:var(--highlight)}
+ul{margin:10px 0 0; padding-left:20px; color:var(--text-cn); font-size:14.5px}
+li{margin-bottom:6px}
+.lang{text-align:right; font-size:13px; margin-bottom:18px}
+.lang a{color:var(--text-secondary); text-decoration:none}
+.back{text-align:center; margin-top:34px; font-size:14px}
+.back a{color:var(--text-secondary); text-decoration:none}
+.foot{margin-top:40px; font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lang"><a href="/en/download.html">English ›</a></div>
+
+  <div class="brand">Transless</div>
+  <h1>获取 Transless</h1>
+  <div class="sub">说中文，出地道英文。31 种目标语言。</div>
+
+  <div class="note">
+    Transless 是<b>输入法</b>——装上之后，在微信、邮件、任何 App 里打字的地方都能用，
+    不用再复制粘贴到翻译软件里。微信不支持第三方输入法在小程序里生效，
+    所以想用起来，得装这个 App。
+  </div>
+
+  <div id="goon" class="goon" hidden>正在前往应用商店…</div>
+
+  <div class="card">
+    <div id="btn-ios" class="btn btn-off">iPhone / iPad · 即将上线</div>
+    <div id="btn-android" class="btn btn-off">Android · 即将上线</div>
+    <div class="store" id="store-note">两个商店都还在上架流程里，先关注下面的动态。</div>
+  </div>
+
+  <div class="card">
+    <ul>
+      <li>iOS：识别完就丢，不写入磁盘</li>
+      <li>安卓：内测中，可以直接拿安装包</li>
+      <li>31 种目标语言，手写识别在你手机上本地跑，不联网</li>
+    </ul>
+  </div>
+
+  <div class="jump" id="nolang">
+    用桌面浏览器打开？手机上打开这一页会自动跳到对应商店。
+  </div>
+
+  <div class="back"><a href="/">← 回官网</a>　·　<a href="/privacy.html">隐私政策</a></div>
+
+  <div class="foot">
+    Transless · 让世界听懂你 · No Language In Between
+  </div>
+
+</div>
+
+<script>
+// 🚨🚨 上架后只改这两个字符串，别的都不用动。留空 = 还没上架。
+//    App Store 形如 https://apps.apple.com/app/id0000000000
+//    Google Play 形如 https://play.google.com/store/apps/details?id=com.xxx
+var STORE = {
+  ios: "",
+  android: ""
+};
+
+(function () {
+  var iOS = STORE.ios, android = STORE.android;
+  var bI = document.getElementById('btn-ios');
+  var bA = document.getElementById('btn-android');
+  var note = document.getElementById('store-note');
+
+  function arm(el, url, label) {
+    if (url) {
+      el.className = 'btn';
+      el.textContent = label;
+      el.href = url;
+    }
+  }
+  arm(bI, iOS, '前往 App Store');
+  arm(bA, android, '前往 Google Play');
+  if (iOS || android) { note.textContent = '手机上打开这一页会自动跳转。'; }
+
+  // 移动端自动跳：只跳**真填了链接**的那一个，没填就老实待着
+  var ua = navigator.userAgent || '';
+  var isiOS = /iPad|iPhone|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  var target = isiOS ? iOS : (isAndroid ? android : '');
+  if (target) {
+    document.getElementById('goon').hidden = false;
+    setTimeout(function () { window.location.href = target; }, 1200);
+  } else {
+    document.getElementById('nolang').hidden = !isiOS && !isAndroid;
+  }
+})();
+</script>
+</body>
+</html>
