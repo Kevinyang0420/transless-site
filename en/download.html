@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Get Transless · Speak Chinese, get native-sounding English</title>
+<meta name="description" content="Transless is a keyboard. Install it once and speak Chinese anywhere you type — WeChat, email, any app.">
+<meta property="og:title" content="Transless — No Language In Between">
+<meta property="og:description" content="Speak Chinese, get native-sounding English. 31 target languages, three registers: casual / work / email.">
+<meta property="og:image" content="https://transless.net/og_en.png">
+<link rel="icon" href="/favicon.ico">
+
+<!--
+  🚨🚨 The only TODO on this page: the two links in STORE below.
+  A store link is a FACT, not copy — leave it empty until the app is actually live
+  and the page will say "Coming soon". A made-up link sends people to someone
+  else's app, which is far worse than saying "not yet".
+
+  After editing, republish: py site/deploy_site.py
+-->
+<style>
+:root{
+  --bg-gradient: linear-gradient(165deg, #0F1B4F 0%, #2A1358 45%, #431661 100%);
+  --accent-from: #8B5CF6;
+  --accent-to: #6D3FB0;
+  --highlight: #B98BE8;
+  --text-primary: #F4F1FB;
+  --text-secondary: #A99DC6;
+  --text-cn: #D4CDE8;
+  --success: #6EE7B7;
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(185,139,232,0.15);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; padding:56px 22px 72px;
+  background:var(--bg-gradient); background-attachment:fixed;
+  color:var(--text-primary);
+  font-family:-apple-system, "PingFang SC", Roboto, "Helvetica Neue", sans-serif;
+  line-height:1.7; font-size:16px;
+}
+.wrap{max-width:640px; margin:0 auto}
+.brand{font-size:20px; letter-spacing:.03em}
+h1{font-size:32px; letter-spacing:.03em; margin:22px 0 10px; color:var(--text-cn); font-weight:500}
+.sub{color:var(--text-secondary); font-size:15px; margin-bottom:32px}
+.card{background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; padding:22px 24px; margin-bottom:16px}
+.note{background:rgba(185,139,232,.10); border:1px solid rgba(185,139,232,.25); border-radius:14px; padding:16px 20px; margin-bottom:24px; color:var(--text-cn); font-size:14.5px}
+.btn{display:block; text-decoration:none; text-align:center;
+  background:linear-gradient(135deg, var(--accent-from) 0%, var(--accent-to) 100%);
+  color:var(--text-primary); border-radius:999px; padding:15px 0; font-size:16px; margin-bottom:12px}
+.btn-off{background:rgba(255,255,255,.05); color:var(--text-secondary); border:1px solid var(--card-border); cursor:default}
+.store{font-size:13px; color:var(--text-secondary); margin:-6px 0 16px}
+.goon{color:var(--success); font-size:14.5px; margin-bottom:18px}
+.jump{font-size:14.5px; color:var(--highlight)}
+ul{margin:10px 0 0; padding-left:20px; color:var(--text-cn); font-size:14.5px}
+li{margin-bottom:6px}
+.lang{text-align:right; font-size:13px; margin-bottom:18px}
+.lang a{color:var(--text-secondary); text-decoration:none}
+.back{text-align:center; margin-top:34px; font-size:14px}
+.back a{color:var(--text-secondary); text-decoration:none}
+.foot{margin-top:40px; font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lang"><a href="/download.html">中文 ›</a></div>
+
+  <div class="brand">Transless</div>
+  <h1>Get Transless</h1>
+  <div class="sub">Speak Chinese. Get native-sounding English. 31 target languages.</div>
+
+  <div class="note">
+    Transless is a <b>keyboard</b>. Install it once and it works wherever you already type —
+    WeChat, email, any app. No more copying text into a translator.
+    (WeChat does not allow third-party keyboards inside mini programs,
+    so to actually use it you need the app.)
+  </div>
+
+  <div id="goon" class="goon" hidden>Opening the store…</div>
+
+  <div class="card">
+    <div id="btn-ios" class="btn btn-off">iPhone / iPad · Coming soon</div>
+    <div id="btn-android" class="btn btn-off">Android · Coming soon</div>
+    <div class="store" id="store-note">Both stores are still in review.</div>
+  </div>
+
+  <div class="card">
+    <ul>
+      <li>Audio is discarded right after recognition — never written to disk</li>
+      <li>Android: closed beta, APK available</li>
+      <li>31 target languages; handwriting recognition runs on your device, offline</li>
+    </ul>
+  </div>
+
+  <div class="jump" id="nolang">On mobile, this page opens the right store automatically.</div>
+
+  <div class="back"><a href="/en/">← Back to site</a>　·　<a href="/privacy-en.html">Privacy</a></div>
+
+  <div class="foot">Transless · No Language In Between</div>
+
+</div>
+
+<script>
+// 🚨🚨 Only these two strings need editing once the apps go live.
+var STORE = {
+  ios: "",      // e.g. https://apps.apple.com/app/id0000000000
+  android: ""   // e.g. https://play.google.com/store/apps/details?id=com.xxx
+};
+
+(function () {
+  var iOS = STORE.ios, android = STORE.android;
+  function arm(el, url, label) {
+    if (url) { el.className = 'btn'; el.textContent = label; el.href = url; }
+  }
+  arm(document.getElementById('btn-ios'), iOS, 'Get it on the App Store');
+  arm(document.getElementById('btn-android'), android, 'Get it on Google Play');
+  if (iOS || android) { document.getElementById('store-note').textContent = 'On mobile this page redirects automatically.'; }
+
+  var ua = navigator.userAgent || '';
+  var isiOS = /iPad|iPhone|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  var target = isiOS ? iOS : (isAndroid ? android : '');
+  if (target) {
+    document.getElementById('goon').hidden = false;
+    setTimeout(function () { window.location.href = target; }, 1200);
+  } else {
+    document.getElementById('nolang').hidden = !isiOS && !isAndroid;
+  }
+})();
+</script>
+</body>
+</html>
