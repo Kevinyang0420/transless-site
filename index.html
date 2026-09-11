@@ -233,7 +233,12 @@ body{
    靠右下角箭头 + 键盘（↓/→/空格/PageDown 下一页，↑/←/PageUp 上一页）+ 触屏滑动 +
    鼠标滚轮（每次滚动只翻一页，不是连续滚）来切页。原来的 .seam 渐隐过渡条是给
    "滚动经过接缝"设计的，现在两屏是硬切换（配合淡入淡出动画），不再需要，直接隐藏。 */
-html,body{height:100%;overflow:hidden}
+html,body{height:100%}
+/* 2026-09-11：这条原来是全局一条 height:100% + overflow:hidden 打在 html,body 上。
+   桌面幻灯片模式靠它锁死整页滚动是对的，但它没被任何媒体查询包着 —— 手机端跟着一起
+   被锁，375×812 下整页拉不动。现在拆成两半：锁滚动只留给 >768px（桌面端逐字节保持
+   原样），≤768px 由下面「响应式」里的断点放开，降级成普通纵向长页。 */
+@media (min-width:769px){html,body{overflow:hidden}}
 .seam{display:none}
 nav{position:fixed}
 /* 🚨 第一版这里用 visibility:hidden 来"藏"非当前屏，结果 Kevin 反馈"基本没有任何动效"——
@@ -916,6 +921,30 @@ h2 .dim{color:var(--text-secondary)}
   section{padding:80px 0}
   .compare-grid,.steps-grid,.scenes-grid{grid-template-columns:1fr}
   .cta-row{flex-direction:column;align-items:flex-start;gap:14px}
+
+  /* ---- 2026-09-11：手机端把「幻灯片」降级成普通纵向长页 ----
+     桌面端每屏 position:fixed + 锁一屏高 + overflow:hidden，靠翻页换内容；
+     可每屏内容实际要 1000~1913px 高，375×812 下最多只露出 43%，加上上面那条全局
+     overflow:hidden，手机上既拉不动、又看不全。这里把 .slide 还原成正常流里的块：
+     不固定、不限高、不裁切、全部可见，一屏接一屏往下排。只作用于 ≤768px。 */
+  html,body{height:auto;overflow:visible}
+  .slide{
+    position:relative;inset:auto;z-index:auto;
+    height:auto;min-height:auto;overflow:visible;
+    opacity:1;pointer-events:auto;transform:none;filter:none;
+    transition:none;
+  }
+  .slide .wrap{max-height:none}
+  /* 🚨 .reveal 那条是 .js .reveal{opacity:0}（两个类），比 .slide 那条（一个类）优先，
+     只写 .slide{opacity:1} 压不住 —— 这几屏会一直透明到 IntersectionObserver 想起来为止。
+     长页上内容必须始终看得见，这里按 reduced-motion 区块同样的做法直接点亮。 */
+  .slide .wrap>*,
+  .js .reveal{opacity:1;transform:none}
+  /* 圆点导航是「跳到第几屏」用的，长页没有「第几屏」；右下角箭头同理。
+     手机端 JS 已经不再绑翻页，留着就是两坨按不动的浮层，一起收掉。 */
+  #slideDots,#slideNav{display:none}
+  /* 导航固定占高 64px，锚点跳转时留出空隙，别让目标标题压在导航底下 */
+  [id]{scroll-margin-top:88px}
 }
 @media (max-width:560px){
   /* 窄屏藏掉三个锚点链接，只留品牌 + 语言切换器。
@@ -1519,6 +1548,13 @@ h2 .dim{color:var(--text-secondary)}
   var slides = [].slice.call(document.querySelectorAll('.slide'));
   if (!slides.length) return;
   var idx = 0;
+
+  /* 2026-09-11：手机端（≤768px）整套翻页引擎关掉 —— 那边是普通纵向长页，没有「第几屏」，
+     滚轮/触屏/方向键都得还给浏览器，否则 preventDefault 一拦，页面照样拉不动。
+     这里用活判断而不是一次性开关：横竖屏切换、窗口缩放跨过 768px 时，引擎和 CSS 断点
+     会同时切过去，不会出现「CSS 以为是手机、JS 以为是桌面」的错配。 */
+  var mq = window.matchMedia('(max-width:768px)');
+  function isMobile(){ return mq.matches; }
   var dotsBox = document.getElementById('slideDots');
   var prevBtn = document.getElementById('slidePrev');
   var nextBtn = document.getElementById('slideNext');
@@ -1529,6 +1565,11 @@ h2 .dim{color:var(--text-secondary)}
   });
 
   function render(){
+    if (isMobile()) {
+      // 手机端：所有屏都在正常流里平铺，没有「当前屏」，也就不写 history hash。
+      slides.forEach(function(s){ s.classList.add('slide-active'); });
+      return;
+    }
     slides.forEach(function(s, k){ s.classList.toggle('slide-active', k === idx); });
     dots.forEach(function(d, k){ d.classList.toggle('on', k === idx); });
     if (prevBtn) prevBtn.disabled = (idx === 0);
@@ -1547,6 +1588,7 @@ h2 .dim{color:var(--text-secondary)}
   if (nextBtn) nextBtn.addEventListener('click', next);
 
   document.addEventListener('keydown', function(e){
+    if (isMobile()) return;  // 手机端方向键/空格/PageDown 交回给浏览器的原生滚动
     if (e.target && /input|textarea/i.test(e.target.tagName)) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault(); next();
@@ -1558,6 +1600,7 @@ h2 .dim{color:var(--text-secondary)}
   // 鼠标滚轮/触控板：一次手势只翻一页，翻完前锁住，不会被连续滚动一次拖过好几屏。
   var wheelLocked = false;
   window.addEventListener('wheel', function(e){
+    if (isMobile()) return;  // 🚨 必须在 preventDefault 之前 —— 手机上它就是"页面拉不动"的元凶
     e.preventDefault();
     if (wheelLocked || Math.abs(e.deltaY) < 8) return;
     wheelLocked = true;
@@ -1567,9 +1610,12 @@ h2 .dim{color:var(--text-secondary)}
 
   // 触屏上下滑动
   var touchStartY = null;
-  window.addEventListener('touchstart', function(e){ touchStartY = e.touches[0].clientY; }, {passive: true});
+  window.addEventListener('touchstart', function(e){
+    if (isMobile()) return;  // 手机端上下滑动 = 滚动，不是翻页
+    touchStartY = e.touches[0].clientY;
+  }, {passive: true});
   window.addEventListener('touchend', function(e){
-    if (touchStartY === null) return;
+    if (isMobile() || touchStartY === null) return;
     var dy = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(dy) > 40) { if (dy > 0) next(); else prev(); }
     touchStartY = null;
@@ -1583,7 +1629,8 @@ h2 .dim{color:var(--text-secondary)}
     var target = document.getElementById(id) || document.querySelector('.' + id);
     var i = slides.indexOf(target);
     if (i < 0) return;
-    a.addEventListener('click', function(e){ e.preventDefault(); go(i); });
+    // 手机端不拦：那是普通长页，#how / #privacy 就是原生锚点跳转。
+    a.addEventListener('click', function(e){ if (isMobile()) return; e.preventDefault(); go(i); });
   });
 
   // 打开时带 #hash 的话直接定位到那一屏（例如从 faq.html 回主页带着 #privacy）
@@ -1594,6 +1641,11 @@ h2 .dim{color:var(--text-secondary)}
     if (si >= 0) idx = si;
   }
   render();
+
+  // 跨过 768px 断点时重算：回到桌面从第一屏重新开始，降到手机则全部平铺。
+  function onMqChange(){ idx = 0; render(); }
+  if (mq.addEventListener) mq.addEventListener('change', onMqChange);
+  else if (mq.addListener) mq.addListener(onMqChange);
 })();
 
 /* 功能轮播。原生 setInterval，零依赖。
@@ -1769,6 +1821,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-36bcd2b020 -->
+<!-- build-127c349f5f -->
 </body>
 </html>
