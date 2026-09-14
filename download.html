@@ -74,6 +74,10 @@ li{margin-bottom:6px}
 .back{text-align:center; margin-top:34px; font-size:14px}
 .back a{color:var(--text-secondary); text-decoration:none}
 .foot{margin-top:40px; font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.8}
+.footnote{
+  margin-top:28px; padding-top:18px; border-top:1px solid var(--card-border);
+  color:var(--text-secondary); font-size:12.5px; line-height:1.85;
+}
 </style>
 </head>
 <body>
@@ -118,6 +122,11 @@ li{margin-bottom:6px}
   <div class="jump" id="nolang">
     用桌面浏览器打开？手机上打开这一页会自动跳到对应商店。
   </div>
+
+  <!-- 🚨 Kevin 2026-09-15 点名：两条系统安装提示原文太长，别堵在下载按钮正下方
+       （那是用户决定「点不点」的位置）。按钮那边只留一句短的，完整原文挪到这里，
+       想看再看。文案本身一个字不许改。 -->
+  <div class="footnote" id="install-notes" hidden></div>
 
   <div class="back"><a href="/">← 回官网</a>　·　<a href="/privacy.html">隐私政策</a></div>
 
@@ -165,7 +174,9 @@ try {
 var DL = ROUTES[ROUTE];
 
 (function () {
-  var LBL = {"ios": "前往 App Store", "android": "下载安卓版 (APK)", "pc": "下载 Windows 版", "noteSome": "手机上打开这一页会自动跳转到对应商店。<br><br>🚨 <b>Windows 首次打开会提示「Windows 已保护你的电脑」</b> —— 那是新程序还没有下载量积累的正常提示，不是病毒。点<b>「更多信息」→「仍要运行」</b>就能装。<br><br>🚨 <b>安卓首次安装会提示「为了安全，你的手机目前不允许安装此来源的应用」</b> —— 那是安装商店以外的应用时的正常提示。点<b>「设置」→ 允许这次安装</b>即可。（Google Play 版正在审核中，上架后这里会换成商店链接。）"};
+  var LBL = {"ios": "前往 App Store", "android": "下载安卓版 (APK)", "pc": "下载 Windows 版",
+    "noteSome": "手机上打开这一页会自动跳转到对应商店。",
+    "installNotes": "🚨 <b>Windows 首次打开会提示「Windows 已保护你的电脑」</b> —— 那是新程序还没有下载量积累的正常提示，不是病毒。点<b>「更多信息」→「仍要运行」</b>就能装。<br><br>🚨 <b>安卓首次安装会提示「为了安全，你的手机目前不允许安装此来源的应用」</b> —— 那是安装商店以外的应用时的正常提示。点<b>「设置」→ 允许这次安装</b>即可。（Google Play 版正在审核中，上架后这里会换成商店链接。）"};
   var ROUTE_LABEL = {"cn": "国内线路", "intl": "海外线路"};
 
   var rn = document.getElementById('route-now');
@@ -208,6 +219,10 @@ var DL = ROUTES[ROUTE];
     if (warn) { warn.hidden = true; }
     var sn = document.getElementById('store-note');
     if (sn) { sn.innerHTML = LBL.noteSome; }
+    // 🚨 完整的系统安装提示原文放到页面底部（见 install-notes 那段注释），
+    //    按钮正下方只留一句短的，别让两段小字挡住「点不点」这个决定。
+    var inotes = document.getElementById('install-notes');
+    if (inotes) { inotes.innerHTML = LBL.installNotes; inotes.hidden = false; }
   }
 
   // 移动端自动跳：只跳**真填了链接**的那一个，没填就老实待着
