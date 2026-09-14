@@ -96,20 +96,21 @@ li{margin-bottom:6px}
   <div class="card">
     <div id="btn-ios" class="btn btn-off">iPhone / iPad · 即将上线</div>
     <div id="btn-android" class="btn btn-off">Android · 即将上线</div>
-    <div class="store" id="store-note">两个商店都还在上架流程里，先关注下面的动态。</div>
+    <div id="btn-pc" class="btn btn-off">Windows · 即将上线</div>
+    <div class="store" id="store-note">三端都还在上架流程里。下面留了订阅入口，但<b>现在还没有可安装的版本</b>——等有了包再订阅，别先付钱。</div>
   </div>
   <div class="card">
-    <a class="btn" href="https://buy.stripe.com/4gMaEXfZg7wX4Qj7ie3Nm00">订阅 Transless Pro · US$9.99 / 月</a>
-    <div class="store">无限次翻译。支持信用卡 / Apple Pay / Google Pay。<br>
-      <b>结账时请填你在 App 里登录用的那个邮箱</b>，会员会自动挂到那个账号上。填错了找我们改，钱不会丢。</div>
+    <div id="sub-warn" class="store">🚨 <b>现在还没有可安装的版本</b>，订阅了也用不上。等上面出现下载按钮之后再来。</div>
+    <a id="sub-btn" class="btn" href="https://buy.stripe.com/4gMaEXfZg7wX4Qj7ie3Nm00">订阅 Transless Pro · US$9.99 / 月</a>
+    <div class="store">无限次翻译。支持信用卡 / Apple Pay / Google Pay。<br><b>结账时请填你在 App 里登录用的那个邮箱</b>，会员会自动挂到那个账号上。填错了找我们改，钱不会丢。</div>
   </div>
 
 
   <div class="card">
     <ul>
       <li>iOS：识别完就丢，不写入磁盘</li>
-      <li>安卓：内测中，可以直接拿安装包</li>
       <li>31 种目标语言，手写识别在你手机上本地跑，不联网</li>
+      <li>一个账号三端通用：手机上订阅，电脑上也是会员</li>
     </ul>
   </div>
 
@@ -126,41 +127,60 @@ li{margin-bottom:6px}
 </div>
 
 <script>
-// 🚨🚨 上架后只改这两个字符串，别的都不用动。留空 = 还没上架。
-//    App Store 形如 https://apps.apple.com/app/id0000000000
-//    Google Play 形如 https://play.google.com/store/apps/details?id=com.xxx
-var STORE = {
+// 🚨🚨 **唯一配置点**：上架/出包后只改这三个字符串，别的都不用动。
+//    留空 = 还没有 —— 页面自己显示「即将上线」，**订阅卡自己挂出警告**。
+//    🚨 绝不许编一个假链接：用户点进去是别人的 App，比显示「还没好」严重得多。
+//    App Store    形如 https://apps.apple.com/app/id0000000000
+//    Google Play  形如 https://play.google.com/store/apps/details?id=com.kevin.transless
+//    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
+var DL = {
   ios: "",
-  android: ""
+  android: "",
+  pc: ""
 };
 
 (function () {
-  var iOS = STORE.ios, android = STORE.android;
-  var bI = document.getElementById('btn-ios');
-  var bA = document.getElementById('btn-android');
-  var note = document.getElementById('store-note');
+  var LBL = {"ios": "前往 App Store", "android": "前往 Google Play", "pc": "下载 Windows 版", "noteSome": "手机上打开这一页会自动跳转到对应商店。"};
 
-  function arm(el, url, label) {
-    if (url) {
-      el.className = 'btn';
-      el.textContent = label;
-      el.href = url;
-    }
+  // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
+  //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
+  //    「按钮看着亮了、点下去没反应」那类最难查的坏按钮。
+  function arm(id, url, label) {
+    var el = document.getElementById(id);
+    if (!el || !url) { return false; }
+    var a = document.createElement('a');
+    a.className = 'btn';
+    a.href = url;
+    a.textContent = label;
+    el.parentNode.replaceChild(a, el);
+    return true;
   }
-  arm(bI, iOS, '前往 App Store');
-  arm(bA, android, '前往 Google Play');
-  if (iOS || android) { note.textContent = '手机上打开这一页会自动跳转。'; }
+
+  var any = false;
+  any = arm('btn-ios', DL.ios, LBL.ios) || any;
+  any = arm('btn-android', DL.android, LBL.android) || any;
+  any = arm('btn-pc', DL.pc, LBL.pc) || any;
+
+  // 🚨 判据挂在「有没有【任何一个】包」上，不是挂在某一个平台上。
+  //    一个都没有时订阅卡必须自己说出来 —— 默不作声收钱是挖坑。
+  var warn = document.getElementById('sub-warn');
+  if (any) {
+    if (warn) { warn.hidden = true; }
+    var sn = document.getElementById('store-note');
+    if (sn) { sn.innerHTML = LBL.noteSome; }
+  }
 
   // 移动端自动跳：只跳**真填了链接**的那一个，没填就老实待着
   var ua = navigator.userAgent || '';
   var isiOS = /iPad|iPhone|iPod/.test(ua);
   var isAndroid = /Android/.test(ua);
-  var target = isiOS ? iOS : (isAndroid ? android : '');
+  var target = isiOS ? DL.ios : (isAndroid ? DL.android : '');
   if (target) {
     document.getElementById('goon').hidden = false;
     setTimeout(function () { window.location.href = target; }, 1200);
   } else {
-    document.getElementById('nolang').hidden = !isiOS && !isAndroid;
+    var nl = document.getElementById('nolang');
+    if (nl) { nl.hidden = !isiOS && !isAndroid; }
   }
 })();
 </script>
