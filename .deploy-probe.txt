@@ -1,1 +1,1 @@
-deploy probe 1789310763
+rebuild-trigger 2026-09-14T12:20:03  (0: Pages build stuck in 'building' ~21h; repo already has 9.99 but live served 9.9/9.90)
