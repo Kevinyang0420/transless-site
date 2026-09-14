@@ -82,20 +82,21 @@ li{margin-bottom:6px}
   <div class="card">
     <div id="btn-ios" class="btn btn-off">iPhone / iPad · Coming soon</div>
     <div id="btn-android" class="btn btn-off">Android · Coming soon</div>
-    <div class="store" id="store-note">Both stores are still in review.</div>
+    <div id="btn-pc" class="btn btn-off">Windows · Coming soon</div>
+    <div class="store" id="store-note">All three are still going through store review. There is a subscribe button below, but <b>there is nothing to install yet</b> — wait for a download before you pay.</div>
   </div>
   <div class="card">
-    <a class="btn" href="https://buy.stripe.com/4gMaEXfZg7wX4Qj7ie3Nm00">Subscribe to Transless Pro · US$9.99 / month</a>
-    <div class="store">Unlimited translation. Card, Apple Pay and Google Pay accepted.<br>
-      <b>At checkout, use the same email you sign in with in the app</b> — your membership is linked to that account. Used a different one? Contact us and we will fix it; your payment is not lost.</div>
+    <div id="sub-warn" class="store">🚨 <b>There is nothing to install yet</b>, so a subscription will not do anything. Come back once a download button appears above.</div>
+    <a id="sub-btn" class="btn" href="https://buy.stripe.com/4gMaEXfZg7wX4Qj7ie3Nm00">Subscribe to Transless Pro · US$9.99 / month</a>
+    <div class="store">Unlimited translation. Card / Apple Pay / Google Pay.<br><b>Use the same email you sign in with in the app</b> at checkout, and Pro attaches to that account automatically. Wrong email? Tell us and we will move it — your money is safe.</div>
   </div>
 
 
   <div class="card">
     <ul>
-      <li>Audio is discarded right after recognition — never written to disk</li>
-      <li>Android: closed beta, APK available</li>
-      <li>31 target languages; handwriting recognition runs on your device, offline</li>
+      <li>iOS: audio is discarded after recognition, never written to disk</li>
+      <li>31 target languages; handwriting recognition runs on-device, offline</li>
+      <li>One account, all platforms: subscribe on your phone, you are Pro on desktop too</li>
     </ul>
   </div>
 
@@ -108,30 +109,60 @@ li{margin-bottom:6px}
 </div>
 
 <script>
-// 🚨🚨 Only these two strings need editing once the apps go live.
-var STORE = {
-  ios: "",      // e.g. https://apps.apple.com/app/id0000000000
-  android: ""   // e.g. https://play.google.com/store/apps/details?id=com.xxx
+// 🚨🚨 **唯一配置点**：上架/出包后只改这三个字符串，别的都不用动。
+//    留空 = 还没有 —— 页面自己显示「即将上线」，**订阅卡自己挂出警告**。
+//    🚨 绝不许编一个假链接：用户点进去是别人的 App，比显示「还没好」严重得多。
+//    App Store    形如 https://apps.apple.com/app/id0000000000
+//    Google Play  形如 https://play.google.com/store/apps/details?id=com.kevin.transless
+//    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
+var DL = {
+  ios: "",
+  android: "",
+  pc: ""
 };
 
 (function () {
-  var iOS = STORE.ios, android = STORE.android;
-  function arm(el, url, label) {
-    if (url) { el.className = 'btn'; el.textContent = label; el.href = url; }
-  }
-  arm(document.getElementById('btn-ios'), iOS, 'Get it on the App Store');
-  arm(document.getElementById('btn-android'), android, 'Get it on Google Play');
-  if (iOS || android) { document.getElementById('store-note').textContent = 'On mobile this page redirects automatically.'; }
+  var LBL = {"ios": "Get it on the App Store", "android": "Get it on Google Play", "pc": "Download for Windows", "noteSome": "Opening this page on a phone takes you straight to the store."};
 
+  // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
+  //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
+  //    「按钮看着亮了、点下去没反应」那类最难查的坏按钮。
+  function arm(id, url, label) {
+    var el = document.getElementById(id);
+    if (!el || !url) { return false; }
+    var a = document.createElement('a');
+    a.className = 'btn';
+    a.href = url;
+    a.textContent = label;
+    el.parentNode.replaceChild(a, el);
+    return true;
+  }
+
+  var any = false;
+  any = arm('btn-ios', DL.ios, LBL.ios) || any;
+  any = arm('btn-android', DL.android, LBL.android) || any;
+  any = arm('btn-pc', DL.pc, LBL.pc) || any;
+
+  // 🚨 判据挂在「有没有【任何一个】包」上，不是挂在某一个平台上。
+  //    一个都没有时订阅卡必须自己说出来 —— 默不作声收钱是挖坑。
+  var warn = document.getElementById('sub-warn');
+  if (any) {
+    if (warn) { warn.hidden = true; }
+    var sn = document.getElementById('store-note');
+    if (sn) { sn.innerHTML = LBL.noteSome; }
+  }
+
+  // 移动端自动跳：只跳**真填了链接**的那一个，没填就老实待着
   var ua = navigator.userAgent || '';
   var isiOS = /iPad|iPhone|iPod/.test(ua);
   var isAndroid = /Android/.test(ua);
-  var target = isiOS ? iOS : (isAndroid ? android : '');
+  var target = isiOS ? DL.ios : (isAndroid ? DL.android : '');
   if (target) {
     document.getElementById('goon').hidden = false;
     setTimeout(function () { window.location.href = target; }, 1200);
   } else {
-    document.getElementById('nolang').hidden = !isiOS && !isAndroid;
+    var nl = document.getElementById('nolang');
+    if (nl) { nl.hidden = !isiOS && !isAndroid; }
   }
 })();
 </script>
