@@ -11,9 +11,12 @@
 <meta name="description" content="想说的话，直接说给世界听。中文说出来，就是地道的英文、日语、法语等 31 种语言。Transless 语音输入法键盘。">
 <meta name="theme-color" content="#0F1B4F">
 
-<!-- 多语言。7 个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English) · /ja/ · /de/ · /es/ · /ar/
+<!-- 多语言。9 个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English) · /ja/ · /de/ · /es/ · /ar/ · /vi/ · /th/
      🚨 2026-09-06 改：界面语言现在实际支持 7 种（zh/zht/en/ja/de/es/ar，Kevin 当面点名
      主页语言切换器跟不上这个事实——之前只列了简/繁/英三个），加齐 hreflang + 切换器。
+     🚨 2026-09-14 再改：加 vi/th（Kevin 09-14 点名东南亚语种）——这仨块是**手改的**，
+        不是从 LANGS 表生成的，加一门界面语言就要在这三处（这里 / CSS 选择器 /
+        底下 .langsw 导航）各加一行，跟 09-06 那次一样，别漏。
      🚨 canonical / og:locale / og:url 三条由 build_i18n.py 的 cmd_render **逐版改写**，
         不要在这里手改 —— 单一配置点在 LANGS 那张表里。 -->
 <link rel="canonical" href="https://transless.net/">
@@ -24,6 +27,8 @@
 <link rel="alternate" hreflang="de" href="https://transless.net/de/">
 <link rel="alternate" hreflang="es" href="https://transless.net/es/">
 <link rel="alternate" hreflang="ar" href="https://transless.net/ar/">
+<link rel="alternate" hreflang="vi" href="https://transless.net/vi/">
+<link rel="alternate" hreflang="th" href="https://transless.net/th/">
 <link rel="alternate" hreflang="x-default" href="https://transless.net/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Transless">
@@ -389,7 +394,9 @@ html[lang^="en"]         .langsw a[hreflang="en"],
 html[lang^="ja"]         .langsw a[hreflang="ja"],
 html[lang^="de"]         .langsw a[hreflang="de"],
 html[lang^="es"]         .langsw a[hreflang="es"],
-html[lang^="ar"]         .langsw a[hreflang="ar"]{
+html[lang^="ar"]         .langsw a[hreflang="ar"],
+html[lang^="vi"]         .langsw a[hreflang="vi"],
+html[lang^="th"]         .langsw a[hreflang="th"]{
   color:var(--text-primary);background:rgba(255,255,255,.10);
 }
 
@@ -979,6 +986,8 @@ h2 .dim{color:var(--text-secondary)}
         <a data-i18n="no" href="/de/"    hreflang="de"        lang="de">DE</a>
         <a data-i18n="no" href="/es/"    hreflang="es"        lang="es">ES</a>
         <a data-i18n="no" href="/ar/"    hreflang="ar"        lang="ar">AR</a>
+        <a data-i18n="no" href="/vi/"    hreflang="vi"        lang="vi">VI</a>
+        <a data-i18n="no" href="/th/"    hreflang="th"        lang="th">TH</a>
       </span>
     </span>
   </div>
@@ -1821,6 +1830,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-127c349f5f -->
+<!-- build-b8fdb99768 -->
 </body>
 </html>
