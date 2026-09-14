@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>获取 Transless · 说中文，出地道英文</title>
-<meta name="description" content="Transless 是输入法：装上之后，在微信、邮件、任何 App 里打字的地方，说中文就能出地道英文。">
+<title>获取 Transless · 说出来，就是地道的那门语言</title>
+<meta name="description" content="Transless 是输入法：装上之后，在微信、邮件、任何 App 里打字的地方，说出来就是地道的那门语言。">
 <meta property="og:title" content="Transless — 让世界听懂你">
-<meta property="og:description" content="说中文，出地道英文。31 种目标语言，随意／工作／邮件三档语气。">
+<meta property="og:description" content="说出来，就是地道的那门语言。31 种语言互译，随意／工作／邮件三档语气，还能面对面对讲。">
 <meta property="og:image" content="https://transless.net/og_zh-CN.png">
 <link rel="icon" href="/favicon.ico">
 
@@ -83,7 +83,7 @@ li{margin-bottom:6px}
 
   <div class="brand">Transless</div>
   <h1>获取 Transless</h1>
-  <div class="sub">说中文，出地道英文。31 种目标语言。</div>
+  <div class="sub">说出来，就是地道的那门语言。31 种语言互译，还能面对面对讲。</div>
 
   <div class="note">
     Transless 是<b>输入法</b>——装上之后，在微信、邮件、任何 App 里打字的地方都能用，
@@ -98,6 +98,7 @@ li{margin-bottom:6px}
     <div id="btn-android" class="btn btn-off">Android · 即将上线</div>
     <div id="btn-pc" class="btn btn-off">Windows · 即将上线</div>
     <div class="store" id="store-note">三端都还在上架流程里。下面留了订阅入口，但<b>现在还没有可安装的版本</b>——等有了包再订阅，别先付钱。</div>
+    <div class="store" style="margin-top:6px;opacity:.85">这条下不动？<a href="#" id="route-switch">换另一条线路</a>（现在走<span id="route-now"></span>）</div>
   </div>
   <div class="card">
     <div id="sub-warn" class="store">🚨 <b>现在还没有可安装的版本</b>，订阅了也用不上。等上面出现下载按钮之后再来。</div>
@@ -133,14 +134,53 @@ li{margin-bottom:6px}
 //    App Store    形如 https://apps.apple.com/app/id0000000000
 //    Google Play  形如 https://play.google.com/store/apps/details?id=com.kevin.transless
 //    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
-var DL = {
-  ios: "",
-  android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
-  pc: "https://transless-dl.tos-cn-beijing.volces.com/Transless-Setup.exe"
+// 🚨 双线路：国内下载国内 CDN 慢/打不开 GitHub release 直链，海外反过来。
+//    Kevin 2026-09-14 亲身撞到 GitHub 直链国内打不开。
+var ROUTES = {
+  cn: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://transless-dl.tos-cn-beijing.volces.com/Transless-Setup.exe"
+  },
+  intl: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://github.com/Kevinyang0420/transless-site/releases/download/pc-v1.0/Transless-Setup.exe"
+  }
 };
+
+// 🚨 纯静态页没有后端，读不到访客 IP。用浏览器本地时区猜，零请求。
+//    时区会猜错，所以下面「换另一条线路」入口永远可见，猜错的代价是点一下。
+function guessCN() {
+  try {
+    var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+    return /Shanghai|Chongqing|Urumqi|Harbin|PRC/i.test(tz);
+  } catch (e) { return false; }
+}
+var ROUTE = guessCN() ? "cn" : "intl";
+try {
+  var savedRoute = localStorage.getItem("dl.route");
+  if (savedRoute === "cn" || savedRoute === "intl") { ROUTE = savedRoute; }
+} catch (e) {}
+var DL = ROUTES[ROUTE];
 
 (function () {
   var LBL = {"ios": "前往 App Store", "android": "下载安卓版 (APK)", "pc": "下载 Windows 版", "noteSome": "手机上打开这一页会自动跳转到对应商店。<br><br>🚨 <b>Windows 首次打开会提示「Windows 已保护你的电脑」</b> —— 那是新程序还没有下载量积累的正常提示，不是病毒。点<b>「更多信息」→「仍要运行」</b>就能装。<br><br>🚨 <b>安卓首次安装会提示「为了安全，你的手机目前不允许安装此来源的应用」</b> —— 那是安装商店以外的应用时的正常提示。点<b>「设置」→ 允许这次安装</b>即可。（Google Play 版正在审核中，上架后这里会换成商店链接。）"};
+  var ROUTE_LABEL = {"cn": "国内线路", "intl": "海外线路"};
+
+  var rn = document.getElementById('route-now');
+  if (rn) { rn.textContent = ROUTE_LABEL[ROUTE] || ROUTE; }
+  var rs = document.getElementById('route-switch');
+  if (rs) {
+    // 🚨 只在用户点了之后才换线路，不自动重定向、不自动重试 ——
+    //    用户看不见发生了什么，坏了也说不清哪条线坏的。
+    rs.addEventListener('click', function (e) {
+      e.preventDefault();
+      var next = (ROUTE === 'cn') ? 'intl' : 'cn';
+      try { localStorage.setItem('dl.route', next); } catch (e2) {}
+      window.location.reload();
+    });
+  }
 
   // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
   //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
