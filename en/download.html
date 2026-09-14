@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Get Transless · Speak Chinese, get native-sounding English</title>
-<meta name="description" content="Transless is a keyboard. Install it once and speak Chinese anywhere you type — WeChat, email, any app.">
+<title>Get Transless · Speak, and it comes out native</title>
+<meta name="description" content="Transless is a keyboard. Install it once and speak anywhere you type — WeChat, email, any app — it comes out native.">
 <meta property="og:title" content="Transless — No Language In Between">
-<meta property="og:description" content="Speak Chinese, get native-sounding English. 31 target languages, three registers: casual / work / email.">
+<meta property="og:description" content="Speak, and it comes out native. 31 languages, three registers: casual / work / email, plus face-to-face conversation.">
 <meta property="og:image" content="https://transless.net/og_en.png">
 <link rel="icon" href="/favicon.ico">
 
@@ -68,7 +68,7 @@ li{margin-bottom:6px}
 
   <div class="brand">Transless</div>
   <h1>Get Transless</h1>
-  <div class="sub">Speak Chinese. Get native-sounding English. 31 target languages.</div>
+  <div class="sub">Speak, and it comes out native. 31 languages, both ways, plus face-to-face.</div>
 
   <div class="note">
     Transless is a <b>keyboard</b>. Install it once and it works wherever you already type —
@@ -84,6 +84,7 @@ li{margin-bottom:6px}
     <div id="btn-android" class="btn btn-off">Android · Coming soon</div>
     <div id="btn-pc" class="btn btn-off">Windows · Coming soon</div>
     <div class="store" id="store-note">All three are still going through store review. There is a subscribe button below, but <b>there is nothing to install yet</b> — wait for a download before you pay.</div>
+    <div class="store" style="margin-top:6px;opacity:.85">Slow or not loading? <a href="#" id="route-switch">try the other route</a> (currently <span id="route-now"></span>)</div>
   </div>
   <div class="card">
     <div id="sub-warn" class="store">🚨 <b>There is nothing to install yet</b>, so a subscription will not do anything. Come back once a download button appears above.</div>
@@ -115,14 +116,54 @@ li{margin-bottom:6px}
 //    App Store    形如 https://apps.apple.com/app/id0000000000
 //    Google Play  形如 https://play.google.com/store/apps/details?id=com.kevin.transless
 //    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
-var DL = {
-  ios: "",
-  android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
-  pc: "https://transless-dl.tos-cn-beijing.volces.com/Transless-Setup.exe"
+// 🚨 Two routes: mainland China's CDN is slow/unreachable for GitHub release
+//    links, and the other way round. Kevin 2026-09-14 hit the GitHub-blocked case himself.
+var ROUTES = {
+  cn: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://transless-dl.tos-cn-beijing.volces.com/Transless-Setup.exe"
+  },
+  intl: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://github.com/Kevinyang0420/transless-site/releases/download/pc-v1.0/Transless-Setup.exe"
+  }
 };
+
+// 🚨 Static page, no backend, can't read the visitor's IP. Guess from the
+//    browser's own timezone instead — zero requests. It can guess wrong,
+//    which is why the "try the other route" link below is always visible.
+function guessCN() {
+  try {
+    var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+    return /Shanghai|Chongqing|Urumqi|Harbin|PRC/i.test(tz);
+  } catch (e) { return false; }
+}
+var ROUTE = guessCN() ? "cn" : "intl";
+try {
+  var savedRoute = localStorage.getItem("dl.route");
+  if (savedRoute === "cn" || savedRoute === "intl") { ROUTE = savedRoute; }
+} catch (e) {}
+var DL = ROUTES[ROUTE];
 
 (function () {
   var LBL = {"ios": "Get it on the App Store", "android": "Download for Android (APK)", "pc": "Download for Windows", "noteSome": "Opening this page on a phone takes you straight to the store.<br><br>🚨 <b>Windows will show 'Windows protected your PC' the first time you open it</b> — that's the normal warning for a brand-new app with no download history yet, not a virus. Click <b>More info → Run anyway</b> to install.<br><br>🚨 <b>Android will say 'your phone isn't allowed to install unknown apps from this source'</b> the first time — that's the normal prompt for any app installed outside the store. Tap <b>Settings → allow this install</b> to continue. (The Google Play version is in review; this will become a store link.)"};
+  var ROUTE_LABEL = {"cn": "mainland route", "intl": "international route"};
+
+  var rn = document.getElementById('route-now');
+  if (rn) { rn.textContent = ROUTE_LABEL[ROUTE] || ROUTE; }
+  var rs = document.getElementById('route-switch');
+  if (rs) {
+    // 🚨 Only switches when the user clicks — no auto-redirect, no auto-retry.
+    //    Silently doing something the user can't see makes a broken route unfindable.
+    rs.addEventListener('click', function (e) {
+      e.preventDefault();
+      var next = (ROUTE === 'cn') ? 'intl' : 'cn';
+      try { localStorage.setItem('dl.route', next); } catch (e2) {}
+      window.location.reload();
+    });
+  }
 
   // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
   //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
