@@ -59,6 +59,10 @@ li{margin-bottom:6px}
 .back{text-align:center; margin-top:34px; font-size:14px}
 .back a{color:var(--text-secondary); text-decoration:none}
 .foot{margin-top:40px; font-size:13px; color:var(--text-secondary); text-align:center; line-height:1.8}
+.footnote{
+  margin-top:28px; padding-top:18px; border-top:1px solid var(--card-border);
+  color:var(--text-secondary); font-size:12.5px; line-height:1.85;
+}
 </style>
 </head>
 <body>
@@ -102,6 +106,12 @@ li{margin-bottom:6px}
   </div>
 
   <div class="jump" id="nolang">On mobile, this page opens the right store automatically.</div>
+
+  <!-- 🚨 Kevin 2026-09-15: the two system install-warning paragraphs are too long
+       to sit right under the download buttons — that's the spot where someone
+       decides whether to click at all. Buttons get one short line; the full text
+       moves down here. Wording itself must not change. -->
+  <div class="footnote" id="install-notes" hidden></div>
 
   <div class="back"><a href="/en/">← Back to site</a>　·　<a href="/privacy-en.html">Privacy</a></div>
 
@@ -148,7 +158,9 @@ try {
 var DL = ROUTES[ROUTE];
 
 (function () {
-  var LBL = {"ios": "Get it on the App Store", "android": "Download for Android (APK)", "pc": "Download for Windows", "noteSome": "Opening this page on a phone takes you straight to the store.<br><br>🚨 <b>Windows will show 'Windows protected your PC' the first time you open it</b> — that's the normal warning for a brand-new app with no download history yet, not a virus. Click <b>More info → Run anyway</b> to install.<br><br>🚨 <b>Android will say 'your phone isn't allowed to install unknown apps from this source'</b> the first time — that's the normal prompt for any app installed outside the store. Tap <b>Settings → allow this install</b> to continue. (The Google Play version is in review; this will become a store link.)"};
+  var LBL = {"ios": "Get it on the App Store", "android": "Download for Android (APK)", "pc": "Download for Windows",
+    "noteSome": "Opening this page on a phone takes you straight to the store.",
+    "installNotes": "🚨 <b>Windows will show 'Windows protected your PC' the first time you open it</b> — that's the normal warning for a brand-new app with no download history yet, not a virus. Click <b>More info → Run anyway</b> to install.<br><br>🚨 <b>Android will say 'your phone isn't allowed to install unknown apps from this source'</b> the first time — that's the normal prompt for any app installed outside the store. Tap <b>Settings → allow this install</b> to continue. (The Google Play version is in review; this will become a store link.)"};
   var ROUTE_LABEL = {"cn": "mainland route", "intl": "international route"};
 
   var rn = document.getElementById('route-now');
@@ -191,6 +203,8 @@ var DL = ROUTES[ROUTE];
     if (warn) { warn.hidden = true; }
     var sn = document.getElementById('store-note');
     if (sn) { sn.innerHTML = LBL.noteSome; }
+    var inotes = document.getElementById('install-notes');
+    if (inotes) { inotes.innerHTML = LBL.installNotes; inotes.hidden = false; }
   }
 
   // 移动端自动跳：只跳**真填了链接**的那一个，没填就老实待着
