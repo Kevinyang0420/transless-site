@@ -135,12 +135,12 @@ li{margin-bottom:6px}
 //    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
 var DL = {
   ios: "",
-  android: "",
+  android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
   pc: "https://github.com/Kevinyang0420/transless-site/releases/download/pc-v1.0/Transless-Setup.exe"
 };
 
 (function () {
-  var LBL = {"ios": "前往 App Store", "android": "前往 Google Play", "pc": "下载 Windows 版", "noteSome": "手机上打开这一页会自动跳转到对应商店。<br><br>🚨 <b>Windows 首次打开会提示「Windows 已保护你的电脑」</b> —— 那是新程序还没有下载量积累的正常提示，不是病毒。点<b>「更多信息」→「仍要运行」</b>就能装。"};
+  var LBL = {"ios": "前往 App Store", "android": "下载安卓版 (APK)", "pc": "下载 Windows 版", "noteSome": "手机上打开这一页会自动跳转到对应商店。<br><br>🚨 <b>Windows 首次打开会提示「Windows 已保护你的电脑」</b> —— 那是新程序还没有下载量积累的正常提示，不是病毒。点<b>「更多信息」→「仍要运行」</b>就能装。<br><br>🚨 <b>安卓首次安装会提示「为了安全，你的手机目前不允许安装此来源的应用」</b> —— 那是安装商店以外的应用时的正常提示。点<b>「设置」→ 允许这次安装</b>即可。（Google Play 版正在审核中，上架后这里会换成商店链接。）"};
 
   // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
   //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
