@@ -206,13 +206,26 @@ body{
    这样整条页面的场景才是 社交(hero)→工作(pivot/difference)→旅行(how/where)→
    家人(memory)→独处(privacy)→世界(final)，跟"话在嘴边说不出来"那屏列的
    六种场景对得上，不再是清一色的"朋友聚会"。 */
-.pivot, #difference{
+.pivot{
   background:linear-gradient(rgba(30,23,83,.42),rgba(30,23,83,.42)),
   url('/img/scene_work.jpg') center/cover no-repeat fixed;
 }
-#how, #where{
+/* 2026-09-15：difference 原来跟 pivot 共用 scene_work.jpg，where 原来跟 how
+   共用 scene_travel.jpg——Kevin 抓出主页多处背景图重复。difference 讲"中文碎念
+   →英文结构化"，换成新拍的"深夜对手机说话"场景图；where 讲"跨境协作卡壳的
+   时刻"，换成新拍的"两人对着手机跨语言沟通"场景图（东亚+中东，语言背景一眼
+   可辨）。how 保留原 scene_travel.jpg 不动。 */
+#difference{
+  background:linear-gradient(rgba(30,23,83,.42),rgba(30,23,83,.42)),
+  url('/img/scene_message.jpg') center/cover no-repeat fixed;
+}
+#how{
   background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
   url('/img/scene_travel.jpg') center/cover no-repeat fixed;
+}
+#where{
+  background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
+  url('/img/scene_bridge.jpg') center/cover no-repeat fixed;
 }
 #memory{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
@@ -1393,7 +1406,7 @@ h2 .dim{color:var(--text-secondary)}
 </section>
 
 <div class="seam" aria-hidden="true">
-  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-under" style="background-image:url('/img/scene_bridge.jpg')"></div>
   <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
 </div>
 
@@ -1830,6 +1843,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-b8fdb99768 -->
+<!-- build-5ea77c163c -->
 </body>
 </html>
