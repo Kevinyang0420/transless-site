@@ -117,12 +117,12 @@ li{margin-bottom:6px}
 //    Windows      直链安装包，或微软商店 https://apps.microsoft.com/detail/XXXXXXXX
 var DL = {
   ios: "",
-  android: "",
+  android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
   pc: "https://github.com/Kevinyang0420/transless-site/releases/download/pc-v1.0/Transless-Setup.exe"
 };
 
 (function () {
-  var LBL = {"ios": "Get it on the App Store", "android": "Get it on Google Play", "pc": "Download for Windows", "noteSome": "Opening this page on a phone takes you straight to the store.<br><br>🚨 <b>Windows will show 'Windows protected your PC' the first time you open it</b> — that's the normal warning for a brand-new app with no download history yet, not a virus. Click <b>More info → Run anyway</b> to install."};
+  var LBL = {"ios": "Get it on the App Store", "android": "Download for Android (APK)", "pc": "Download for Windows", "noteSome": "Opening this page on a phone takes you straight to the store.<br><br>🚨 <b>Windows will show 'Windows protected your PC' the first time you open it</b> — that's the normal warning for a brand-new app with no download history yet, not a virus. Click <b>More info → Run anyway</b> to install.<br><br>🚨 <b>Android will say 'your phone isn't allowed to install unknown apps from this source'</b> the first time — that's the normal prompt for any app installed outside the store. Tap <b>Settings → allow this install</b> to continue. (The Google Play version is in review; this will become a store link.)"};
 
   // 🚨 占位是 <div class="btn btn-off">，它**没有 href**，直接赋值点不动。
   //    所以有链接时要把它整个换成真正的 <a> —— 这一步漏了就是
