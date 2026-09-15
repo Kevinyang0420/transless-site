@@ -45,15 +45,24 @@
   --warn-fg: #E8B4B4;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--page-bg);color:var(--text-primary);
+html,body{margin:0;color:var(--text-primary);
+  /* 2026-09-15: Kevin caught two things -- a hard edge where the hero
+     photo stopped partway down the page, and cards that did not read as
+     glass. Root cause of the edge: the photo was scoped to .hero (a
+     short div sized to its own content), so at wide/short viewports the
+     box crops sooner than expected and the rest of this long page falls
+     back to flat --page-bg -- that's the visible seam. Fix: same trick
+     already used on the homepage body -- a single fixed, viewport-
+     covering background that never runs out regardless of page or
+     window height. */
+  background: linear-gradient(rgba(20,14,45,.62),rgba(20,14,45,.86)),
+    url('/img/scene_download.jpg') center/cover no-repeat fixed;
   font-family:-apple-system,"PingFang SC","Microsoft YaHei",Roboto,sans-serif;line-height:1.75}
 a{color:inherit;text-decoration:none}
 
 /* ---- 英雄条：只在顶部占一段，背景图不铺满全页 ---- */
 .hero{
   position:relative;
-  background:linear-gradient(rgba(20,14,45,.60),rgba(20,14,45,.82)),
-    url('/img/scene_download.jpg') center/cover no-repeat;
   padding:0 0 90px;
 }
 .topbar{max-width:1280px;margin:0 auto;padding:26px 22px 0;
@@ -96,8 +105,9 @@ html[lang^="th"]         .langsw a[hreflang="th"]{
 /* ---- 下载台：三栏卡片，悬浮在英雄条下方，负 margin 叠上去 ---- */
 .station-wrap{max-width:1280px;margin:-46px auto 0;padding:0 22px 60px;position:relative;z-index:2}
 .station{
-  background:rgba(20,14,40,.66);border:1px solid var(--card-border);border-radius:22px;
-  padding:28px;backdrop-filter:blur(20px);box-shadow:0 30px 90px rgba(0,0,0,.4);
+  background:rgba(24,17,48,.58);border:1px solid rgba(255,255,255,.14);border-radius:22px;
+  padding:28px;-webkit-backdrop-filter:blur(28px) saturate(150%);backdrop-filter:blur(28px) saturate(150%);
+  box-shadow:0 30px 90px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
 }
 .plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 @media (max-width:820px){.plat-grid{grid-template-columns:1fr}}
@@ -128,8 +138,9 @@ html[lang^="th"]         .langsw a[hreflang="th"]{
 
 /* ---- 订阅：横条 ---- */
 .sub-card{
-  margin-top:18px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;
+  margin-top:18px;background:rgba(24,17,48,.5);border:1px solid rgba(255,255,255,.12);border-radius:16px;
   padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+  -webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);
 }
 .sub-left{flex:1;min-width:0}
 .sub-title{font-weight:700;font-size:15.5px;margin-bottom:6px}
