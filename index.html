@@ -387,6 +387,19 @@ nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-betwe
   text-decoration:none;transition:color .25s var(--ease);
 }
 .nav-link:hover{color:var(--text-primary)}
+/* 2026-09-15：Kevin「下载按钮那么小，别人怎么找」——下载是全站唯一的转化动作，
+   跟"怎么用/隐私/常见问题"这些说明性链接不该长一个样。药丸强调色（.cta 那种
+   渐变）整页只留给 hero/结尾的主 CTA，不能在 nav 里再出现一份（见 442 行注释
+   "整页唯一用强调色的元素"）。借用 .wb-new-tag 那套已有的"徽标"处理
+   （--highlight 描边+浅底），分量比纯文字链接重、又不跟主 CTA 抢色。 */
+.nav-cta{
+  font-size:13px;font-weight:500;letter-spacing:.02em;
+  color:var(--highlight)!important;text-decoration:none;
+  padding:6px 16px;border-radius:9999px;
+  background:rgba(139,92,246,.16);border:1px solid rgba(185,139,232,.45);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.nav-cta:hover{background:rgba(139,92,246,.28);border-color:var(--highlight)}
 .nav-right{display:flex;align-items:center;gap:26px}
 /* 语言切换器。三个标签写成各自语言的字（简/繁/EN），所以 data-i18n="no" ——
    它们三版必须一模一样，被当成待译文案就废了。
@@ -991,7 +1004,7 @@ h2 .dim{color:var(--text-secondary)}
       <a class="nav-link" href="#how">怎么用</a>
       <a class="nav-link" href="#privacy">隐私</a>
       <a class="nav-link" href="/faq.html">常见问题</a>
-      <a class="nav-link" href="/download.html">下载</a>
+      <a class="nav-cta" href="/download.html">下载</a>
       <span class="langsw" role="group" aria-label="语言">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1844,6 +1857,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-94766c8917 -->
+<!-- build-1b4e7c632e -->
 </body>
 </html>
