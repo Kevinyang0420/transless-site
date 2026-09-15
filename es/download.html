@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Obtén Transless - Transless</title>
+<meta name="description" content="Transless es un teclado (método de entrada): una vez instalado funciona en cualquier sitio donde escribas —WeChat, correo, cualquier app— y ya no tienes que copiar y pegar en una app de traducción. WeChat no permite que los teclados de terceros funcionen dentro de sus miniprogramas, así que para usarlo hay que instalar esta app.">
+<meta property="og:title" content="Transless - Obtén Transless">
+<meta property="og:description" content="Basta con decirlo y sale en el idioma correcto. Traducción entre 31 idiomas, también cara a cara.">
+<meta property="og:image" content="https://transless.net/og_en.png">
+<link rel="icon" href="/favicon.ico">
+
+<!--
+  2026-09-15: Kevin pointed out the download page only had zh/en, so the other
+  7 locale homepages linked "Download" to a page visitors couldn't read.
+  This is the es version, structurally identical (same CSS/JS/element IDs)
+  to site/download.html and site/en/download.html -- copy generated from
+  _executor/download_i18n.json. Change structure/logic in all locale files
+  together, not just the Chinese one.
+-->
+<style>
+:root{
+  --bg-gradient: linear-gradient(165deg, #0F1B4F 0%, #2A1358 45%, #431661 100%);
+  --accent-from: #8B5CF6;
+  --accent-to: #6D3FB0;
+  --highlight: #B98BE8;
+  --text-primary: #F4F1FB;
+  --text-secondary: #A99DC6;
+  --text-cn: #D4CDE8;
+  --success: #6EE7B7;
+  --card-bg: rgba(255,255,255,0.06);
+  --card-border: rgba(185,139,232,0.18);
+  --page-bg: #14102a;
+  --warn-fg: #E8B4B4;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page-bg);color:var(--text-primary);
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",Roboto,"Helvetica Neue",sans-serif;line-height:1.75}
+a{color:inherit;text-decoration:none}
+
+.hero{
+  position:relative;
+  background:linear-gradient(rgba(20,14,45,.60),rgba(20,14,45,.82)),
+    url('/img/scene_download.jpg') center/cover no-repeat;
+  padding:0 0 90px;
+}
+.topbar{max-width:1280px;margin:0 auto;padding:26px 22px 0;
+  display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:700;font-size:19px;letter-spacing:.02em}
+.topnav{font-size:13px;color:var(--text-cn);display:flex;gap:22px}
+.topnav a:hover{color:var(--text-primary)}
+
+.hero-inner{max-width:760px;margin:0 auto;padding:64px 22px 0;text-align:center}
+.hero-inner h1{font-size:38px;margin:0 0 14px;font-weight:600;letter-spacing:.01em;color:var(--text-cn)}
+.hero-inner .sub{font-size:16px;color:var(--text-cn);margin:0 0 20px}
+.hero-inner .desc{font-size:14px;color:var(--text-secondary);line-height:1.8;margin:0 auto 26px;max-width:600px}
+.feat{list-style:none;padding:0;margin:0 auto;display:flex;justify-content:center;
+  flex-wrap:wrap;gap:9px 26px;max-width:680px}
+.feat li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-cn)}
+.feat li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--highlight);flex:none}
+
+.station-wrap{max-width:1280px;margin:-46px auto 0;padding:0 22px 60px;position:relative;z-index:2}
+.station{
+  background:rgba(20,14,40,.66);border:1px solid var(--card-border);border-radius:22px;
+  padding:28px;backdrop-filter:blur(20px);box-shadow:0 30px 90px rgba(0,0,0,.4);
+}
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:820px){.plat-grid{grid-template-columns:1fr}}
+
+.plat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;
+  padding:20px;display:flex;flex-direction:column}
+.plat-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.icon{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;flex:0 0 42px}
+.icon svg{width:20px;height:20px;fill:var(--text-primary)}
+.pname{font-size:15px;font-weight:600}
+.pmeta{font-size:12px;color:var(--text-secondary);margin-top:2px}
+
+.badge{
+  align-self:flex-start;font-size:12.5px;padding:10px 16px;border-radius:9px;
+  background:rgba(255,255,255,.09);color:var(--text-secondary);margin-top:auto;
+}
+.btn{
+  display:block;text-align:center;padding:12px;border-radius:10px;margin-top:auto;
+  background:linear-gradient(135deg,var(--accent-from),var(--accent-to));
+  color:var(--text-primary);font-weight:600;font-size:14px;
+}
+.hint{font-size:12.5px;color:var(--text-secondary);text-align:center;margin:20px 0 0}
+.hint .sw{margin-top:4px;opacity:.85}
+.hint .sw a{color:var(--highlight)}
+.goon{color:var(--success);font-size:13.5px;text-align:center;margin-top:14px}
+
+.sub-card{
+  margin-top:18px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;
+  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+}
+.sub-left{flex:1;min-width:0}
+.sub-title{font-weight:700;font-size:15.5px;margin-bottom:6px}
+.sub-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.7}
+.sub-warn{font-size:12.5px;color:var(--warn-fg);line-height:1.7;margin-bottom:8px}
+.sub-btn{flex:0 0 auto;padding:12px 26px;border-radius:10px;
+  background:rgba(255,255,255,.08);color:var(--text-primary);font-weight:600;
+  font-size:14px;border:1px solid var(--card-border);white-space:nowrap}
+@media (max-width:700px){.sub-card{flex-direction:column;align-items:stretch;text-align:center}
+  .sub-btn{align-self:center}}
+
+.footnote{margin-top:22px;padding-top:18px;border-top:1px solid var(--card-border);
+  color:var(--text-secondary);font-size:12px;line-height:1.85}
+.footnote b{color:var(--warn-fg);font-weight:600}
+.footbar{max-width:1280px;margin:0 auto;padding:0 22px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--text-secondary)}
+@media (max-width:600px){.footbar{flex-direction:column;gap:8px;text-align:center;padding-bottom:30px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="topbar">
+    <div class="brand">Transless<span style="color:var(--highlight)">.</span></div>
+    <div class="topnav">
+      <a href="/es/">Volver a la web</a>
+      <a href="/privacy.html">Política de privacidad</a>
+    </div>
+  </div>
+  <div class="hero-inner">
+    <h1>Obtén Transless</h1>
+    <p class="sub">Basta con decirlo y sale en el idioma correcto. Traducción entre 31 idiomas, también cara a cara.</p>
+    <p class="desc">Transless es un teclado (método de entrada): una vez instalado funciona en cualquier sitio donde escribas —WeChat, correo, cualquier app— y ya no tienes que copiar y pegar en una app de traducción. WeChat no permite que los teclados de terceros funcionen dentro de sus miniprogramas, así que para usarlo hay que instalar esta app.</p>
+    <ul class="feat">
+      <li>iOS: se descarta en cuanto se reconoce, no se escribe en el disco</li>
+      <li>31 idiomas de destino, el reconocimiento de escritura a mano se ejecuta en el dispositivo, sin conexión</li>
+      <li>Una sola cuenta para las tres plataformas</li>
+    </ul>
+  </div>
+</div>
+
+<div class="station-wrap">
+  <div class="station">
+
+    <div id="goon" class="goon" hidden></div>
+
+    <div class="plat-grid">
+      <div class="plat-card">
+        <div class="plat-head">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.35-1.26-3.428-2.78-1.34-1.94-2.412-4.93-2.412-7.61 0-4.28 2.79-6.53 5.51-6.53 1.42 0 2.6.94 3.5.94.87 0 2.19-.98 3.83-.98.62 0 2.85.06 4.32 2.13-.11.07-2.58 1.51-2.58 4.51 0 3.55 3.12 4.87 3.14 4.87z"/></svg></div>
+          <div><div class="pname">iPhone / iPad</div><div class="pmeta">App Store</div></div>
+        </div>
+        <div id="btn-ios" class="badge">Próximamente</div>
+      </div>
+
+      <div class="plat-card">
+        <div class="plat-head">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M6 8.5V17a1 1 0 0 0 1 1h1v2.3a1.2 1.2 0 0 0 2.4 0V18h3.2v2.3a1.2 1.2 0 0 0 2.4 0V18h1a1 1 0 0 0 1-1V8.5H6Zm-1.6 0a1.1 1.1 0 0 0-1.1 1.1V15a1.1 1.1 0 1 0 2.2 0V9.6a1.1 1.1 0 0 0-1.1-1.1Zm15.2 0a1.1 1.1 0 0 0-1.1 1.1V15a1.1 1.1 0 1 0 2.2 0V9.6a1.1 1.1 0 0 0-1.1-1.1ZM8.1 3.9l-.86-1.5a.4.4 0 1 0-.7.4l.83 1.44C6.02 4.9 5.2 6.3 6.03 7.5h11.94C18.8 6.3 17.98 4.9 16.63 4.24l.83-1.44a.4.4 0 1 0-.7-.4l-.86 1.5A8.9 8.9 0 0 0 12 3.3c-1.4 0-2.72.22-3.9.6Zm.99 2.1a.7.7 0 1 1 0-1.4.7.7 0 0 1 0 1.4Zm5.8 0a.7.7 0 1 1 0-1.4.7.7 0 0 1 0 1.4Z"/></svg></div>
+          <div><div class="pname">Android</div><div class="pmeta">Instalación directa del APK</div></div>
+        </div>
+        <div id="btn-android" class="badge">Próximamente</div>
+      </div>
+
+      <div class="plat-card">
+        <div class="plat-head">
+          <div class="icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="8.3" height="8.3"/><rect x="13.2" y="2.5" width="8.3" height="8.3"/><rect x="2.5" y="13.2" width="8.3" height="8.3"/><rect x="13.2" y="13.2" width="8.3" height="8.3"/></svg></div>
+          <div><div class="pname">Windows</div><div class="pmeta">Instalador exe</div></div>
+        </div>
+        <div id="btn-pc" class="badge">Próximamente</div>
+      </div>
+    </div>
+
+    <div class="hint">
+      <div id="store-note">Las tres plataformas siguen en proceso de publicación. Abajo hemos dejado el acceso a la suscripción, pero <b>todavía no hay ninguna versión instalable</b>: suscríbete cuando haya paquete y no pagues antes.</div>
+      <div class="sw">¿No se descarga? <a href="#" id="route-switch">Cambiar a otra ruta</a>(ahora mismo <span id="route-now"></span>)</div>
+      <div id="nolang">Si abres esta página en el móvil, te llevará automáticamente a la tienda correspondiente.</div>
+    </div>
+
+    <div class="sub-card">
+      <div class="sub-left">
+        <div id="sub-warn" class="sub-warn">🚨 <b>Todavía no hay ninguna versión instalable</b>: suscribirte no te serviría de nada. Vuelve cuando aparezca arriba el botón de descarga.</div>
+        <div class="sub-title">Suscríbete a Transless Pro · US$9.99 / mes</div>
+        <div class="sub-desc">Traducciones ilimitadas. Aceptamos tarjeta de crédito / Apple Pay / Google Pay.<br><b>Al pagar, pon el correo con el que inicias sesión en la app</b>; la membresía se vinculará automáticamente a esa cuenta. Si te equivocas, escríbenos y lo cambiamos: el dinero no se pierde.</div>
+      </div>
+      <a id="sub-btn" class="sub-btn" href="https://buy.stripe.com/4gMaEXfZg7wX4Qj7ie3Nm00">Suscribirse a Pro</a>
+    </div>
+
+    <div class="footnote" id="install-notes" hidden></div>
+
+  </div>
+</div>
+
+<div class="footbar">
+  <div>&#8592; <a href="/es/">Volver a la web</a> . <a href="/privacy.html">Política de privacidad</a></div>
+  <div>Transless · Que el mundo te entienda · No Language In Between</div>
+</div>
+
+<script>
+var ROUTES = {
+  cn: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://transless-dl.tos-cn-beijing.volces.com/Transless-Setup.exe"
+  },
+  intl: {
+    ios: "",
+    android: "https://github.com/Kevinyang0420/transless-site/releases/download/android-v1.0/Transless.apk",
+    pc: "https://github.com/Kevinyang0420/transless-site/releases/download/pc-v1.0/Transless-Setup.exe"
+  }
+};
+
+function guessCN() {
+  try {
+    var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+    return /Shanghai|Chongqing|Urumqi|Harbin|PRC/i.test(tz);
+  } catch (e) { return false; }
+}
+var ROUTE = guessCN() ? "cn" : "intl";
+try {
+  var savedRoute = localStorage.getItem("dl.route");
+  if (savedRoute === "cn" || savedRoute === "intl") { ROUTE = savedRoute; }
+} catch (e) {}
+var DL = ROUTES[ROUTE];
+
+(function () {
+  var LBL = {"ios": "Ir al App Store", "android": "Descargar la versión para Android (APK)", "pc": "Descargar la versión para Windows",
+    "noteSome": "Si abres esta página en el móvil, te llevará automáticamente a la tienda correspondiente.",
+    "installNotes": "🚨 <b>La primera vez que lo abras en Windows aparecerá el aviso «Windows protegió tu PC»</b> — es el aviso normal de un programa nuevo que aún no acumula descargas, no es un virus. Haz clic en <b>«Más información» → «Ejecutar de todas formas»</b> y se instalará.<br><br>🚨 <b>La primera vez que instales en Android aparecerá el aviso «Por seguridad, tu teléfono no permite instalar apps de esta fuente»</b> — es el aviso normal al instalar apps fuera de la tienda. Toca <b>«Ajustes» → Permitir esta instalación</b> y listo. (La versión de Google Play está en revisión; cuando se publique, aquí pondremos el enlace a la tienda.)"};
+  var ROUTE_LABEL = {"cn": "Ruta de China", "intl": "Ruta internacional"};
+
+  var rn = document.getElementById('route-now');
+  if (rn) { rn.textContent = ROUTE_LABEL[ROUTE] || ROUTE; }
+  var rs = document.getElementById('route-switch');
+  if (rs) {
+    rs.addEventListener('click', function (e) {
+      e.preventDefault();
+      var next = (ROUTE === 'cn') ? 'intl' : 'cn';
+      try { localStorage.setItem('dl.route', next); } catch (e2) {}
+      window.location.reload();
+    });
+  }
+
+  function arm(id, url, label) {
+    var el = document.getElementById(id);
+    if (!el || !url) { return false; }
+    var a = document.createElement('a');
+    a.className = 'btn';
+    a.href = url;
+    a.textContent = label;
+    el.parentNode.replaceChild(a, el);
+    return true;
+  }
+
+  var any = false;
+  any = arm('btn-ios', DL.ios, LBL.ios) || any;
+  any = arm('btn-android', DL.android, LBL.android) || any;
+  any = arm('btn-pc', DL.pc, LBL.pc) || any;
+
+  var warn = document.getElementById('sub-warn');
+  if (any) {
+    if (warn) { warn.hidden = true; }
+    var sn = document.getElementById('store-note');
+    if (sn) { sn.innerHTML = LBL.noteSome; }
+    var inotes = document.getElementById('install-notes');
+    if (inotes) { inotes.innerHTML = LBL.installNotes; inotes.hidden = false; }
+  }
+
+  var ua = navigator.userAgent || '';
+  var isiOS = /iPad|iPhone|iPod/.test(ua);
+  var isAndroid = /Android/.test(ua);
+  var target = isiOS ? DL.ios : (isAndroid ? DL.android : '');
+  if (target) {
+    document.getElementById('goon').hidden = false;
+    document.getElementById('goon').textContent = LBL.noteSome;
+    setTimeout(function () { window.location.href = target; }, 1200);
+  } else {
+    var nl = document.getElementById('nolang');
+    if (nl) { nl.hidden = !isiOS && !isAndroid; }
+  }
+})();
+</script>
+</body>
+</html>
