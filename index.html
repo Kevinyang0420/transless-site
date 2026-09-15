@@ -464,7 +464,13 @@ h1{
 .cta{white-space:nowrap}
 .cta:hover{transform:scale(1.02);filter:brightness(1.12);box-shadow:0 12px 40px rgba(139,92,246,.38)}
 .cta:active{transform:scale(.98);transition-duration:.1s}
-.cta-note{font-size:13px;color:var(--text-secondary)}
+/* 次级动作——纯文字链接，不跟主 CTA 抢强调色 */
+.cta-secondary{
+  font-size:15px;color:var(--text-secondary);text-decoration:none;
+  transition:color .25s var(--ease);
+}
+.cta-secondary:hover{color:var(--text-primary)}
+.cta-note{font-size:13px;color:var(--text-secondary);margin-top:14px}
 /* 八种目标语言，跟 engine.LANGS 一致 —— 加语言要两边一起改 */
 .langs{margin-top:26px;font-size:12px;letter-spacing:.04em;color:var(--text-secondary);
        opacity:.72;line-height:1.9}
@@ -1045,10 +1051,15 @@ h2 .dim{color:var(--text-secondary)}
       <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
            "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
            不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
+      <!-- 2026-09-15：Kevin 当面点名——首页最显眼的按钮应该直接是下载，
+           不该是"看看它怎么工作"，更不该只在导航角落塞一个小链接让人自己找。
+           主 CTA 换成"立即下载"（整页唯一强调色的元素，规则不变），
+           "看看它怎么工作"降级成旁边的次级文字链接。 -->
       <div class="cta-row">
-        <a class="cta" href="#how">看看它怎么工作</a>
-        <span class="cta-note">安卓 / Windows 现可下载 · iOS 审核排队中</span>
+        <a class="cta" href="/download.html">立即下载</a>
+        <a class="cta-secondary" href="#how">看看它怎么工作 →</a>
       </div>
+      <div class="cta-note">安卓 / Windows 现可下载 · iOS 审核排队中</div>
       <div class="langs">English &middot; 日本語 &middot; Français &middot; Deutsch &middot; Español &middot; 한국어 &middot; 粵語 &middot; 繁體中文 &middot; 简体中文</div>
     </div>
 
@@ -1857,6 +1868,6 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }, {passive:true});
 }
 </script>
-<!-- build-1b4e7c632e -->
+<!-- build-a2e7d4672a -->
 </body>
 </html>
