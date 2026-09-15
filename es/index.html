@@ -374,6 +374,17 @@ nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-betwe
   text-decoration:none;transition:color .25s var(--ease);
 }
 .nav-link:hover{color:var(--text-primary)}
+/* 2026-09-15：跟中文主页同步——下载是全站唯一转化动作，用徽标样式（借
+   .wb-new-tag 那套 --highlight 描边+浅底）跟纯文字导航区分开，同时不
+   跟 hero/结尾的主 CTA 抢那份"整页唯一强调色"。 */
+.nav-cta{
+  font-size:13px;font-weight:500;letter-spacing:.02em;
+  color:var(--highlight)!important;text-decoration:none;
+  padding:6px 16px;border-radius:9999px;
+  background:rgba(139,92,246,.16);border:1px solid rgba(185,139,232,.45);
+  transition:background .25s var(--ease),border-color .25s var(--ease);
+}
+.nav-cta:hover{background:rgba(139,92,246,.28);border-color:var(--highlight)}
 .nav-right{display:flex;align-items:center;gap:26px}
 /* 语言切换器。三个标签写成各自语言的字（简/繁/EN），所以 data-i18n="no" ——
    它们三版必须一模一样，被当成待译文案就废了。
@@ -978,7 +989,7 @@ h2 .dim{color:var(--text-secondary)}
       <a class="nav-link" href="#how">Cómo funciona</a>
       <a class="nav-link" href="#privacy">Privacidad</a>
       <a class="nav-link" href="/faq.html">Preguntas frecuentes</a>
-      <a class="nav-link" href="/download.html">Descargar</a>
+      <a class="nav-cta" href="/download.html">Descargar</a>
       <span class="langsw" role="group" aria-label="Idioma">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
