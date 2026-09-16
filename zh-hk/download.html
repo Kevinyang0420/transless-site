@@ -131,9 +131,13 @@ html[lang^="th"]         .langsw a[hreflang="th"]{
 .sub-title{font-weight:700;font-size:15.5px;margin-bottom:6px}
 .sub-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.7}
 .sub-warn{font-size:12.5px;color:var(--warn-fg);line-height:1.7;margin-bottom:8px}
-.sub-btn{flex:0 0 auto;padding:12px 26px;border-radius:10px;
-  background:rgba(255,255,255,.08);color:var(--text-primary);font-weight:600;
-  font-size:14px;border:1px solid var(--card-border);white-space:nowrap}
+.sub-btn{flex:0 0 auto;padding:12px 26px;border-radius:10px;border:0;
+  background:linear-gradient(135deg,var(--accent-from),var(--accent-to));
+  color:var(--text-primary);font-weight:600;
+  font-size:14px;white-space:nowrap;cursor:pointer;
+  box-shadow:0 8px 24px rgba(139,92,246,.32);
+  transition:transform .2s ease,filter .2s ease,box-shadow .2s ease}
+.sub-btn:hover{transform:scale(1.02);filter:brightness(1.1);box-shadow:0 10px 30px rgba(139,92,246,.42)}
 @media (max-width:700px){.sub-card{flex-direction:column;align-items:stretch;text-align:center}
   .sub-btn{align-self:center}}
 
