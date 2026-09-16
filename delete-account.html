@@ -64,11 +64,28 @@ button:disabled{opacity:.5;cursor:not-allowed}
 [hidden]{display:none!important}
 .foot{color:var(--text-secondary);font-size:12px;text-align:center;margin-top:24px}
 .foot a{color:var(--highlight)}
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;width:fit-content;
+  margin:0 0 36px;padding:7px 14px 7px 10px;border-radius:999px;
+  border:1px solid rgba(185,139,232,.18);background:rgba(255,255,255,.05);
+  color:#A99DC6;font-family:inherit;font-size:13px;font-weight:500;
+  letter-spacing:.01em;line-height:1;text-decoration:none;
+  transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease,transform 160ms ease;
+}
+.back-link svg{
+  display:block;width:14px;height:14px;flex-shrink:0;fill:none;
+  stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 160ms ease;
+}
+.back-link:hover{color:#F4F1FB;background:rgba(185,139,232,.12);border-color:rgba(185,139,232,.18)}
+.back-link:hover svg{transform:translateX(-2px)}
+.back-link:active{transform:translateY(1px)}
+.back-link:focus-visible{outline:2px solid #B98BE8;outline-offset:3px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a href="/" style="color:var(--text-secondary);text-decoration:none;font-size:14px">← 回主页</a>
+  <a class="back-link" href="/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" /></svg>回官网</a>
   <h1 style="margin-top:16px">删除 Transless 账号</h1>
   <p class="sub">卸载 App 之后，也可以在这里请求删除账号和相关数据。</p>
 
