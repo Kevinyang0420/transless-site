@@ -27,9 +27,26 @@ th,td{border:1px solid rgba(185,139,232,.18);padding:8px 9px;text-align:left;ver
 th{background:rgba(255,255,255,.07);color:#fff}
 a{color:#B98BE8}
 .back{color:#A99DC6;text-decoration:none;font-size:14px}
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;width:fit-content;
+  margin:0 0 36px;padding:7px 14px 7px 10px;border-radius:999px;
+  border:1px solid rgba(185,139,232,.18);background:rgba(255,255,255,.05);
+  color:#A99DC6;font-family:inherit;font-size:13px;font-weight:500;
+  letter-spacing:.01em;line-height:1;text-decoration:none;
+  transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease,transform 160ms ease;
+}
+.back-link svg{
+  display:block;width:14px;height:14px;flex-shrink:0;fill:none;
+  stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 160ms ease;
+}
+.back-link:hover{color:#F4F1FB;background:rgba(185,139,232,.12);border-color:rgba(185,139,232,.18)}
+.back-link:hover svg{transform:translateX(-2px)}
+.back-link:active{transform:translateY(1px)}
+.back-link:focus-visible{outline:2px solid #B98BE8;outline-offset:3px}
 .back:hover{color:#F4F1FB}
 </style></head><body>
-<a class="back" href="/en/">← Back to home</a>
+<a class="back-link" href="/en/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" /></svg>Back to site</a>
 <h1>Transless Privacy Policy</h1>
 <p><strong>Effective date: 2026-08-28</strong>&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Version: v2.2</strong></p>
 <p><strong>Operator (the data controller under this policy)</strong>:
@@ -210,5 +227,5 @@ provided us with information, please contact us at the email address above.</p>
 <h2>12. Changes and contact</h2>
 <p>If this policy changes, we update the version and date at the top of this page.</p>
 <p>Questions: <a href="mailto:support@transless.net">support@transless.net</a></p>
-<p style="margin-top:24px"><a class="back" href="/en/">← Back to home</a> · <a class="back" href="/en/download.html">Download</a></p>
+<p style="margin-top:24px"><a class="back" href="/en/">← Back to site</a> · <a class="back" href="/en/download.html">Download</a></p>
 </body></html>
