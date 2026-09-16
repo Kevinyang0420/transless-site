@@ -30,9 +30,26 @@ th,td{border:1px solid rgba(185,139,232,.18);padding:8px 9px;text-align:left;ver
 th{background:rgba(255,255,255,.07);color:#fff;width:34%}
 a{color:#B98BE8}
 .back{color:#A99DC6;text-decoration:none;font-size:14px}
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;width:fit-content;
+  margin:0 0 36px;padding:7px 14px 7px 10px;border-radius:999px;
+  border:1px solid rgba(185,139,232,.18);background:rgba(255,255,255,.05);
+  color:#A99DC6;font-family:inherit;font-size:13px;font-weight:500;
+  letter-spacing:.01em;line-height:1;text-decoration:none;
+  transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease,transform 160ms ease;
+}
+.back-link svg{
+  display:block;width:14px;height:14px;flex-shrink:0;fill:none;
+  stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 160ms ease;
+}
+.back-link:hover{color:#F4F1FB;background:rgba(185,139,232,.12);border-color:rgba(185,139,232,.18)}
+.back-link:hover svg{transform:translateX(-2px)}
+.back-link:active{transform:translateY(1px)}
+.back-link:focus-visible{outline:2px solid #B98BE8;outline-offset:3px}
 .back:hover{color:#F4F1FB}
 </style></head><body>
-<a class="back" href="/">← 回主页</a>
+<a class="back-link" href="/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" /></svg>回官网</a>
 <h1>公司信息</h1>
 <p><strong>Luminate Pacific Consulting Service Limited</strong>　|　睿明諮詢服務有限公司</p>
 <hr>
@@ -73,5 +90,5 @@ Room 702, 7/F, Sterling Centre, 11 Cheung Yue Street, Lai Chi Kok, Kowloon, Hong
 <p style="color:#8B7FA0;font-size:13.5px">
 本页登记资料摘自香港《商业登记条例》（第 310 章）项下签发的商业登记证。
 &copy; 2026 Luminate Pacific Consulting Service Limited</p>
-<p style="margin-top:24px"><a class="back" href="/">← 回主页</a> · <a class="back" href="/privacy.html">隐私政策</a> · <a class="back" href="/terms.html">服务条款</a> · <a class="back" href="/download.html">下载页</a></p>
+<p style="margin-top:24px"><a class="back" href="/">← 回官网</a> · <a class="back" href="/privacy.html">隐私政策</a> · <a class="back" href="/terms.html">服务条款</a> · <a class="back" href="/download.html">下载页</a></p>
 </body></html>
