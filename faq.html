@@ -23,6 +23,23 @@ body{
 }
 .wrap{max-width:720px;margin:0 auto}
 .back{color:var(--text-secondary);text-decoration:none;font-size:14px}
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;width:fit-content;
+  margin:0 0 36px;padding:7px 14px 7px 10px;border-radius:999px;
+  border:1px solid rgba(185,139,232,.18);background:rgba(255,255,255,.05);
+  color:#A99DC6;font-family:inherit;font-size:13px;font-weight:500;
+  letter-spacing:.01em;line-height:1;text-decoration:none;
+  transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease,transform 160ms ease;
+}
+.back-link svg{
+  display:block;width:14px;height:14px;flex-shrink:0;fill:none;
+  stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform 160ms ease;
+}
+.back-link:hover{color:#F4F1FB;background:rgba(185,139,232,.12);border-color:rgba(185,139,232,.18)}
+.back-link:hover svg{transform:translateX(-2px)}
+.back-link:active{transform:translateY(1px)}
+.back-link:focus-visible{outline:2px solid #B98BE8;outline-offset:3px}
 .back:hover{color:var(--text-primary)}
 h1{font-size:32px;margin:24px 0 8px;font-weight:500}
 .sub{color:var(--text-secondary);margin:0 0 40px}
@@ -38,7 +55,7 @@ a{color:var(--highlight)}
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="/">← 回主页</a>
+  <a class="back-link" href="/"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8 10 12.5" /></svg>回官网</a>
   <h1>你多半想问的几件事</h1>
   <p class="sub">FAQ</p>
 
@@ -71,7 +88,7 @@ a{color:var(--highlight)}
     <p>先在系统「输入法设置」里把 Transless 关掉，再正常卸载 App。卸载即终止全部处理，我们这边没有需要你来删的档案。</p>
   </div>
 
-  <p style="margin-top:40px"><a href="/">← 回主页</a> · <a href="/privacy.html">隐私政策</a> · <a href="/terms.html">服务条款</a></p>
+  <p style="margin-top:40px"><a href="/">← 回官网</a> · <a href="/privacy.html">隐私政策</a> · <a href="/terms.html">服务条款</a></p>
   <p style="margin-top:8px">还没解决？写信到 <a href="mailto:support@transless.net">support@transless.net</a>，我们会回你。</p>
 </div>
 </body>
