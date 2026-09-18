@@ -8,7 +8,7 @@
      「转换工具」的框架，Kevin 明确否掉（「不要强调上屏这种工具属性」）。
      新文案对齐 _定位与Slogan_v2 —— 主语是「你想说的话」不是「转换动作」；
      功能部分只写已核实的（9 种目标语言），不写「任何语言」这类未验证的功能承诺。 -->
-<meta name="description" content="พูดสิ่งที่อยู่ในใจได้เลย แล้วออกมาเป็นภาษาอังกฤษ ญี่ปุ่น ฝรั่งเศส และอีกกว่า 31 ภาษาที่เป็นธรรมชาติ Transless คีย์บอร์ดเสียง">
+<meta name="description" content="พูดสิ่งที่คุณคิด ตรงถึงโลก พูดครั้งเดียวได้ภาษาอังกฤษ ญี่ปุ่น ฝรั่งเศสที่เป็นธรรมชาติ — 31 ภาษา แป้นพิมพ์เสียง Transless">
 <meta name="theme-color" content="#0F1B4F">
 
 <!-- 多语言。9 个版本：/ (简体) · /zh-hk/ (繁體) · /en/ (English) · /ja/ · /de/ · /es/ · /ar/ · /vi/ · /th/
@@ -35,7 +35,7 @@
 <meta property="og:url" content="https://transless.net/th/">
 <meta property="og:locale" content="th_TH">
 <meta property="og:title" content="Transless — ให้โลกเข้าใจคุณ">
-<meta property="og:description" content="พูดสิ่งที่อยู่ในใจได้เลย แล้วออกมาเป็นภาษาอังกฤษ ญี่ปุ่น ฝรั่งเศส และอีกกว่า 31 ภาษาที่เป็นธรรมชาติ Transless คีย์บอร์ดเสียง">
+<meta property="og:description" content="พูดสิ่งที่คุณคิด ตรงถึงโลก พูดครั้งเดียวได้ภาษาอังกฤษ ญี่ปุ่น ฝรั่งเศสที่เป็นธรรมชาติ — 31 ภาษา แป้นพิมพ์เสียง Transless">
 <meta name="twitter:card" content="summary_large_image">
 <!-- 分享大图 1200×630。🚨 每语言指自己那张、绝对 URL —— 相对路径分享平台抓不到。
      这两行的值由 build_i18n.py cmd_render 逐版改写（`og_<lang>.png`），别手改。 -->
@@ -206,13 +206,26 @@ body{
    这样整条页面的场景才是 社交(hero)→工作(pivot/difference)→旅行(how/where)→
    家人(memory)→独处(privacy)→世界(final)，跟"话在嘴边说不出来"那屏列的
    六种场景对得上，不再是清一色的"朋友聚会"。 */
-.pivot, #difference{
+.pivot{
   background:linear-gradient(rgba(30,23,83,.42),rgba(30,23,83,.42)),
   url('/img/scene_work.jpg') center/cover no-repeat fixed;
 }
-#how, #where{
+/* 2026-09-15：difference 原来跟 pivot 共用 scene_work.jpg，where 原来跟 how
+   共用 scene_travel.jpg——Kevin 抓出主页多处背景图重复。difference 讲"中文碎念
+   →英文结构化"，换成新拍的"深夜对手机说话"场景图；where 讲"跨境协作卡壳的
+   时刻"，换成新拍的"两人对着手机跨语言沟通"场景图（东亚+中东，语言背景一眼
+   可辨）。how 保留原 scene_travel.jpg 不动。 */
+#difference{
+  background:linear-gradient(rgba(30,23,83,.42),rgba(30,23,83,.42)),
+  url('/img/scene_message.jpg') center/cover no-repeat fixed;
+}
+#how{
   background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
   url('/img/scene_travel.jpg') center/cover no-repeat fixed;
+}
+#where{
+  background:linear-gradient(rgba(54,20,92,.45),rgba(54,20,92,.45)),
+  url('/img/scene_bridge.jpg') center/cover no-repeat fixed;
 }
 #memory{
   background:linear-gradient(rgba(41,24,88,.45),rgba(41,24,88,.45)),
@@ -374,9 +387,11 @@ nav .wrap{width:100%;display:flex;align-items:center;justify-content:space-betwe
   text-decoration:none;transition:color .25s var(--ease);
 }
 .nav-link:hover{color:var(--text-primary)}
-/* 2026-09-15：跟中文主页同步——下载是全站唯一转化动作，用徽标样式（借
-   .wb-new-tag 那套 --highlight 描边+浅底）跟纯文字导航区分开，同时不
-   跟 hero/结尾的主 CTA 抢那份"整页唯一强调色"。 */
+/* 2026-09-15：Kevin「下载按钮那么小，别人怎么找」——下载是全站唯一的转化动作，
+   跟"怎么用/隐私/常见问题"这些说明性链接不该长一个样。药丸强调色（.cta 那种
+   渐变）整页只留给 hero/结尾的主 CTA，不能在 nav 里再出现一份（见 442 行注释
+   "整页唯一用强调色的元素"）。借用 .wb-new-tag 那套已有的"徽标"处理
+   （--highlight 描边+浅底），分量比纯文字链接重、又不跟主 CTA 抢色。 */
 .nav-cta{
   font-size:13px;font-weight:500;letter-spacing:.02em;
   color:var(--highlight)!important;text-decoration:none;
@@ -449,6 +464,7 @@ h1{
 .cta{white-space:nowrap}
 .cta:hover{transform:scale(1.02);filter:brightness(1.12);box-shadow:0 12px 40px rgba(139,92,246,.38)}
 .cta:active{transform:scale(.98);transition-duration:.1s}
+/* 次级动作——纯文字链接，不跟主 CTA 抢强调色 */
 .cta-secondary{
   font-size:15px;color:var(--text-secondary);text-decoration:none;
   transition:color .25s var(--ease);
@@ -994,7 +1010,7 @@ h2 .dim{color:var(--text-secondary)}
       <a class="nav-link" href="#how">วิธีใช้งาน</a>
       <a class="nav-link" href="#privacy">ความเป็นส่วนตัว</a>
       <a class="nav-link" href="/faq.html">คำถามที่พบบ่อย</a>
-      <a class="nav-cta" href="/th/download.html">ดาวน์โหลด</a>
+      <a class="nav-cta" href="/download.html">ดาวน์โหลด</a>
       <span class="langsw" role="group" aria-label="ภาษา">
         <a data-i18n="no" href="/"       hreflang="zh-Hans"   lang="zh-Hans">简</a>
         <a data-i18n="no" href="/zh-hk/" hreflang="zh-Hant-HK" lang="zh-Hant">繁</a>
@@ -1028,18 +1044,22 @@ h2 .dim{color:var(--text-secondary)}
 <header class="hero slide">
   <div class="wrap">
     <div class="hero-left">
-      <div class="hero-eyebrow">คีย์บอร์ดเสียง &middot; พูดภาษาของคุณ ออกมาเป็น 31 ภาษา</div>
+      <div class="hero-eyebrow">แป้นพิมพ์เสียง &middot; พูดครั้งเดียว 31 ภาษา</div>
       <h1>พูดออกไป ให้เขาได้อ่าน</h1>
       <div class="slogan-en">No Language In Between</div>
       <p class="lede">กดค้างเพื่อพูด AI จะเรียบเรียงคำพูดของคุณเป็นข้อความที่ส่งได้ทันที ใช้ได้กับทุกแอป ทั้งข้อความ อีเมล หรือแอปอื่น ๆ<br>พูดสิ่งที่อยู่ในใจออกมา แล้วได้ภาษานั้นอย่างเป็นธรรมชาติ แบ่งบรรทัดให้อัตโนมัติในจุดที่ควร</p>
       <!-- 🚨 2026-09-06 三次修：Kevin 要求主页重新设计（Plan C），顺序纠正为
            "先说清楚这是输入法，再讲不仅是"——这句 lede 先落住"输入法"这个基本功能，
            不提"不仅是"，那句留给紧跟在 header 后面的独立过渡段。 -->
+      <!-- 2026-09-15：Kevin 当面点名——首页最显眼的按钮应该直接是下载，
+           不该是"看看它怎么工作"，更不该只在导航角落塞一个小链接让人自己找。
+           主 CTA 换成"立即下载"（整页唯一强调色的元素，规则不变），
+           "看看它怎么工作"降级成旁边的次级文字链接。 -->
       <div class="cta-row">
-        <a class="cta" href="/th/download.html">ดาวน์โหลดตอนนี้</a>
-        <a class="cta-secondary" href="#how">ดูวิธีการทำงาน →</a>
+        <a class="cta" href="/download.html">ดาวน์โหลดเลย</a>
+        <a class="cta-secondary" href="#how">ดูวิธีใช้งาน →</a>
       </div>
-      <div class="cta-note">Android / Windows ดาวน์โหลดได้แล้ว &middot; iOS อยู่ระหว่างตรวจสอบ</div>
+      <div class="cta-note">Android / Windows พร้อมใช้แล้ว · iOS อยู่ระหว่างตรวจสอบ</div>
       <div class="langs">English &middot; 日本語 &middot; Français &middot; Deutsch &middot; Español &middot; 한국어 &middot; 粵語 &middot; 繁體中文 &middot; 简体中文</div>
     </div>
 
@@ -1061,9 +1081,9 @@ h2 .dim{color:var(--text-secondary)}
                  "We're revisiting the quote")贯穿，5.2s 一屏自动播，不用手动划也能看懂整条链路。
                  每张卡的控件都逐条核过对应源码，不是按感觉编的。 -->
             <div class="feat on" data-sub="tone" data-sub-active="1" data-lang="ภาษาอังกฤษ"
-                 data-mode="tr" data-speaking="0" data-name="① สื่อสาร — พูดออกมา ได้ภาษาของเขา">
+                 data-mode="tr" data-speaking="0" data-name="① สื่อสาร · แค่พูด ผลลัพธ์เหมือนเจ้าของภาษา">
               <div class="compose">
-                <span class="feat-tag">① สื่อสาร — พูดออกมา ได้ภาษาของเขา</span>
+                <span class="feat-tag">① สื่อสาร · แค่พูด ผลลัพธ์เหมือนเจ้าของภาษา</span>
                 <div class="compose-label">คุณพูดว่า</div>
                 <div class="bubble">ใบเสนอราคาต้องปรับอีกนิด ตอบเขาภายในวันพุธหน้า<span class="caret"></span></div>
                 <div class="compose-label">ข้อความที่ได้</div>
@@ -1368,7 +1388,7 @@ h2 .dim{color:var(--text-secondary)}
       <div class="card scene">
         <div class="tag">Work</div>
         <h3>ตอบอีเมลภาษาอังกฤษ</h3>
-        <p>พูดความคิดเป็นภาษาไทยออกมา ได้อีเมลภาษาอังกฤษฉบับสมบูรณ์กลับมาเลย</p>
+        <p>พูดความคิดเป็นภาษาจีนออกมา ได้อีเมลภาษาอังกฤษฉบับสมบูรณ์กลับมาเลย</p>
       </div>
       <div class="card scene">
         <div class="tag">Cross-border</div>
@@ -1404,14 +1424,14 @@ h2 .dim{color:var(--text-secondary)}
       <div class="card scene">
         <div class="tag">Travel</div>
         <h3>สั่งอาหาร ถามทางในต่างประเทศ</h3>
-        <p>พูดใส่โทรศัพท์ ออกมาเป็นภาษาท้องถิ่น แตะเพื่อฟังเสียง<b>อ่านออกเสียงด้วยภาษาของคุณให้อีกฝ่ายฟัง</b></p>
+        <p>พูดใส่มือถือ ได้ภาษาท้องถิ่น แตะเพื่อให้อ่านออกเสียง<b>อ่านออกเสียงด้วยภาษาของคุณให้อีกฝ่ายฟัง</b></p>
       </div>
     </div>
   </div>
 </section>
 
 <div class="seam" aria-hidden="true">
-  <div class="seam-under" style="background-image:url('/img/scene_travel.jpg')"></div>
+  <div class="seam-under" style="background-image:url('/img/scene_bridge.jpg')"></div>
   <div class="seam-over" style="background-image:url('/img/scene_family.jpg')"></div>
 </div>
 
@@ -1550,13 +1570,14 @@ h2 .dim{color:var(--text-secondary)}
     <h2>พูดออกไป ให้เขาได้อ่าน</h2>
     <div class="slogan-en">No Language In Between</div>
     <div class="cta-row">
-      <a class="cta" href="/th/download.html">ดาวน์โหลดตอนนี้</a>
-      <span class="cta-note">ทดลองใช้ฟรี 7 วัน จากนั้น US$9.99/เดือน Android / Windows ดาวน์โหลดได้แล้ว iOS อยู่ระหว่างตรวจสอบ</span>
+      <a class="cta" href="/download.html">ดาวน์โหลดเลย</a>
+      <span class="cta-note">ทดลองฟรี 7 วัน จากนั้น US$9.99/เดือน Android / Windows พร้อมใช้แล้ว iOS อยู่ระหว่างตรวจสอบ</span>
     </div>
     <div class="final-legal">
       <a href="/privacy.html">นโยบายความเป็นส่วนตัว</a>
       <a href="/terms.html">ข้อกำหนดการให้บริการ</a>
       <a href="/company.html">ข้อมูลบริษัท</a>
+      <a href="/delete-account.html">ลบบัญชี</a>
       <a href="mailto:support@transless.net">ติดต่อเรา · support@transless.net</a>
       <span class="copy">&copy; 2026 Luminate Pacific Consulting Service Limited</span>
     </div>
