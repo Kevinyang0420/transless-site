@@ -38,6 +38,16 @@ h1{font-size:24px;margin-bottom:8px}
 }
 .card h2{font-size:16px;margin-bottom:12px}
 .card p{color:var(--text-secondary);font-size:13.5px;margin-bottom:14px}
+/* 「会删除什么、会保留什么」——复用 .card 的视觉，别另起一套配色 */
+.retention-note{
+  background:var(--card-bg);border:1px solid var(--card-border);
+  border-radius:14px;padding:24px;margin-bottom:16px;
+}
+.retention-note h3{font-size:16px;margin-bottom:12px}
+.retention-note p{color:var(--text-secondary);font-size:13.5px;margin-bottom:10px;line-height:1.65}
+.retention-note b{color:var(--text-primary)}
+.retention-more{font-size:12.5px;margin-bottom:0}
+.retention-more a{color:var(--text-primary)}
 label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
 select,input{
   width:100%;padding:11px 12px;border-radius:8px;border:1px solid var(--card-border);
@@ -118,6 +128,23 @@ button:disabled{opacity:.5;cursor:not-allowed}
     </div>
     <button class="btn-danger" id="btnConfirm" disabled>确认删除账号</button>
     <button class="btn-secondary" id="btnResend" style="margin-top:8px">重新发送验证码</button>
+  </div>
+
+  <!-- 🚨 Play 数据安全表对「删除账号网址」有三条硬要求，这一段落的是第三条：
+         「说明会删除或保留的数据类型，以及任何额外保留期限」。
+       原来这页只说了【删什么】和【7 天冷静期】，**没说删完之后还留什么** ——
+       而我们确实留了一份不含内容的使用记录。
+       🚨 措辞跟 dist/privacy.html 第十节保持一致，别在这里另写一版：
+          同一件事两处措辞会漂，而漂了不报错。 -->
+  <div class="retention-note">
+    <h3>会删除什么、会保留什么</h3>
+    <p><b>删除：</b>账号本身，以及其中可以直接识别你的信息（登录用的手机号或邮箱），
+      连同已同步的历史记录、单词本、常用词。</p>
+    <p><b>保留：</b>为了统计使用量、防止滥用和保障服务稳定，我们会保留一份
+      <b>不包含任何内容</b>的使用记录 —— 里面只有时间、用到了哪个功能，以及一个
+      <b>经过加盐哈希处理的代号</b>。账号删除之后，我们无法再把这份记录关联到你本人。</p>
+    <p><b>时限：</b>确认后进入 <b>7 天冷静期</b>，期间可随时撤销；7 天后永久删除，不再保留额外期限。</p>
+    <p class="retention-more">完整说明见 <a href="https://transless.net/privacy.html">Transless 隐私政策</a>第十节。</p>
   </div>
 
   <!-- 步骤3：结果 / 撤销 -->
